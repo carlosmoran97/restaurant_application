@@ -7,17 +7,28 @@
   <div class="collapse navbar-collapse" id="navbarResponsive">
     <ul class="navbar-nav navbar-sidenav" id="exampleAccordion">
       <li class="nav-item" data-toggle="tooltip" data-placement="right" title="Ordenes">
-        <a class="nav-link" href="#">
-          <i class="fa fa-cutlery"></i>
+        <a class="nav-link nav-link-collapse collapsed" data-toggle="collapse" href="#collapseOrdenes" data-parent="#exampleAccordion">
+          <i class="fa fa-wrench"></i>
           <span class="nav-link-text">Ordenes</span>
         </a>
+        <ul class="sidenav-second-level collapse" id="collapseOrdenes">
+          <li>
+            <a href="#">Ordenar</a>
+          </li>
+          <li>
+            <a href="#">Ordenes no finalizadas</a>
+          </li>
+          <li>
+            <a href="#">Facturar</a>
+          </li>
+        </ul>
       </li>
-      <li class="nav-item" data-toggle="tooltip" data-placement="right" title="Components">
-        <a class="nav-link nav-link-collapse collapsed" data-toggle="collapse" href="#collapseComponents" data-parent="#exampleAccordion">
+      <li class="nav-item" data-toggle="tooltip" data-placement="right" title="Mantenimiento">
+        <a class="nav-link nav-link-collapse collapsed" data-toggle="collapse" href="#collapseMantenimiento" data-parent="#exampleAccordion">
           <i class="fa fa-wrench"></i>
           <span class="nav-link-text">Mantenimiento</span>
         </a>
-        <ul class="sidenav-second-level collapse" id="collapseComponents">
+        <ul class="sidenav-second-level collapse" id="collapseMantenimiento">
           <li>
             <a href="#">Categoría de platillos</a>
           </li>
@@ -32,30 +43,20 @@
           </li>
         </ul>
       </li>
-      <!-- <li class="nav-item" data-toggle="tooltip" data-placement="right" title="Categoría Platillos">
-        <a class="nav-link" href="#">
-          <i class="fa fa-fw fa-dashboard"></i>
-          <span class="nav-link-text">Categoría Platillos</span>
+      <li class="nav-item" data-toggle="tooltip" data-placement="right" title="Inventario">
+        <a class="nav-link nav-link-collapse collapsed" data-toggle="collapse" href="#collapseInventario" data-parent="#exampleAccordion">
+          <i class="fa fa-wrench"></i>
+          <span class="nav-link-text">Inventario</span>
         </a>
+        <ul class="sidenav-second-level collapse" id="collapseInventario">
+          <li>
+            <a href="#">Productos</a>
+          </li>
+          <li>
+            <a href="#">Existencias</a>
+          </li>
+        </ul>
       </li>
-      <li class="nav-item" data-toggle="tooltip" data-placement="right" title="Platillos">
-        <a class="nav-link" href="#">
-          <i class="fa fa-fw fa-dashboard"></i>
-          <span class="nav-link-text">Platillos</span>
-        </a>
-      </li>
-      <li class="nav-item" data-toggle="tooltip" data-placement="right" title="Mesas">
-        <a class="nav-link" href="#">
-          <i class="fa fa-fw fa-dashboard"></i>
-          <span class="nav-link-text">Mesas</span>
-        </a>
-      </li>
-      <li class="nav-item" data-toggle="tooltip" data-placement="right" title="Meseros">
-        <a class="nav-link" href="#">
-          <i class="fa fa-fw fa-dashboard"></i>
-          <span class="nav-link-text">Meseros</span>
-        </a>
-      </li> -->
     </ul>
     <ul class="navbar-nav sidenav-toggler">
       <li class="nav-item">
