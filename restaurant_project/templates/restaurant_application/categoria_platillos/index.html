@@ -3,12 +3,197 @@
   {{ 'Categoría Platillo' }}
 {% endblock %}
 {% block body %}
-  <h1>Bienvenido</h1>
+    <div class="container">
+      <!-- Breadcrumbs-->
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item">
+          <a href="#">Restaurant</a>
+        </li>
+        <li class="breadcrumb-item active">Categoría Platillos</li>
+      </ol>
+      <!-- Example DataTables Card-->
+      <div class="card mb-3">
+        <div class="card-header">
+          <i class="fa fa-table"></i> Categoría Platillos
+          <button id="btn-registrar-categoria" type="button" class="btn btn-success btn-sm">Registrar</button>
+        </div>
+        <div class="card-body">
+          <div class="table-responsive">
+            <table class="table table-bordered" id="tableCategoria" width="100%" cellspacing="0">
+              <thead>
+                <tr>
+                  <th>Categoría</th>
+                  <th width="300px"></th>
+                </tr>
+              </thead>
+              <tbody>
+              </tbody>
+            </table>
+        </div>
+      </div>
+      <div class="card-footer small text-muted">Updated yesterday at 11:59 PM</div>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal fade" id="modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="labelModal"></h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <div id="formRegistrar">
+              <div class="form-group">
+                <label>Categoría</label>
+                <input type="text" class="form-control" id="txtCategoriaRegistrar">
+                <small class="form-text text-muted error"></small>
+              </div>
+            </div>
+            <div id="formModificar">
+              <div class="form-group">
+                <label>Categoría</label>
+                <input type="text" class="form-control" id="txtCategoriaUpdate">
+                <small class="form-text text-muted error"></small>
+              </div>
+            </div>
+            <div id="formEliminar">
+              <h4>Confirmar Eliminar Categoría Platillo: <strong><span id="nombreCategoriaPlatillo"></span></strong></h4>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+            <button id="btn-registrar" type="button" class="btn btn-primary">Guardar</button>
+            <button id="btn-modificar" type="button" class="btn btn-primary">Guardar Cambios</button>
+            <button id="btn-eliminar" type="button" class="btn btn-danger">Eliminar</button>
+          </div>
+        </div>
+      </div>
+    </div>
 {% endblock %}
 {% block JavaScriptFiles %}
   <script type="text/javascript">
+    var idCategoriaPlatillo;
     $(document).ready(function(){
+      idCategoriaPlatillo = "";
       //alert('Funciona JQuery!');
+      cargarDatos();
     });
+
+    //Abrir Modal de Formulario de Registro de Categoría
+    $(document).on("click", "#btn-registrar-categoria", function(){
+      $("#formRegistrar").show();
+      $("#formModificar").hide();
+      $("#formEliminar").hide();
+      $("#labelModal").html("Registrar Categoría Platillo");
+      $("#txtCategoriaRegistrar").val("");
+      $("#btn-registrar").show();
+      $("#btn-modificar").hide();
+      $("#btn-eliminar").hide();
+      $("#modal").modal("show");
+    });
+
+    //Función para guardar el formulario
+    $(document).on("click", "#btn-registrar", function(){
+      $.ajax({
+        url : "{% url 'restaurant:create_categoria_platillos' %}",
+        data : {'categoria': $("#txtCategoriaRegistrar").val()},
+        type: "POST",
+        dataType: "json",
+        success : function (data) {
+          //alert('Registrado '+data.respuesta);
+          $("#modal").modal("hide");
+          cargarDatos();
+        }
+      });
+    });
+
+    //Abrir ventana editar
+    $(document).on("click", ".editar", function(){
+      idCategoriaPlatillo = $(this).attr("value");
+      $("#formRegistrar").hide();
+      $("#formModificar").show();
+      $("#formEliminar").hide();
+      $("#labelModal").html("Editar Categoría Platillo");
+      $("#txtCategoriaUpdate").val($(this).parents("tr").find("td")[0].innerHTML);
+      $("#btn-registrar").hide();
+      $("#btn-modificar").show();
+      $("#btn-eliminar").hide();
+      $("#modal").modal("show");
+    });
+
+    //Función para guardar el formulario
+    $(document).on("click", "#btn-modificar", function(){
+      $.ajax({
+        url : "{% url 'restaurant:editar_categoria_platillos' %}",
+        data : {'idCategoriaPlatillo': idCategoriaPlatillo, 'categoria': $("#txtCategoriaUpdate").val()},
+        type: "POST",
+        dataType: "json",
+        success : function (data) {
+          alert('Registrado '+data.respuesta);
+          $("#modal").modal("hide");
+          cargarDatos();
+        }
+      });
+    });
+
+    //Abrir ventana eliminar
+    $(document).on("click", ".eliminar", function(){
+      idCategoriaPlatillo = $(this).attr("value");
+      $("#formRegistrar").hide();
+      $("#formModificar").hide();
+      $("#formEliminar").show();
+      $("#labelModal").html("Eliminar Categoría Platillo");
+      $("#nombreCategoriaPlatillo").html($(this).parents("tr").find("td")[0].innerHTML);
+      $("#btn-registrar").hide();
+      $("#btn-modificar").hide();
+      $("#btn-eliminar").show();
+      $("#modal").modal("show");
+    });
+
+    //Confirmar eliminar
+    $(document).on("click", "#btn-eliminar", function(){
+      $.ajax({
+        url : "{% url 'restaurant:eliminar_categoria_platillos' %}",
+        data : {'idCategoriaPlatillo': idCategoriaPlatillo},
+        type: "POST",
+        dataType: "json",
+        success : function (data) {
+          //alert('Eliminar '+data.respuesta);
+          $("#modal").modal("hide");
+          cargarDatos();
+        }
+      });
+    });
+
+    //Funcion cargar lista
+    function cargarDatos(){
+      $.ajax({
+        url : "{% url 'restaurant:lista_categoria_platillos' %}",
+        dataType: "json",
+        success : function (data) {
+          rellenarTableCategoria(data);
+        }
+      });
+    };
+
+    //Función para rellenar tableCategoria
+    function rellenarTableCategoria(data){
+      var html = "";
+      for(var i = 0; i < data.length; i++){
+        html += "<tr>";
+        html += "<td>";
+        html += data[i].categoria;
+        html += "</td>";
+        html += "<td>";
+        html += "<button type=\"button\" class=\"btn btn-outline-success editar\" value=\""+data[i].idCategoriaPlatillo+"\">Editar</button>&nbsp;&nbsp;&nbsp;";
+        html += "<button type=\"button\" class=\"btn btn-outline-danger eliminar\" value=\""+data[i].idCategoriaPlatillo+"\">Eliminar</button>";
+        html += "</td>";
+        html += "</tr>";
+      }
+      $("#tableCategoria tbody").html(html);
+    }
   </script>
 {% endblock %}

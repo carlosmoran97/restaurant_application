@@ -1,3 +1,5 @@
 from django.db import models
 
-# Create your models here.
+class CategoriaPlatillo(models.Model):
+    idCategoriaPlatillo = models.AutoField(primary_key=True)
+    categoria = models.CharField(max_length=200)
