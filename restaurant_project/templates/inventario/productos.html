@@ -21,7 +21,7 @@
         </div>
         <div class="card-body">
             <div class="table-responsive">
-                <table class="table table-bordered" id="tableProducto" width="100%" cellspacing="0">
+                <table class="table table-bordered" id="tablaProductos" width="100%" cellspacing="0">
                     <thead>
                         <tr>
                             <th>Id</th>
@@ -40,6 +40,24 @@
 {% endblock %} 
 {% block JavaScriptFiles %}
 <script>
+    var unidad_de_medida = {
+            kg: "Kilogramos",
+            lbl: "Libras",
+            tnl: "Toneladas Largas",
+            tnm: "Toneladas Métricas",
+            tnc: "Toneladas Cortas",
+            g: "Gramos",
+            u: "Unidades",
+            lt: "Litros",
+            gal: "Galones",
+            bar: "Barriles",
+           lts: "Latas",
+            caj: "Cajas",
+            mil: "Millares",
+            m3: "Metros cúbicos",
+            m: "Metros",
+            o: "Otros"
+        };
     function cargarDatos() {
         var html = ``;
         $.ajax({
@@ -48,8 +66,17 @@
             dataType: 'json',
             success: (data) => {
                 for(let i = 0; i < data.length; i++){
-
+                    html += `<tr>
+                                <td>${data[i].id}</td>
+                                <td>${data[i].nombre}</td>
+                                <td>${unidad_de_medida[data[i].unidad_de_medida]}</td>
+                                <td>
+                                    <button type="button" class="btn btn-outline-success editar" value=${data[i].id}>Editar</button>
+                                    <button type="button" class="btn btn-outline-danger eliminar" value=${data[i].id}>Eliminar</button>
+                                </td>
+                             </tr>`;
                 }
+                $('#tablaProductos tbody').html(html);
             }
         });
     }
