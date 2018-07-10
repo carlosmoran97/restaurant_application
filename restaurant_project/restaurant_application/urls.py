@@ -20,6 +20,6 @@ urlpatterns = [
     url(r'^create_platillos/$', views.PlatilloCreate.as_view(), name='create_platillos'),
     url(r'^lista_platillos/$', views.PlatilloList.as_view(), name='lista_platillos'),
     #url(r'^listafilter_categoria_platillos/$', views.CategoriaPlatilloListFilter.as_view(), name='listafilter_categoria_platillos'),
-    url(r'^editar_categoria_platillos/$', views.PlatilloUpdate.as_view(), name='editar_platillos'),
+    url(r'^editar_platillos/$', views.PlatilloUpdate.as_view(), name='editar_platillos'),
     url(r'^eliminar_platillos/$', views.PlatilloDelete.as_view(), name='eliminar_platillos'),
 ]

@@ -3,7 +3,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from .models import CategoriaPlatillo, Platillo
 from .serializers import CategoriaPlatilloSerializer, PlatilloSerializer
-from .forms import CategoriaPlatilloForm
+from .forms import CategoriaPlatilloForm, PlatilloForm
 from django.http import JsonResponse
 
 """
@@ -48,19 +48,21 @@ class CategoriaPlatilloListFilter(APIView):
 """
 
 def index_platillos(request):
-    return render(request, 'restaurant_application/platillos/index.html')
+    form = PlatilloForm()
+    context = {'form':form}
+    return render(request, 'restaurant_application/platillos/index.html', context)
 
 class PlatilloCreate(APIView):
     def post(self, request):
         categoriaplatillo = CategoriaPlatillo.objects.filter(idCategoriaPlatillo=request.POST['idCategoriaPlatillo'])
-        platillo = Platillo.objects.create(nombre=request.POST['nombre'], precioUnitario=request.POST['precioUnitario'], idCategoriaPlatillo=categoriaplatillo)
+        platillo = Platillo.objects.create(nombre=request.POST['nombre'], precioUnitario=request.POST['precioUnitario'], idCategoriaPlatillo=categoriaplatillo[0])
         platillo.save()
         return JsonResponse({'respuesta':'correctamente!'})
 
 class PlatilloUpdate(APIView):
     def post(self, request):
         categoriaplatillo = CategoriaPlatillo.objects.filter(idCategoriaPlatillo=request.POST['idCategoriaPlatillo'])
-        platillo = Platillo.objects.filter(codigoPlatillo=request.POST['codigoPlatillo']).update(nombre=request.POST['nombre'], precioUnitario=request.POST['precioUnitario'], idCategoriaPlatillo=categoriaplatillo)
+        platillo = Platillo.objects.filter(codigoPlatillo=request.POST['codigoPlatillo']).update(nombre=request.POST['nombre'], precioUnitario=request.POST['precioUnitario'], idCategoriaPlatillo=categoriaplatillo[0])
         return JsonResponse({'respuesta':'correctamente!'})
 
 class PlatilloDelete(APIView):
