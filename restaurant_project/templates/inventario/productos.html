@@ -1,266 +1,73 @@
 {% extends 'base/base.html' %}
-    {% block TitlePage %}
-        {{'Productos'}}
-    {% endblock %}
-
-    {% block body %}
-        <div class="container">
-            <!-- breadcrumbs -->
-            <ol class="breadcrumb">
-                <li class="breadcrumb-item">
-                    <a href="#">Inventario</a>
-                </li>
-                <li class="breadcrumb-item active">
-                    Productos
-                </li>
-            </ol>
-            <div class="card mb-3">
-                <div class="card-header">
-                    <i class="fa fa-table"></i> Productos
-                    <button id="btn-registrar-producto" type="button" class="btn btn-success btn-sm">Registrar</button>
-                </div>
-                <div class="card-body">
-                    <div class="table-responsive">
-                        <table class="table table-bordered" id="tableProducto" width="100%" cellspacing="0">
-                            <thead>
-                                <tr>
-                                    <th>Id</th>
-                                    <th>Nombre</th>
-                                    <th>Unidad de medida</th>
-                                    <th width="300px">Acciones</th>
-                                </tr>
-                            </thead>
-                            <tbody></tbody>
-                        </table>
-                    </div>
-                </div>
+{% load staticfiles %}
+{% block TitlePage %}
+    {{'Productos'}} 
+{% endblock %} 
+{% block body%}
+<div class="container">
+    <!-- breadcrumbs -->
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item">
+            <a href="#">Inventario</a>
+        </li>
+        <li class="breadcrumb-item active">
+            Productos
+        </li>
+    </ol>
+    <div class="card mb-3">
+        <div class="card-header">
+            <i class="fa fa-table"></i> Productos &nbsp;
+            <button id="btn-registrar-producto" type="button" class="btn btn-success" data-toggle="modal" data-target="#productoModal">Nuevo</button>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-bordered" id="tableProducto" width="100%" cellspacing="0">
+                    <thead>
+                        <tr>
+                            <th>Id</th>
+                            <th>Nombre</th>
+                            <th>Unidad de medida</th>
+                            <th width="300px">Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
             </div>
         </div>
-        <!-- Modal -->
-        <div class="modal fade" id="modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-            <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                <h5 class="modal-title" id="labelModal"></h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-                </div>
-                <div class="modal-body">
-                <div id="formRegistrar">
-                    <div class="form-group">
-                        <label>Nombre</label>
-                        <input type="text" class="form-control" id="txtNombreProducto">
-                        <small class="form-text text-muted error"></small>
-                        <label>Unidad de medida</label>
-                        <!-- <input type="text" class="form-control" id="txtUnidadDeMedidaProducto"> -->
-                        <select class="form-control" id="txtUnidadDeMedidaProducto">
-                            <option value="kg">Kilogramos</option>
-                            <option value="lbl">Libras</option>
-                            <option value="tnl">Toneladas Largas</option>
-                            <option value="tnm">Toneladas Métricas</option>
-                            <option value="tnc">Toneladas Cortas</option>
-                            <option value="g">Gramos</option>
-                            <option value="u" selected>Unidades</option>
-                            <option value="gal">Galones</option>
-                            <option value="bar">Barriles</option>
-                            <option value="lts">Latas</option>
-                            <option value="caj">Cajas</option>
-                            <option value="mil">Millares</option>
-                            <option value="m3">Metros Cúbicos</option>
-                            <option value="m">Metros</option>
-                            <option value="o">Otros</option>
-                        </select>
-                        <small class="form-text text-muted error"></small>
-                    </div>
-                </div>
-                <div id="formModificar">
-                    <div class="form-group">
-                    <label>Nombre</label>
-                    <input type="text" class="form-control" id="txtNombreProducto">
-                    <small class="form-text text-muted error"></small>
-                    <label>Unidad de medida</label>
-                    <!-- <input type="text" class="form-control" id="txtUnidadDeMedidaProducto"> -->
-                    <select class="form-control" id="txtUnidadDeMedidaProducto">
-                            <option value="kg">Kilogramos</option>
-                            <option value="lbl">Libras</option>
-                            <option value="tnl">Toneladas Largas</option>
-                            <option value="tnm">Toneladas Métricas</option>
-                            <option value="tnc">Toneladas Cortas</option>
-                            <option value="g">Gramos</option>
-                            <option value="u" selected>Unidades</option>
-                            <option value="gal">Galones</option>
-                            <option value="bar">Barriles</option>
-                            <option value="lts">Latas</option>
-                            <option value="caj">Cajas</option>
-                            <option value="mil">Millares</option>
-                            <option value="m3">Metros Cúbicos</option>
-                            <option value="m">Metros</option>
-                            <option value="o">Otros</option>
-                    </select>
-                    <small class="form-text text-muted error"></small>
-                    </div>
-                </div>
-                <div id="formEliminar">
-                    <h4>Confirmar Eliminar Categoría Platillo: <strong><span id="nombreProducto"></span></strong></h4>
-                </div>
-                </div>
-                <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
-                <button id="btn-registrar" type="button" class="btn btn-primary">Guardar</button>
-                <button id="btn-modificar" type="button" class="btn btn-primary">Guardar Cambios</button>
-                <button id="btn-eliminar" type="button" class="btn btn-danger">Eliminar</button>
-                </div>
-            </div>
-            </div>
-        </div>
-    {% endblock %}
-
-    {% block JavaScriptFiles %}
-    <script type="text/javascript">
-        var unidad_de_medida = {
-            kg: "Kilogramos",
-            lbl: "Libras",
-            tnl: "Toneladas Largas",
-            tnm: "Toneladas Métricas",
-            tnc: "Toneladas Cortas",
-            g: "Gramos",
-            u: "Unidades",
-            lt: "Litros",
-            gal: "Galones",
-            bar: "Barriles",
-            lts: "Latas",
-            caj: "Cajas",
-            mil: "Millares",
-            m3: "Metros cúbicos",
-            m: "Metros",
-            o: "Otros"
-        }
-        var idProducto;
-        $(document).ready(function(){
-          idProducto = "";
-          //alert('Funciona JQuery!');
-          cargarDatos();
-        });
-    
-        //Abrir Modal de Formulario de Registro de Producto
-        $(document).on("click", "#btn-registrar-producto", function(){
-          $("#formRegistrar").show();
-          $("#formModificar").hide();
-          $("#formEliminar").hide();
-          $("#labelModal").html("Registrar Producto");
-          $("#txtNombreProducto").val("");
-          $("#btn-registrar").show();
-          $("#btn-modificar").hide();
-          $("#btn-eliminar").hide();
-          $("#modal").modal("show");
-        });
-    
-        //Función para guardar el formulario
-        $(document).on("click", "#btn-registrar", function(){
-          $.ajax({
-            url : "{% url 'inventario:productos_create' %}",
-            data : {'nombre': $("#txtNombreProducto").val(), 'unidad_de_medida':$('#txtUnidadDeMedidaProducto').val()},
-            type: "GET",
-            dataType: "json",
-            success : function (data) {
-              //alert('Registrado '+data.respuesta);
-              $("#modal").modal("hide");
-              cargarDatos();
+    </div>
+</div>
+{% include 'inventario/productos_modal.html' %} 
+{% endblock %} 
+{% block JavaScriptFiles %}
+<script>
+    function cargarDatos() {
+        var html = ``;
+        $.ajax({
+            url: "{% url 'inventario:productos_list' %}",
+            type: 'GET',
+            dataType: 'json',
+            success: (data) => {
+                console.log(data);
             }
-          });
         });
-    
-        //Abrir ventana editar
-        $(document).on("click", ".editar", function(){
-          id = $(this).attr("value");
-          $("#formRegistrar").hide();
-          $("#formModificar").show();
-          $("#formEliminar").hide();
-          $("#labelModal").html("Editar Categoría Platillo");
-          $("#txtCategoriaUpdate").val($(this).parents("tr").find("td")[0].innerHTML);
-          $("#btn-registrar").hide();
-          $("#btn-modificar").show();
-          $("#btn-eliminar").hide();
-          $("#modal").modal("show");
-        });
-    
-        //Función para guardar el formulario
-        $(document).on("click", "#btn-modificar", function(){
-          $.ajax({
-            url : "{% url 'restaurant:editar_categoria_platillos' %}",
-            data : {'idCategoriaPlatillo': idCategoriaPlatillo, 'categoria': $("#txtCategoriaUpdate").val()},
-            type: "POST",
-            dataType: "json",
-            success : function (data) {
-              alert('Registrado '+data.respuesta);
-              $("#modal").modal("hide");
-              cargarDatos();
+    }
+    $(document).ready(() => {
+        cargarDatos();
+    });
+    $('#guardar').on('click', function () {
+        $.ajax({
+            url: "{% url 'inventario:productos_create' %}",
+            data: {
+                nombre: $('#id_nombre').val(),
+                unidad_de_medida: $('#id_unidad_de_medida').val()
+            },
+            type: 'GET',
+            dataType: 'json',
+            success: function (data) {
+                $(".modal").modal("hide");
+                cargarDatos();
             }
-          });
         });
-    
-        //Abrir ventana eliminar
-        $(document).on("click", ".eliminar", function(){
-          idCategoriaPlatillo = $(this).attr("value");
-          $("#formRegistrar").hide();
-          $("#formModificar").hide();
-          $("#formEliminar").show();
-          $("#labelModal").html("Eliminar Categoría Platillo");
-          $("#nombreCategoriaPlatillo").html($(this).parents("tr").find("td")[0].innerHTML);
-          $("#btn-registrar").hide();
-          $("#btn-modificar").hide();
-          $("#btn-eliminar").show();
-          $("#modal").modal("show");
-        });
-    
-        //Confirmar eliminar
-        $(document).on("click", "#btn-eliminar", function(){
-          $.ajax({
-            url : "{% url 'restaurant:eliminar_categoria_platillos' %}",
-            data : {'idCategoriaPlatillo': idCategoriaPlatillo},
-            type: "POST",
-            dataType: "json",
-            success : function (data) {
-              //alert('Eliminar '+data.respuesta);
-              $("#modal").modal("hide");
-              cargarDatos();
-            }
-          });
-        });
-    
-        //Funcion cargar lista
-        function cargarDatos(){
-          $.ajax({
-            url : "{% url 'inventario:productos_list' %}",
-            dataType: "json",
-            success : function (data) {
-              rellenarTablaProductos(data);
-            }
-          });
-        };
-    
-        //Función para rellenar tableCategoria
-        function rellenarTablaProductos(data){
-          var html = "";
-          for(var i = 0; i < data.length; i++){
-            html += "<tr>";
-            html += "<td>";
-            html += data[i].id;
-            html += "</td>";
-            html += "<td>";
-            html += data[i].nombre;
-            html += "</td>";
-            html += "<td>";
-            html += unidad_de_medida[data[i].unidad_de_medida];
-            html += "</td>";
-            html += "<td>";
-            html += "<button type=\"button\" class=\"btn btn-outline-success editar\" value=\""+data[i].id+"\">Editar</button>&nbsp;&nbsp;&nbsp;";
-            html += "<button type=\"button\" class=\"btn btn-outline-danger eliminar\" value=\""+data[i].id+"\">Eliminar</button>";
-            html += "</td>";
-            html += "</tr>";
-          }
-          $("#tableProducto tbody").html(html);
-        }
-      </script>
-    {% endblock %}
+    });    
+</script>
+{% endblock %}

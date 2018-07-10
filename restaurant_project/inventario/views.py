@@ -4,6 +4,7 @@ from rest_framework.response import Response
 from inventario.models import Producto
 from inventario.serializers import ProductoSerializer
 from django.http import JsonResponse
+from inventario.forms import ProductoForm
 
 class Get_producto_Create(APIView):
     def get(self, request):
@@ -35,4 +36,6 @@ class Get_producto_ListFilter(APIView):
         return Response(serialized.data)
 
 def productos(request):
-    return render(request, 'inventario/productos.html')
+    form = ProductoForm()
+    context = {'form':form}
+    return render(request, 'inventario/productos.html', context)
