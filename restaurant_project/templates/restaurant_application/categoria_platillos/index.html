@@ -18,108 +18,69 @@
           <button id="btn-registrar-categoria" type="button" class="btn btn-success btn-sm">Registrar</button>
         </div>
         <div class="card-body">
+          <br>
           <div class="table-responsive">
-            <div class="row">
-              <div class="col-md-5">
-                <div class="input-group">
-                  <div class="input-group-prepend">
-                    <span class="input-group-text" id="">Buscar Categoría</span>
-                  </div>
-                  <input type="text" class="form-control" id="txtBuscarCategoria">
-                </div>
-              </div>
-            </div>
-            <br>
             <table class="table table-bordered" id="tableCategoria" width="100%" cellspacing="0">
               <thead>
                 <tr>
                   <th>Categoría</th>
-                  <th width="300px"></th>
+                  <th width="150px"></th>
                 </tr>
               </thead>
               <tbody>
               </tbody>
             </table>
+          </div>
         </div>
-        <nav aria-label="Page navigation example">
-          <ul class="pagination justify-content-end">
-          </ul>
-        </nav>
-      </div>
       <div class="card-footer small text-muted">Updated yesterday at 11:59 PM</div>
     </div>
-
-    <!-- Modal -->
-    <div class="modal fade" id="modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-      <div class="modal-dialog" role="document">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title" id="labelModal"></h5>
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-              <span aria-hidden="true">&times;</span>
-            </button>
-          </div>
-          <div class="modal-body">
-            <div id="formRegistrar">
-              <div class="form-group">
-                <label>Categoría</label>
-                <input type="text" class="form-control" id="txtCategoriaRegistrar">
-                <small class="form-text text-muted error"></small>
-              </div>
-            </div>
-            <div id="formModificar">
-              <div class="form-group">
-                <label>Categoría</label>
-                <input type="text" class="form-control" id="txtCategoriaUpdate">
-                <small class="form-text text-muted error"></small>
-              </div>
-            </div>
-            <div id="formEliminar">
-              <h4>Confirmar Eliminar Categoría Platillo: <strong><span id="nombreCategoriaPlatillo"></span></strong></h4>
-            </div>
-          </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
-            <button id="btn-registrar" type="button" class="btn btn-primary">Guardar</button>
-            <button id="btn-modificar" type="button" class="btn btn-primary">Guardar Cambios</button>
-            <button id="btn-eliminar" type="button" class="btn btn-danger">Eliminar</button>
-          </div>
-        </div>
-      </div>
-    </div>
+    {% include 'base/modal.html' %}
 {% endblock %}
 {% block JavaScriptFiles %}
   <script type="text/javascript">
     //Variable global para Editar y Eliminar
     var idCategoriaPlatillo;
-    //Contador para Páginado
-    var contador;
     $(document).ready(function(){
       //Inicializar variables
       idCategoriaPlatillo = "";
-      contador = 1
       //alert('Funciona JQuery!');
       cargarDatos();
     });
 
     //Abrir Modal de Formulario de Registro de Categoría
     $(document).on("click", "#btn-registrar-categoria", function(){
-      $("#formRegistrar").show();
-      $("#formModificar").hide();
-      $("#formEliminar").hide();
-      $("#labelModal").html("Registrar Categoría Platillo");
-      $("#txtCategoriaRegistrar").val("");
-      $("#btn-registrar").show();
-      $("#btn-modificar").hide();
-      $("#btn-eliminar").hide();
+      idCategoriaPlatillo = "";
+      $("#cargarForm").html(`{% include 'restaurant_application/categoria_platillos/formulario.html' %}`);
+      $("#btn-guardar").attr({value:"{% url 'restaurant:create_categoria_platillos' %}"});
+      $("#labelModal").html("Registrar Categoría");
+      $("#modal").modal("show");
+    });
+
+    //Abrir Ventana Modal Editar
+    $(document).on("click", ".editar", function(){
+      idCategoriaPlatillo = $(this).attr("value");
+      $("#cargarForm").html(`{% include 'restaurant_application/categoria_platillos/formulario.html' %}`);
+      $("#txtCategoria").val($(this).parents("tr").find("td")[0].innerHTML);
+      $("#btn-guardar").attr({value:"{% url 'restaurant:editar_categoria_platillos' %}"});
+      $("#labelModal").html("Editar Categoría");
       $("#modal").modal("show");
     });
 
     //Función para guardar el formulario
-    $(document).on("click", "#btn-registrar", function(){
+    $(document).on("click", "#btn-guardar", function(){
+
+      var parametros;
+      if(idCategoriaPlatillo == ""){
+        //En caso que sea Guardar
+        parametros = {'categoria': $("#txtCategoria").val()};
+      } else{
+        //En caso que sea Editar
+        parametros = {'idCategoriaPlatillo': idCategoriaPlatillo, 'categoria': $("#txtCategoria").val()};
+      }
+
       $.ajax({
-        url : "{% url 'restaurant:create_categoria_platillos' %}",
-        data : {'categoria': $("#txtCategoriaRegistrar").val()},
+        url : $(this).attr("value"),
+        data : parametros,
         type: "POST",
         dataType: "json",
         success : function (data) {
@@ -130,46 +91,13 @@
       });
     });
 
-    //Abrir ventana editar
-    $(document).on("click", ".editar", function(){
-      idCategoriaPlatillo = $(this).attr("value");
-      $("#formRegistrar").hide();
-      $("#formModificar").show();
-      $("#formEliminar").hide();
-      $("#labelModal").html("Editar Categoría Platillo");
-      $("#txtCategoriaUpdate").val($(this).parents("tr").find("td")[0].innerHTML);
-      $("#btn-registrar").hide();
-      $("#btn-modificar").show();
-      $("#btn-eliminar").hide();
-      $("#modal").modal("show");
-    });
-
-    //Función para guardar el formulario
-    $(document).on("click", "#btn-modificar", function(){
-      $.ajax({
-        url : "{% url 'restaurant:editar_categoria_platillos' %}",
-        data : {'idCategoriaPlatillo': idCategoriaPlatillo, 'categoria': $("#txtCategoriaUpdate").val()},
-        type: "POST",
-        dataType: "json",
-        success : function (data) {
-          alert('Registrado '+data.respuesta);
-          $("#modal").modal("hide");
-          cargarDatos();
-        }
-      });
-    });
 
     //Abrir ventana eliminar
     $(document).on("click", ".eliminar", function(){
       idCategoriaPlatillo = $(this).attr("value");
-      $("#formRegistrar").hide();
-      $("#formModificar").hide();
-      $("#formEliminar").show();
-      $("#labelModal").html("Eliminar Categoría Platillo");
+      $("#cargarForm").html(`{% include 'restaurant_application/categoria_platillos/delete.html' %}`);
       $("#nombreCategoriaPlatillo").html($(this).parents("tr").find("td")[0].innerHTML);
-      $("#btn-registrar").hide();
-      $("#btn-modificar").hide();
-      $("#btn-eliminar").show();
+      $("#labelModal").html("Eliminar Categoría");
       $("#modal").modal("show");
     });
 
@@ -188,28 +116,6 @@
       });
     });
 
-    //Cambiar de página
-    $(document).on("click", ".numero-pagina", function(){
-      contador = parseFloat($(this).attr("value"));
-      cargarDatos();
-    });
-
-    //Filtrar Categoría en Linea
-    $(document).on("keyup", "#txtBuscarCategoria", function(){
-      //alert($(this).val());
-      $.ajax({
-        url : "{% url 'restaurant:listafilter_categoria_platillos' %}",
-        data : {'categoria': $(this).val()},
-        type: "POST",
-        dataType: "json",
-        success : function (data) {
-          //alert('Eliminar '+data.respuesta);
-          $("#modal").modal("hide");
-          rellenarTableCategoria(data);
-        }
-      });
-    });
-
     //Funcion cargar lista
     function cargarDatos(){
       $.ajax({
@@ -217,50 +123,23 @@
         type: 'POST',
         dataType: "json",
         success : function (data) {
-          rellenarTableCategoria(data);
+          $("#tableCategoria").DataTable({
+            destroy: true,
+            data : data,
+            ordering: false,
+            columns: [
+              { "data": "categoria" },
+              { sortable: false,
+                "render": function ( data, type, full, meta ) {
+                  var id = full.idCategoriaPlatillo;
+                  var htmlButton = '<button type=\"button\" class=\"btn btn-outline-success btn-sm editar\" value='+id+'><i class=\"fa fa-pencil\" aria-hidden=\"true\"></i></button>&nbsp;&nbsp;&nbsp';
+                  htmlButton += '<button type=\"button\" class=\"btn btn-outline-danger btn-sm eliminar\"  value='+id+'><i class="fa fa-times" aria-hidden="true"></i></button>';
+                    return htmlButton;
+              }},
+            ]
+          });
         }
       });
-    };
-
-    //Función para rellenar tableCategoria
-    function rellenarTableCategoria(data){
-      var html = "";
-      var inicio = (5*contador)-5;
-      var final = 0;
-
-      if(data.length < (5*contador)){
-        final = data.length;
-      } else{
-        final = 5*contador;
-      }
-
-      for(var cont = inicio; cont >= inicio && cont < final; cont++){
-        html += "<tr>";
-        html += "<td>";
-        html += data[cont].categoria;
-        html += "</td>";
-        html += "<td>";
-        html += "<button type=\"button\" class=\"btn btn-outline-success editar\" value=\""+data[cont].idCategoriaPlatillo+"\">Editar</button>&nbsp;&nbsp;&nbsp;";
-        html += "<button type=\"button\" class=\"btn btn-outline-danger eliminar\" value=\""+data[cont].idCategoriaPlatillo+"\">Eliminar</button>";
-        html += "</td>";
-        html += "</tr>";
-      }
-
-      $("#tableCategoria tbody").html(html);
-
-      if(data.length <= 5){
-        $(".pagination").html("");
-      } else{
-        $(".pagination").html("");
-        var cantidad = Math.ceil(data.length/5);
-        var pg = "";
-        pg += "<li class=\"page-item\"><a class=\"numero-pagina page-link\" aria-label=\"Previous\" value=\""+1+"\"><span aria-hidden=\"true\">&laquo;</span><span class=\"sr-only\">Previous</span></a></li>";
-        for(var con = 1; con <= cantidad; con++){
-          pg += "<li class=\"page-item\"><a class=\"numero-pagina page-link\" value=\""+con+"\">"+con+"</a></li>";
-        }
-        pg += "<li class=\"page-item\"><a class=\"numero-pagina page-link\" aria-label=\"Next\" value=\""+cantidad+"\"><span aria-hidden=\"true\">&raquo;</span><span class=\"sr-only\">Next</span></a></li>";
-          $(".pagination").html(pg);
-      }
     };
   </script>
 {% endblock %}
