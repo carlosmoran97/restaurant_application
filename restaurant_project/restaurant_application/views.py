@@ -25,7 +25,13 @@ class CategoriaPlatilloDelete(APIView):
         return JsonResponse({'respuesta':'correctamente!'})
 
 class CategoriaPlatilloList(APIView):
-    def get(self, request):
+    def post(self, request):
         categoriaplatillos = CategoriaPlatillo.objects.all().order_by("-idCategoriaPlatillo")
+        serialized = CategoriaPlatilloSerializer(categoriaplatillos, many=True)
+        return Response(serialized.data)
+
+class CategoriaPlatilloListFilter(APIView):
+    def post(self, request):
+        categoriaplatillos = CategoriaPlatillo.objects.filter(categoria__startswith=request.POST['categoria']).order_by("-idCategoriaPlatillo")
         serialized = CategoriaPlatilloSerializer(categoriaplatillos, many=True)
         return Response(serialized.data)

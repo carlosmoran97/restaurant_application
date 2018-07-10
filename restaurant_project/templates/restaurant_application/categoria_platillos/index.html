@@ -19,6 +19,17 @@
         </div>
         <div class="card-body">
           <div class="table-responsive">
+            <div class="row">
+              <div class="col-md-5">
+                <div class="input-group">
+                  <div class="input-group-prepend">
+                    <span class="input-group-text" id="">Buscar Categoría</span>
+                  </div>
+                  <input type="text" class="form-control" id="txtBuscarCategoria">
+                </div>
+              </div>
+            </div>
+            <br>
             <table class="table table-bordered" id="tableCategoria" width="100%" cellspacing="0">
               <thead>
                 <tr>
@@ -30,6 +41,10 @@
               </tbody>
             </table>
         </div>
+        <nav aria-label="Page navigation example">
+          <ul class="pagination justify-content-end">
+          </ul>
+        </nav>
       </div>
       <div class="card-footer small text-muted">Updated yesterday at 11:59 PM</div>
     </div>
@@ -75,9 +90,14 @@
 {% endblock %}
 {% block JavaScriptFiles %}
   <script type="text/javascript">
+    //Variable global para Editar y Eliminar
     var idCategoriaPlatillo;
+    //Contador para Páginado
+    var contador;
     $(document).ready(function(){
+      //Inicializar variables
       idCategoriaPlatillo = "";
+      contador = 1
       //alert('Funciona JQuery!');
       cargarDatos();
     });
@@ -168,10 +188,33 @@
       });
     });
 
+    //Cambiar de página
+    $(document).on("click", ".numero-pagina", function(){
+      contador = parseFloat($(this).attr("value"));
+      cargarDatos();
+    });
+
+    //Filtrar Categoría en Linea
+    $(document).on("keyup", "#txtBuscarCategoria", function(){
+      //alert($(this).val());
+      $.ajax({
+        url : "{% url 'restaurant:listafilter_categoria_platillos' %}",
+        data : {'categoria': $(this).val()},
+        type: "POST",
+        dataType: "json",
+        success : function (data) {
+          //alert('Eliminar '+data.respuesta);
+          $("#modal").modal("hide");
+          rellenarTableCategoria(data);
+        }
+      });
+    });
+
     //Funcion cargar lista
     function cargarDatos(){
       $.ajax({
         url : "{% url 'restaurant:lista_categoria_platillos' %}",
+        type: 'POST',
         dataType: "json",
         success : function (data) {
           rellenarTableCategoria(data);
@@ -182,18 +225,42 @@
     //Función para rellenar tableCategoria
     function rellenarTableCategoria(data){
       var html = "";
-      for(var i = 0; i < data.length; i++){
+      var inicio = (5*contador)-5;
+      var final = 0;
+
+      if(data.length < (5*contador)){
+        final = data.length;
+      } else{
+        final = 5*contador;
+      }
+
+      for(var cont = inicio; cont >= inicio && cont < final; cont++){
         html += "<tr>";
         html += "<td>";
-        html += data[i].categoria;
+        html += data[cont].categoria;
         html += "</td>";
         html += "<td>";
-        html += "<button type=\"button\" class=\"btn btn-outline-success editar\" value=\""+data[i].idCategoriaPlatillo+"\">Editar</button>&nbsp;&nbsp;&nbsp;";
-        html += "<button type=\"button\" class=\"btn btn-outline-danger eliminar\" value=\""+data[i].idCategoriaPlatillo+"\">Eliminar</button>";
+        html += "<button type=\"button\" class=\"btn btn-outline-success editar\" value=\""+data[cont].idCategoriaPlatillo+"\">Editar</button>&nbsp;&nbsp;&nbsp;";
+        html += "<button type=\"button\" class=\"btn btn-outline-danger eliminar\" value=\""+data[cont].idCategoriaPlatillo+"\">Eliminar</button>";
         html += "</td>";
         html += "</tr>";
       }
+
       $("#tableCategoria tbody").html(html);
-    }
+
+      if(data.length <= 5){
+        $(".pagination").html("");
+      } else{
+        $(".pagination").html("");
+        var cantidad = Math.ceil(data.length/5);
+        var pg = "";
+        pg += "<li class=\"page-item\"><a class=\"numero-pagina page-link\" aria-label=\"Previous\" value=\""+1+"\"><span aria-hidden=\"true\">&laquo;</span><span class=\"sr-only\">Previous</span></a></li>";
+        for(var con = 1; con <= cantidad; con++){
+          pg += "<li class=\"page-item\"><a class=\"numero-pagina page-link\" value=\""+con+"\">"+con+"</a></li>";
+        }
+        pg += "<li class=\"page-item\"><a class=\"numero-pagina page-link\" aria-label=\"Next\" value=\""+cantidad+"\"><span aria-hidden=\"true\">&raquo;</span><span class=\"sr-only\">Next</span></a></li>";
+          $(".pagination").html(pg);
+      }
+    };
   </script>
 {% endblock %}
