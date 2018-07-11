@@ -20,7 +20,7 @@
         <div class="card-body">
           <br>
           <div class="table-responsive">
-            <table class="table table-bordered" id="tableCategoria" width="100%" cellspacing="0">
+            <table class="table table-bordered" id="tablePlatillos" width="100%" cellspacing="0">
               <thead>
                 <tr>
                   <th>Código</th>
@@ -68,7 +68,8 @@
       $("#cargarForm").html(`{% include 'restaurant_application/platillos/formulario.html' %}`);
       $("#txtNombre").val($(this).parents("tr").find("td")[1].innerHTML);
       $("#txtPrecioUnitario").val($(this).parents("tr").find("td")[2].innerHTML);
-      $("#selectidCategoriaPlatillo").val($(this).parents("tr").find("td")[3].innerHTML);
+      //$("#selectCategoriaPlatillo").val($(this).parents("tr").attr("value"));
+      $("#selectCategoriaPlatillo").val($(this).attr("id"));
       $("#btn-guardar").attr({value:"{% url 'restaurant:editar_platillos' %}"});
       $("#labelModal").html("Editar Platillo");
       $("#modal").modal("show");
@@ -80,10 +81,10 @@
       var parametros;
       if(codigoPlatillo == ""){
         //En caso que sea Guardar
-        parametros = {'nombre': $("#txtNombre").val(), 'precioUnitario':$("#txtPrecioUnitario").val(), 'idCategoriaPlatillo':$("#selectidCategoriaPlatillo").val()};
+        parametros = {'nombre': $("#txtNombre").val(), 'precioUnitario':parseFloat($("#txtPrecioUnitario").val()).toFixed(2), 'categoria_platillo':$("#selectCategoriaPlatillo").val()};
       } else{
         //En caso que sea Editar
-        parametros = {'codigoPlatillo':codigoPlatillo, 'nombre': $("#txtNombre").val(), 'precioUnitario':$("#txtPrecioUnitario").val(), 'idCategoriaPlatillo':$("#selectidCategoriaPlatillo").val()};
+        parametros = {'codigoPlatillo':codigoPlatillo, 'nombre': $("#txtNombre").val(), 'precioUnitario':parseFloat($("#txtPrecioUnitario").val()).toFixed(2), 'categoria_platillo':$("#selectCategoriaPlatillo").val()};
       }
 
       $.ajax({
@@ -130,8 +131,7 @@
         type: 'POST',
         dataType: "json",
         success : function (data) {
-          console.log(data);
-          $("#tableCategoria").DataTable({
+          $("#tablePlatillos").DataTable({
             destroy: true,
             data : data,
             ordering: false,
@@ -139,11 +139,12 @@
               { "data": "codigoPlatillo" },
               { "data": "nombre" },
               { "data": "precioUnitario" },
-              { "data": "idCategoriaPlatillo" },
+              { "data": "categoria_platillo.categoria" },
               { sortable: false,
                 "render": function ( data, type, full, meta ) {
                   var id = full.codigoPlatillo;
-                  var htmlButton = '<button type=\"button\" class=\"btn btn-outline-success btn-sm editar\" value='+id+'><i class=\"fa fa-pencil\" aria-hidden=\"true\"></i></button>&nbsp;&nbsp;&nbsp';
+                  var categoria = full.categoria_platillo.idCategoriaPlatillo;
+                  var htmlButton = '<button type=\"button\" class=\"btn btn-outline-success btn-sm editar\" value='+id+' id='+categoria+'><i class=\"fa fa-pencil\" aria-hidden=\"true\"></i></button>&nbsp;&nbsp;&nbsp';
                   htmlButton += '<button type=\"button\" class=\"btn btn-outline-danger btn-sm eliminar\"  value='+id+'><i class="fa fa-times" aria-hidden="true"></i></button>';
                     return htmlButton;
               }},
@@ -151,6 +152,6 @@
           });
         }
       });
-    };
+    }
   </script>
 {% endblock %}

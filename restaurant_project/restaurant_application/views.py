@@ -54,15 +54,15 @@ def index_platillos(request):
 
 class PlatilloCreate(APIView):
     def post(self, request):
-        categoriaplatillo = CategoriaPlatillo.objects.filter(idCategoriaPlatillo=request.POST['idCategoriaPlatillo'])
-        platillo = Platillo.objects.create(nombre=request.POST['nombre'], precioUnitario=request.POST['precioUnitario'], idCategoriaPlatillo=categoriaplatillo[0])
+        categoriaplatillo = CategoriaPlatillo.objects.filter(idCategoriaPlatillo=request.POST['categoria_platillo'])
+        platillo = Platillo.objects.create(nombre=request.POST['nombre'], precioUnitario=request.POST['precioUnitario'], categoria_platillo=categoriaplatillo[0])
         platillo.save()
         return JsonResponse({'respuesta':'correctamente!'})
 
 class PlatilloUpdate(APIView):
     def post(self, request):
-        categoriaplatillo = CategoriaPlatillo.objects.filter(idCategoriaPlatillo=request.POST['idCategoriaPlatillo'])
-        platillo = Platillo.objects.filter(codigoPlatillo=request.POST['codigoPlatillo']).update(nombre=request.POST['nombre'], precioUnitario=request.POST['precioUnitario'], idCategoriaPlatillo=categoriaplatillo[0])
+        categoriaplatillo = CategoriaPlatillo.objects.filter(idCategoriaPlatillo=request.POST['categoria_platillo'])
+        platillo = Platillo.objects.filter(codigoPlatillo=request.POST['codigoPlatillo']).update(nombre=request.POST['nombre'], precioUnitario=request.POST['precioUnitario'], categoria_platillo=categoriaplatillo[0])
         return JsonResponse({'respuesta':'correctamente!'})
 
 class PlatilloDelete(APIView):

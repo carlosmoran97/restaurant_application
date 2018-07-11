@@ -20,11 +20,11 @@ class PlatilloForm(forms.ModelForm):
         fields = [
             'nombre',
             'precioUnitario',
-            'idCategoriaPlatillo'
+            'categoria_platillo'
         ]
 
         widgets = {
             'nombre':forms.TextInput(attrs={'class':'form-control','id':'txtNombre'}),
             'precioUnitario':forms.TextInput(attrs={'class':'form-control','id':'txtPrecioUnitario'}),
-            'idCategoriaPlatillo':forms.Select(attrs={'class':'form-control','id':'selectidCategoriaPlatillo'})
+            'categoria_platillo':forms.Select(attrs={'class':'form-control','id':'selectCategoriaPlatillo'})
         }

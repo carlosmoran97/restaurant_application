@@ -8,6 +8,7 @@ class CategoriaPlatilloSerializer(serializers.ModelSerializer):
 
 
 class PlatilloSerializer(serializers.ModelSerializer):
+    categoria_platillo = CategoriaPlatilloSerializer(many=False)
     class Meta:
         model = Platillo
-        fields = '__all__'
+        fields = ('codigoPlatillo', 'nombre', 'precioUnitario', 'categoria_platillo')
