@@ -69,7 +69,7 @@
                     html += `<tr>
                                 <td>${data[i].id}</td>
                                 <td>${data[i].nombre}</td>
-                                <td>${unidad_de_medida[data[i].unidad_de_medida]}</td>
+                                <td class="${data[i].unidad_de_medida}">${unidad_de_medida[data[i].unidad_de_medida]}</td>
                                 <td>
                                     <button type="button" class="btn btn-outline-success editar" value=${data[i].id}>Editar</button>
                                     <button type="button" class="btn btn-outline-danger eliminar" value=${data[i].id}>Eliminar</button>
@@ -97,6 +97,49 @@
                 cargarDatos();
             }
         });
-    });    
+    });
+    $(document).on('click', '.editar', function(){
+        $("#productoModalEditar").modal("show");
+        $("#productoModalLabelEditar").html(`Editar producto con Id: ${$(this).val()}`);
+        $("#productoModalEditar #id_nombre").val($(this).parents("tr").find("td")[1].innerText);
+        $("#productoModalEditar #id_unidad_de_medida").val($(this).parents("tr").find("td")[2].classList[0]);
+        $("#actualizar").val($(this).val());
+    });
+    $('#actualizar').on('click', function () {
+        $.ajax({
+            url: "{% url 'inventario:productos_update' %}",
+            data: {
+                id: $(this).val(),
+                nombre: $('#productoModalEditar #id_nombre').val(),
+                unidad_de_medida: $('#productoModalEditar #id_unidad_de_medida').val()
+            },
+            type: 'GET',
+            dataType: 'json',
+            success: function (data) {
+                $(".modal").modal("hide");
+                cargarDatos();
+            }
+        });
+    });
+    $(document).on('click', '.eliminar', function(){
+        $("#productoModalEliminar").modal("show");
+        $("#productoModalLabelEliminar").html(`Eliminar producto con Id: ${$(this).val()}`);
+        $("#productoModalEliminar .modal-body").html(`<h5>¿Está seguro de eliminar este producto?<br>Esta operación no puede ser revertida</h5>`);
+        $("#eliminar").val($(this).val());
+    });
+    $('#eliminar').on('click', function () {
+        $.ajax({
+            url: "{% url 'inventario:productos_delete' %}",
+            data: {
+                id: $(this).val()
+            },
+            type: 'GET',
+            dataType: 'json',
+            success: function (data) {
+                $(".modal").modal("hide");
+                cargarDatos();
+            }
+        });
+    });
 </script>
 {% endblock %}
