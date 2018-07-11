@@ -25,13 +25,13 @@ class Get_producto_Delete(APIView):
 
 class Get_producto_List(APIView):
     def get(self, request):
-        productos = Producto.objects.all().order_by("-id")
+        productos = Producto.objects.all().order_by("id")
         serialized = ProductoSerializer(productos, many=True)
         return Response(serialized.data)
 
 class Get_producto_ListFilter(APIView):
     def get(self, request):
-        productos = Producto.objects.filter(nombre__startswith=request.GET['nombre']).order_by('-id')
+        productos = Producto.objects.filter(nombre__startswith=request.GET['nombre']).order_by('id')
         serialized = ProductoSerializer(productos, many=True)
         return Response(serialized.data)
 
