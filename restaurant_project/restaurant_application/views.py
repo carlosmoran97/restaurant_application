@@ -1,9 +1,9 @@
 from django.shortcuts import render
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from .models import CategoriaPlatillo, Platillo
-from .serializers import CategoriaPlatilloSerializer, PlatilloSerializer
-from .forms import CategoriaPlatilloForm, PlatilloForm
+from .models import CategoriaPlatillo, Platillo, Mesa
+from .serializers import CategoriaPlatilloSerializer, PlatilloSerializer, MesaSerializer
+from .forms import CategoriaPlatilloForm, PlatilloForm, MesaForm
 from django.http import JsonResponse
 
 """
@@ -74,4 +74,35 @@ class PlatilloList(APIView):
     def post(self, request):
         platillos = Platillo.objects.all().order_by("-codigoPlatillo")
         serialized = PlatilloSerializer(platillos, many=True)
+        return Response(serialized.data)
+
+"""
+    VIEWS PARA MESAS
+"""
+
+def index_mesas(request):
+    form = MesaForm()
+    context = {'form':form}
+    return render(request, 'restaurant_application/mesas/index.html', context)
+
+class MesaCreate(APIView):
+    def post(self, request):
+        mesa = Mesa.objects.create(numero_mesa=request.POST['numero_mesa'], asientos=request.POST['asientos'])
+        mesa.save()
+        return JsonResponse({'respuesta':'correctamente!'})
+
+class MesaUpdate(APIView):
+    def post(self, request):
+        mesa = Mesa.objects.filter(codigo_mesa=request.POST['codigo_mesa']).update(numero_mesa=request.POST['numero_mesa'], asientos=request.POST['asientos'])
+        return JsonResponse({'respuesta':'correctamente!'})
+
+class MesaDelete(APIView):
+    def post(self, request):
+        mesa = Mesa.objects.filter(codigo_mesa=request.POST['codigo_mesa']).delete()
+        return JsonResponse({'respuesta':'correctamente!'})
+
+class MesaList(APIView):
+    def post(self, request):
+        mesas = Mesa.objects.all().order_by("-codigo_mesa")
+        serialized = MesaSerializer(mesas, many=True)
         return Response(serialized.data)

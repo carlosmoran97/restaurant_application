@@ -15,3 +15,12 @@ class Platillo(models.Model):
 
     def __str__(self):
         return '{}'.format(self.nombre)
+
+class Mesa(models.Model):
+    codigo_mesa = models.AutoField(primary_key=True)
+    numero_mesa = models.IntegerField()
+    asientos = models.IntegerField()
+    ocupado = models.BooleanField(default=False)
+
+    def __str__(self):
+        return '{}'.format(self.numero_mesa)

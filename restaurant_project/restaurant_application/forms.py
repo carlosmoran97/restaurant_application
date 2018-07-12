@@ -1,5 +1,5 @@
 from django import forms
-from .models import CategoriaPlatillo, Platillo
+from .models import CategoriaPlatillo, Platillo, Mesa
 
 class CategoriaPlatilloForm(forms.ModelForm):
 
@@ -27,4 +27,20 @@ class PlatilloForm(forms.ModelForm):
             'nombre':forms.TextInput(attrs={'class':'form-control','id':'txtNombre'}),
             'precioUnitario':forms.TextInput(attrs={'class':'form-control','id':'txtPrecioUnitario'}),
             'categoria_platillo':forms.Select(attrs={'class':'form-control','id':'selectCategoriaPlatillo'})
+        }
+
+class MesaForm(forms.ModelForm):
+
+    class Meta:
+        model = Mesa
+        fields = [
+            'numero_mesa',
+            'asientos',
+            'ocupado'
+        ]
+
+        widgets = {
+            'numero_mesa':forms.TextInput(attrs={'class':'form-control','id':'txtNumeroMesa'}),
+            'asientos':forms.TextInput(attrs={'class':'form-control','id':'txtAsientos'}),
+            'ocupado':forms.Select(attrs={'class':'form-control','id':'selectEstado'})
         }
