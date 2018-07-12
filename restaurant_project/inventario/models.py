@@ -46,7 +46,10 @@ class Producto(models.Model):
     def __str__(self):
         return self.nombre
 
+class ReporteDeExistencia(models.Model):
+    fecha_reporte = models.DateField(auto_now=True)
+
 class Existencia(models.Model):
-    producto = models.OneToOneField(Producto, on_delete=models.CASCADE, related_name='producto')
-    fecha_existencia = models.DateField(auto_now=True)
+    producto = models.ForeignKey(Producto, on_delete=models.CASCADE, related_name='producto')
     existencias = models.PositiveIntegerField()
+
