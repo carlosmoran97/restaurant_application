@@ -21,4 +21,12 @@ urlpatterns = [
     url(r'^lista_platillos/$', views.PlatilloList.as_view(), name='lista_platillos'),
     url(r'^editar_platillos/$', views.PlatilloUpdate.as_view(), name='editar_platillos'),
     url(r'^eliminar_platillos/$', views.PlatilloDelete.as_view(), name='eliminar_platillos'),
+
+        #URL PARA MESAS
+
+    url(r'^mesas/$', views.index_mesas, name='index_mesas'),
+    url(r'^create_mesas/$', views.MesaCreate.as_view(), name='create_mesas'),
+    url(r'^lista_mesas/$', views.MesaList.as_view(), name='lista_mesas'),
+    url(r'^editar_mesas/$', views.MesaUpdate.as_view(), name='editar_mesas'),
+    url(r'^eliminar_mesas/$', views.MesaDelete.as_view(), name='eliminar_mesas'),
 ]
