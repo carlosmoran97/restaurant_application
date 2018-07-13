@@ -1,0 +1,49 @@
+{% extends 'base/base.html' %}
+{% load staticfiles %}
+{% block TitlePage %}
+    {{'Inventario | Reportes de existencia'}}
+{% endblock %}
+{% block body %}
+    <div class="container">
+        <!-- breadcrumbs -->
+    <ol class="breadcrumb">
+            <li class="breadcrumb-item">
+                <a href="#">Inventario</a>
+            </li>
+            <li class="breadcrumb-item active">
+                Reportes
+            </li>
+        </ol>
+        <div class="card mb-3">
+        <div class="card-header">
+            <i class="fa fa-table"></i> Reportes &nbsp;
+            <button id="btn-registrar-reporte" type="button" class="btn btn-success">Nuevo</button>
+        </div>
+        <table class="table table-bordered table-striped">
+            <thead class="thead-dark">
+                <tr>
+                    <th>ID</th>
+                    <th>Título</th>
+                    <th>Observaciones</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for reporte in reportes %}
+                    <tr>
+                        <td>{{ reporte.id }}</td>
+                        <td>{{ reporte }}</td>
+                        <td>{{ reporte.observaciones }}</td>
+                        <td>
+                            <a href="{{ reporte.id }}"><button class="btn btn-outline-success">Detalles</button></a>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endblock %}
+
+{% block JavaScriptFiles %}
+
+{% endblock %}

@@ -38,18 +38,32 @@ class Producto(models.Model):
     )
     nombre = models.CharField(max_length=100)
     unidad_de_medida = models.CharField(
-                        max_length=3,
                         choices= UNIDAD_DE_MEDIDA_CHOICES,
-                        default = UNIDADES
+                        default = UNIDADES,
+                        max_length=30
                     )
     
     def __str__(self):
-        return self.nombre
+        return '{} - {}'.format(self.id , self.nombre)
 
 class ReporteDeExistencia(models.Model):
-    fecha_reporte = models.DateField(auto_now=True)
+    fecha_reporte = models.DateField()
+    observaciones = models.TextField(max_length=512, blank=True)
+    class Meta():
+        ordering = ['fecha_reporte']
+
+    def __str__(self):
+        return 'Reporte de existencias a fecha {}'.format(self.fecha_reporte)
 
 class Existencia(models.Model):
-    producto = models.ForeignKey(Producto, on_delete=models.CASCADE, related_name='producto')
+    producto = models.ForeignKey(Producto, on_delete=models.CASCADE)
+    reporte_de_existencia = models.ForeignKey(ReporteDeExistencia, on_delete=models.CASCADE, related_name='existencias', default=None)
     existencias = models.PositiveIntegerField()
+
+    def __str__(self):
+        unidad_de_medida_producto = ''
+        for unidad_de_medida in Producto.UNIDAD_DE_MEDIDA_CHOICES:
+            if(unidad_de_medida[0] == self.producto.unidad_de_medida):
+                unidad_de_medida_producto = unidad_de_medida[1]
+        return 'Códido: {} - Descripción: {} - Cantidad: {} - Unidad: {} - Fecha: {}'.format(self.producto.id, self.producto.nombre, self.existencias, unidad_de_medida_producto, self.reporte_de_existencia.fecha_reporte)
 

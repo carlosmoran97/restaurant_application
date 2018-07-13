@@ -1,0 +1,149 @@
+{% extends 'base/base.html' %}
+{% load staticfiles %}
+{% block TitlePage %}
+    {{'Inventario | Detalle del reporte'}}
+{% endblock %}
+{% block body %}
+<link rel="stylesheet" href="{% static 'css/select2.min.css' %}">
+    <div class="container">
+        <!-- breadcrumbs -->
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item">
+                <a href="#">Inventario</a>
+            </li>
+            <li class="breadcrumb-item">
+                <a href="{% url 'inventario:reportes' %}">Reportes</a>
+            </li>
+            <li class="breadcrumb-item active">
+                {{ reporte.id }}
+            </li>
+        </ol>
+        <div class="card">
+            <h5 class="card-header">{{ reporte }}
+                    <button class="btn btn-success" id="reporte-xlsx">
+                        <i class="fa fa-file-excel-o" aria-hidden="true"></i>
+                        Reporte (XLSX)
+                    </button>
+                    <button class="btn btn-success" id="reporte-pdf">
+                            <i class="fa fa-file-pdf-o" aria-hidden="true"></i>
+                            Reporte (PDF)
+                        </button>
+            </h5>
+            <div class="card-body">
+                <h5>
+                    Producto:&nbsp;&nbsp;
+                    {{ form.producto }}
+                    Existencias: {{ form.existencias }}
+                    <button class="btn btn-primary" id="btn-agregar">
+                        <i class="fa fa-plus-square" aria-hidden="true"></i>
+                        Agregar
+                    </button>
+                </h5>
+                <table class="table table-bordered table-striped" id="tablaExistencias">
+                    <thead class="thead-dark">
+                        <th>Código</th>
+                        <th>Descripción</th>
+                        <th>Cantidad</th>
+                        <th>Unidad</th>
+                        <th>Acciones</th>
+                    </thead>
+                    <tbody>
+                        
+                    </tbody>
+                </table>
+                <h5 class="card-title">Observaciones:</h5>
+            </div>
+        </div>
+    </div>
+<style>
+    #reporte-pdf
+    {
+        float: right;
+        margin-right: 2px;
+    }
+    #reporte-xlsx
+    {
+        float: right;
+    }
+    #id_producto
+    {
+        min-width: 250px;
+    }
+</style>
+{% endblock %}
+
+{% block JavaScriptFiles %}
+<script src="{% static 'js/select2.min.js' %}"></script>
+<script>
+    var unidad_de_medida = {
+            kg: "Kilogramos",
+            lbl: "Libras",
+            tnl: "Toneladas Largas",
+            tnm: "Toneladas Métricas",
+            tnc: "Toneladas Cortas",
+            g: "Gramos",
+            u: "Unidades",
+            lt: "Litros",
+            gal: "Galones",
+            bar: "Barriles",
+           lts: "Latas",
+            caj: "Cajas",
+            mil: "Millares",
+            m3: "Metros cúbicos",
+            m: "Metros",
+            o: "Otros"
+        };
+    $(document).ready(function() {
+        $('#id_producto').select2();
+        $('#id_producto').css('min-width: 300px;');
+        cargarDatos();
+    });
+    function cargarDatos() {
+        var html = ``;
+        $.ajax({
+            url: "{% url 'inventario:existencias_list' %}",
+            data: {
+                id_reporte: "{{reporte.id}}"
+            },
+            type: 'GET',
+            dataType: 'json',
+            success: (data) => {
+                for(let i = 0; i < data.length; i++){
+                    html += `<tr>
+                                <td>${data[i].producto.id}</td>
+                                <td>${data[i].producto.nombre}</td>
+                                <td>${data[i].existencias}</td>
+                                <td class="${data[i].unidad_de_medida}">${unidad_de_medida[data[i].producto.unidad_de_medida]}</td>
+                                <td>
+                                    <button type="button" class="btn btn-outline-success editar" value=${data[i].id}>Editar</button>
+                                    <button type="button" class="btn btn-outline-danger eliminar" value=${data[i].id}>Eliminar</button>
+                                </td>
+                             </tr>`;
+                }
+                $('#tablaExistencias tbody').html(html);
+            }
+        });
+    }
+    $("#btn-agregar").on('click', () => {
+        $.ajax({
+            url: "{% url 'inventario:existencias_create' %}",
+            data: {
+                id_reporte: "{{ reporte.id }}",
+                id_producto: $("#id_producto").val(),
+                existencias: $("#id_existencias").val()
+            },
+            type: 'GET',
+            dataType: 'json',
+            success: (data) => {
+                cargarDatos();
+                
+            }
+        });
+    });
+    function limpiar()
+    {
+        $('input').val('')
+        $('select').val('')
+    }
+</script>
+{% endblock %}
