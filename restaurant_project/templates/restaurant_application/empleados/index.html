@@ -9,22 +9,23 @@
         <li class="breadcrumb-item">
           <a href="#">Restaurant</a>
         </li>
-        <li class="breadcrumb-item active">Mesas</li>
+        <li class="breadcrumb-item active">Empleados</li>
       </ol>
       <!-- Example DataTables Card-->
       <div class="card mb-3">
         <div class="card-header">
-          <i class="fa fa-table"></i> Mesas
-          <button id="btn-registrar-mesa" type="button" class="btn btn-success btn-sm">Registrar</button>
+          <i class="fa fa-table"></i> Empleados
+          <button id="btn-registrar-empleado" type="button" class="btn btn-success btn-sm">Registrar</button>
         </div>
         <div class="card-body">
           <br>
           <div class="table-responsive">
-            <table class="table table-bordered" id="tableMesas" width="100%" cellspacing="0">
+            <table class="table table-bordered" id="tableEmpleados" width="100%" cellspacing="0">
               <thead>
                 <tr>
-                  <th>Número de Mesa</th>
-                  <th>Cantida de Asientos</th>
+                  <th>Código de Empleado</th>
+                  <th>Nombre</th>
+                  <th>Apellido</th>
                   <th width="150px"></th>
                 </tr>
               </thead>
@@ -42,21 +43,27 @@
 {% block JavaScriptFiles %}
   <script type="text/javascript">
     //Variable global para Editar y Eliminar
-    var codigo_mesa;
+    var idEmpleado;
+    var idPuesto;
 
     $(document).ready(function(){
       //Inicializar variables
-      codigo_mesa = "";
+      idEmpleado = "";
+      idPuesto = "";
       //alert('Funciona JQuery!');
-      cargarDatos();
+      //cargarDatos();
     });
 
-    //Abrir Modal de Formulario de Registro de Categoría
-    $(document).on("click", "#btn-registrar-mesa", function(){
-      codigo_mesa = "";
-      $("#cargarForm").html(`{% include 'restaurant_application/mesas/formulario.html' %}`);
-      $("#btn-guardar").attr({value:"{% url 'restaurant:create_mesas' %}"});
-      $("#labelModal").html("Registrar Mesa");
+    //Abrir Modal de Formulario de Registro de Empleado
+    $(document).on("click", "#btn-registrar-empleado", function(){
+      idEmpleado = "";
+      idPuesto = "";
+      $("#cargarForm").html(`{% include 'restaurant_application/empleados/formulario.html' %}`);
+      $(".modal-dialog").attr("class", "modal-dialog modal-lg");
+      $("#btn-guardar").attr({value:"{% url 'restaurant:create_empleado' %}"});
+      $("#id_fecha_nacimiento_year").val("2000");
+      $("#txtDUI").attr("maxlength", "10");
+      $("#labelModal").html("Registrar Empleado");
       $("#modal").modal("show");
     });
 
@@ -78,11 +85,12 @@
       if(codigo_mesa == ""){
         //En caso que sea Guardar
         parametros = {'numero_mesa': $("#txtNumeroMesa").val(), 'asientos':parseFloat($("#txtAsientos").val())};
+
       } else{
         //En caso que sea Editar
         parametros = {'codigo_mesa':codigo_mesa,'numero_mesa': $("#txtNumeroMesa").val(), 'asientos':parseFloat($("#txtAsientos").val())};
       }
-
+      /*
       $.ajax({
         url : $(this).attr("value"),
         data : parametros,
@@ -93,7 +101,7 @@
           $("#modal").modal("hide");
           cargarDatos();
         }
-      });
+      });*/
     });
 
     //Abrir ventana eliminar
@@ -146,5 +154,11 @@
         }
       });
     }
+
+    $(document).on("keyup", "#txtDUI", function(){
+      if($(this).val().length == 8){
+        $("#txtDUI").val($(this).val()+"-");
+      }
+    });
   </script>
 {% endblock %}

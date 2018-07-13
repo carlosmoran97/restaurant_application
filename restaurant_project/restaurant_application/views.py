@@ -1,9 +1,9 @@
 from django.shortcuts import render
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from .models import CategoriaPlatillo, Platillo, Mesa
+from .models import CategoriaPlatillo, Platillo, Mesa, Empleado, Puesto, Asignacion
 from .serializers import CategoriaPlatilloSerializer, PlatilloSerializer, MesaSerializer
-from .forms import CategoriaPlatilloForm, PlatilloForm, MesaForm
+from .forms import CategoriaPlatilloForm, PlatilloForm, MesaForm, EmpleadoForm, PuestoForm, AsignacionForm
 from django.http import JsonResponse
 
 """
@@ -106,3 +106,40 @@ class MesaList(APIView):
         mesas = Mesa.objects.all().order_by("-codigo_mesa")
         serialized = MesaSerializer(mesas, many=True)
         return Response(serialized.data)
+
+"""
+    VIEWS PARA EMPLEADOS
+"""
+
+def index_empleados(request):
+    formEmpleado = EmpleadoForm()
+    formPuesto = PuestoForm()
+    formAsignacion = AsignacionForm()
+    context = {'formEmpleado':formEmpleado,'formAsignacion':formAsignacion}
+    return render(request, 'restaurant_application/empleados/index.html', context)
+
+
+class EmpleadoCreate(APIView):
+    def post(self, request):
+        empleado = Empleado.objects.create(nombre=request.POST['nombre'], apellido=request.POST['apellido'], fecha_nacimiento=request.POST['fecha_nacimiento'], dui=request.POST['dui'], nit=request.POST['nit'], afp=request.POST['afp'])
+        puesto = Puesto.objects.filter(idPuesto=request.POST['idPuesto'])
+        asignacion = Asignacion.objects.create(empleado=empleado, puesto=puesto[0], salario=request.POST['salario'], fecha_contratacion=request.POST['fecha_contratacion'])
+        return JsonResponse({'respuesta':'correctamente!'})
+"""
+
+class MesaUpdate(APIView):
+    def post(self, request):
+        mesa = Mesa.objects.filter(codigo_mesa=request.POST['codigo_mesa']).update(numero_mesa=request.POST['numero_mesa'], asientos=request.POST['asientos'])
+        return JsonResponse({'respuesta':'correctamente!'})
+
+class MesaDelete(APIView):
+    def post(self, request):
+        mesa = Mesa.objects.filter(codigo_mesa=request.POST['codigo_mesa']).delete()
+        return JsonResponse({'respuesta':'correctamente!'})
+
+class MesaList(APIView):
+    def post(self, request):
+        mesas = Mesa.objects.all().order_by("-codigo_mesa")
+        serialized = MesaSerializer(mesas, many=True)
+        return Response(serialized.data)
+"""

@@ -29,4 +29,9 @@ urlpatterns = [
     url(r'^lista_mesas/$', views.MesaList.as_view(), name='lista_mesas'),
     url(r'^editar_mesas/$', views.MesaUpdate.as_view(), name='editar_mesas'),
     url(r'^eliminar_mesas/$', views.MesaDelete.as_view(), name='eliminar_mesas'),
+
+        #URL PARA MESAS
+
+    url(r'^empleados/$', views.index_empleados, name='index_empleados'),
+    url(r'^create_empleado/$', views.EmpleadoCreate.as_view(), name='create_empleado'),
 ]

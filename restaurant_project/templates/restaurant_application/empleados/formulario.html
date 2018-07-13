@@ -1,0 +1,81 @@
+<div class="modal-body">
+  <p>Datos Peronales</p>
+  <div class="row">
+    <div class="col-md-6">
+      <div class="form-group">
+        <label>Nombre</label>
+          {{ formEmpleado.nombre }}
+        <small class="form-text text-muted"></small>
+      </div>
+    </div>
+    <div class="col-md-6">
+      <div class="form-group">
+        <label>Apellido</label>
+          {{ formEmpleado.apellido }}
+        <small class="form-text text-muted"></small>
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-6">
+      <div class="form-group">
+        <label>Fecha de Nacimiento</label>
+          {{ formEmpleado.fecha_nacimiento }}
+        <small class="form-text text-muted"></small>
+      </div>
+    </div>
+    <div class="col-md-6">
+      <div class="form-group">
+        <label>DUI</label>
+          {{ formEmpleado.dui }}
+        <small class="form-text text-muted"></small>
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-6">
+      <div class="form-group">
+        <label>NIT</label>
+          {{ formEmpleado.nit }}
+        <small class="form-text text-muted"></small>
+      </div>
+    </div>
+    <div class="col-md-6">
+      <div class="form-group">
+        <label>AFP</label>
+          {{ formEmpleado.afp }}
+        <small class="form-text text-muted"></small>
+      </div>
+    </div>
+  </div>
+  <p>Datos Laborales</p>
+  <div class="row">
+    <div class="col-md-6">
+      <div class="form-group">
+        <label>Puesto</label>
+          {{ formAsignacion.puesto }}
+        <small class="form-text text-muted"></small>
+      </div>
+    </div>
+    <div class="col-md-6">
+      <div class="form-group">
+        <label>Salario</label>
+          {{ formAsignacion.salario }}
+        <small class="form-text text-muted"></small>
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-6">
+      <div class="form-group">
+        <label>Fecha de Contratación</label>
+          {{ formAsignacion.fecha_contratacion }}
+        <small class="form-text text-muted"></small>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="modal-footer">
+  <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+  <button id="btn-guardar" type="button" class="btn btn-primary" value="">Guardar</button>
+</div>
