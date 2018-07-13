@@ -102,6 +102,10 @@
       verDetalleEmpleado();
     })
 
+    $(document).on("click", '.cancelar', function(){
+      verDetalleEmpleado();
+    });
+
     //Mostrar Formulario Editar
     $(document).on("click", "#btn-editar", function(){
       $("#labelModal").html("Editar Empleado");
