@@ -14,6 +14,7 @@ urlpatterns = [
     # urls de las vistas basadas en clases para los reportes de inventario
     url(r'^reportes/$', views.ReporteDeExistenciaList.as_view(), name='reportes'),
     url(r'^reportes/(?P<pk>[-\w]+)/$', views.ReporteDeExistenciaDetail.as_view(), name='reporte_detail'),
+    url(r'^reportes/(?P<pk>[-\w]+)/pdf', views.pdf_view.as_view(), name='reporte_detail_pdf'),
     # urls del api rest para el crud de existencias
     url(r'^existencias_list/$', views.GetExistenciasList.as_view(), name='existencias_list'),
     url(r'^existencias_create/$', views.GetExistenciasCreate.as_view(), name='existencias_create'),
