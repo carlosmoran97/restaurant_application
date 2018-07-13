@@ -30,16 +30,16 @@
         </a>
         <ul class="sidenav-second-level collapse" id="collapseMantenimiento">
           <li>
-            <a href="#">Categoría de platillos</a>
+            <a href="{% url 'restaurant:index_categoria_platillos' %}">Categoría de platillos</a>
           </li>
           <li>
-            <a href="#">Platillos</a>
+            <a href="{% url 'restaurant:index_platillos' %}">Platillos</a>
           </li>
           <li>
-            <a href="#">Mesas</a>
+            <a href="{% url 'restaurant:index_mesas' %}">Mesas</a>
           </li>
           <li>
-            <a href="#">Meseros</a>
+            <a href="{% url 'restaurant:index_empleados' %}">Meseros</a>
           </li>
         </ul>
       </li>
