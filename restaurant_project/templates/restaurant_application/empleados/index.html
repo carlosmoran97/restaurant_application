@@ -74,7 +74,7 @@
       $.ajax({
         url : "{% url 'restaurant:detalle_empleado' %}",
         data : {'id': idAsignacion},
-        type: "POST",
+        type: "GET",
         dataType: "json",
         success : function (data) {
           $("#lblNombre").html(data[0].empleado.nombre);
@@ -173,7 +173,7 @@
       $.ajax({
         url : $(this).attr("value"),
         data : parametros,
-        type: "POST",
+        type: "GET",
         dataType: "json",
         success : function (data) {
           //alert('Registrado '+data.respuesta);
@@ -199,7 +199,7 @@
       $.ajax({
         url : "{% url 'restaurant:eliminar_empleado' %}",
         data : {'idEmpleado': empleado[0].empleado.idEmpleado, 'id':empleado[0].id},
-        type: "POST",
+        type: "GET",
         dataType: "json",
         success : function (data) {
           //alert('Eliminar '+data.respuesta);
@@ -213,7 +213,7 @@
     function cargarDatos(){
       $.ajax({
         url : "{% url 'restaurant:lista_empleados' %}",
-        type: 'POST',
+        type: 'GET',
         dataType: "json",
         success : function (data) {
           dataE = data;

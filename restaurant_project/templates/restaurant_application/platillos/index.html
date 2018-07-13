@@ -90,7 +90,7 @@
       $.ajax({
         url : $(this).attr("value"),
         data : parametros,
-        type: "POST",
+        type: "GET",
         dataType: "json",
         success : function (data) {
           //alert('Registrado '+data.respuesta);
@@ -114,7 +114,7 @@
       $.ajax({
         url : "{% url 'restaurant:eliminar_platillos' %}",
         data : {'codigoPlatillo': codigoPlatillo},
-        type: "POST",
+        type: "GET",
         dataType: "json",
         success : function (data) {
           //alert('Eliminar '+data.respuesta);
@@ -128,7 +128,7 @@
     function cargarDatos(){
       $.ajax({
         url : "{% url 'restaurant:lista_platillos' %}",
-        type: 'POST',
+        type: 'GET',
         dataType: "json",
         success : function (data) {
           $("#tablePlatillos").DataTable({

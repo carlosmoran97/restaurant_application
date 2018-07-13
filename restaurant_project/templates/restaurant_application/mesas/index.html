@@ -86,7 +86,7 @@
       $.ajax({
         url : $(this).attr("value"),
         data : parametros,
-        type: "POST",
+        type: "GET",
         dataType: "json",
         success : function (data) {
           //alert('Registrado '+data.respuesta);
@@ -110,7 +110,7 @@
       $.ajax({
         url : "{% url 'restaurant:eliminar_mesas' %}",
         data : {'codigo_mesa': codigo_mesa},
-        type: "POST",
+        type: "GET",
         dataType: "json",
         success : function (data) {
           //alert('Eliminar '+data.respuesta);
@@ -124,7 +124,7 @@
     function cargarDatos(){
       $.ajax({
         url : "{% url 'restaurant:lista_mesas' %}",
-        type: 'POST',
+        type: 'GET',
         dataType: "json",
         success : function (data) {
           $("#tableMesas").DataTable({
