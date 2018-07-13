@@ -2,10 +2,14 @@ from django.shortcuts import render
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from inventario.models import Producto, ReporteDeExistencia, Existencia
-from inventario.serializers import ProductoSerializer, ExistenciaSerializer
-from django.http import JsonResponse
+from inventario.serializers import ProductoSerializer, ExistenciaSerializer, ReporteDeExistenciaSerializer
+from django.http import JsonResponse, HttpResponse
 from inventario.forms import ProductoForm, ExistenciaForm
 from django.views.generic import ListView, DetailView
+from django.views import View
+from io import BytesIO
+from reportlab.pdfgen import canvas
+
 
 class Get_producto_Create(APIView):
     def get(self, request):
@@ -71,3 +75,35 @@ class GetExistenciasCreate(APIView):
         existencia = Existencia.objects.create(reporte_de_existencia=reporte, producto=producto ,existencias=request.GET['existencias'])
         existencia.save()
         return JsonResponse({'respuesta':'ok'})
+
+class pdf_view(View):
+    def get(self, request, pk):
+        reporte = ReporteDeExistencia.objects.get(id=pk)
+
+        reporte_serialized = ReporteDeExistenciaSerializer(reporte, many=False)
+
+        response = HttpResponse(content_type='application/pdf')
+        response['Content-Disposition'] = 'attachment; filename="{}.pdf"'.format(reporte.__str__())
+
+        buffer = BytesIO()
+
+        p = canvas.Canvas(buffer)
+
+        p.drawString(100, 750, reporte.__str__())
+
+        start, step = 735, 15
+        i = 0
+        while(i < len(reporte_serialized.data['existencias'])):
+            e = reporte_serialized.data['existencias'][i]
+            p.drawString(100, start, "{} - {} - {}".format(e['producto']['id'], e['producto']['nombre'], e['existencias']))
+            start = start - step
+            i = i + 1        
+
+        p.showPage()
+        p.save()
+
+        pdf = buffer.getvalue()
+        buffer.close()
+        response.write(pdf)
+
+        return response

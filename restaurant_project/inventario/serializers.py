@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from inventario.models import Producto, Existencia
+from inventario.models import Producto, Existencia, ReporteDeExistencia
 
 class ProductoSerializer(serializers.ModelSerializer):
     class Meta():
@@ -12,4 +12,12 @@ class ExistenciaSerializer(serializers.ModelSerializer):
 
     class Meta():
         model = Existencia
+        fields = '__all__'
+
+class ReporteDeExistenciaSerializer(serializers.ModelSerializer):
+
+    existencias = ExistenciaSerializer(many=True, read_only=True)
+
+    class Meta():
+        model = ReporteDeExistencia
         fields = '__all__'
