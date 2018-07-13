@@ -30,8 +30,12 @@ urlpatterns = [
     url(r'^editar_mesas/$', views.MesaUpdate.as_view(), name='editar_mesas'),
     url(r'^eliminar_mesas/$', views.MesaDelete.as_view(), name='eliminar_mesas'),
 
-        #URL PARA MESAS
+        #URL PARA EMPLEADOS
 
     url(r'^empleados/$', views.index_empleados, name='index_empleados'),
     url(r'^create_empleado/$', views.EmpleadoCreate.as_view(), name='create_empleado'),
+    url(r'^lista_empleados/$', views.EmpleadosList.as_view(), name='lista_empleados'),
+    url(r'^detalle_empleado/$', views.EmpleadoDetalle.as_view(), name='detalle_empleado'),
+    url(r'^editar_empleado/$', views.EmpleadoUpdate.as_view(), name='editar_empleado'),
+    url(r'^eliminar_empleado/$', views.EmpleadoDelete.as_view(), name='eliminar_empleado'),
 ]

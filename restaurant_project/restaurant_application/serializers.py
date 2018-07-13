@@ -15,22 +15,22 @@ class PlatilloSerializer(serializers.ModelSerializer):
 
 class MesaSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Empleado
+        model = Mesa
         fields = ('codigo_mesa', 'numero_mesa', 'asientos', 'ocupado')
 
 class EmpleadoSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Mesa
+        model = Empleado
         fields = ('idEmpleado', 'nombre', 'apellido', 'fecha_nacimiento', 'dui', 'nit', 'afp')
 
 class PuestoSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Mesa
+        model = Puesto
         fields = ('idPuesto', 'puesto')
 
 class AsignacionSerializer(serializers.ModelSerializer):
     empleado = EmpleadoSerializer(many=False)
     puesto = PuestoSerializer(many=False)
     class Meta:
-        model = Mesa
-        fields = ('empleado', 'puesto', 'salario', 'fecha_contratacion')
+        model = Asignacion
+        fields = ('id', 'empleado', 'puesto', 'salario', 'fecha_contratacion')

@@ -65,7 +65,7 @@ class EmpleadoForm(forms.ModelForm):
             'fecha_nacimiento': forms.SelectDateWidget(years=range(1950, int(time.strftime("%Y"))+1),attrs={'class':'form-control'}),
             'dui':forms.TextInput(attrs={'class':'form-control','id':'txtDUI'}),
             'nit':forms.TextInput(attrs={'class':'form-control','id':'txtNIT'}),
-            'afp':forms.TextInput(attrs={'class':'form-control','id':'txtAFṔ'}),
+            'afp':forms.TextInput(attrs={'class':'form-control','id':'txtAFP'}),
         }
 
 class PuestoForm(forms.ModelForm):

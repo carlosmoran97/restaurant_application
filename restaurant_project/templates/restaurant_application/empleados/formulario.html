@@ -1,5 +1,5 @@
 <div class="modal-body">
-  <p>Datos Peronales</p>
+  <p>Datos Personales</p>
   <div class="row">
     <div class="col-md-6">
       <div class="form-group">
@@ -20,13 +20,13 @@
     <div class="col-md-6">
       <div class="form-group">
         <label>Fecha de Nacimiento</label>
-          {{ formEmpleado.fecha_nacimiento }}
+        <input type="text" class="form-control" id="fecha_nacimiento">
         <small class="form-text text-muted"></small>
       </div>
     </div>
     <div class="col-md-6">
       <div class="form-group">
-        <label>DUI</label>
+        <label>DUI (sin guión)</label>
           {{ formEmpleado.dui }}
         <small class="form-text text-muted"></small>
       </div>
@@ -35,7 +35,7 @@
   <div class="row">
     <div class="col-md-6">
       <div class="form-group">
-        <label>NIT</label>
+        <label>NIT (sin guiones)</label>
           {{ formEmpleado.nit }}
         <small class="form-text text-muted"></small>
       </div>
@@ -69,7 +69,7 @@
     <div class="col-md-6">
       <div class="form-group">
         <label>Fecha de Contratación</label>
-          {{ formAsignacion.fecha_contratacion }}
+          <input type="text" class="form-control" id="fecha_contratacion">
         <small class="form-text text-muted"></small>
       </div>
     </div>
