@@ -3,7 +3,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from .models import CategoriaPlatillo, Platillo, Mesa, Empleado, Puesto, Asignacion
 from .serializers import CategoriaPlatilloSerializer, PlatilloSerializer, MesaSerializer, EmpleadoSerializer, PuestoSerializer, AsignacionSerializer
-from .forms import CategoriaPlatilloForm, PlatilloForm, PlatilloFormSelect, MesaForm, EmpleadoForm, PuestoForm, AsignacionForm
+from .forms import CategoriaPlatilloForm, PlatilloForm, PlatilloFormSelect, MesaForm, EmpleadoForm, PuestoForm, AsignacionForm, AsignacionFormSelect
 from django.http import JsonResponse
 
 """
@@ -116,7 +116,8 @@ def index_empleados(request):
     formEmpleado = EmpleadoForm()
     formPuesto = PuestoForm()
     formAsignacion = AsignacionForm()
-    context = {'formEmpleado':formEmpleado,'formAsignacion':formAsignacion}
+    formAsignacionSelect = AsignacionFormSelect()
+    context = {'formEmpleado':formEmpleado,'formAsignacion':formAsignacion, 'formAsignacionSelect':formAsignacionSelect}
     return render(request, 'restaurant_application/empleados/index.html', context)
 
 

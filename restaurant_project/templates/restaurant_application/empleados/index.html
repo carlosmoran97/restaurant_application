@@ -1,4 +1,4 @@
-{% extends 'base/base.html'%}
+.{% extends 'base/base.html'%}
 {% block TitlePage %}
   {{ 'Empleados' }}
 {% endblock %}
@@ -18,7 +18,31 @@
           <button id="btn-registrar-empleado" type="button" class="btn btn-success btn-sm">Registrar</button>
         </div>
         <div class="card-body">
-          <br>
+          <div class="row">
+            <div class="col-md-3">
+              <div class="input-group mb-3">
+                <div class="input-group-prepend">
+                  <span class="input-group-text" id="basic-addon1"><i class="fa fa-search" aria-hidden="true"></i></span>
+                </div>
+                <input type="text" class="form-control form-control-sm" placeholder="Código" aria-describedby="basic-addon1" id="txtBuscarCodigo">
+              </div>
+            </div>
+            <div class="col-md-3">
+              <div class="form-group">
+                <input type="text" class="form-control form-control-sm" placeholder="Nombre" id="txtBuscarNombre">
+              </div>
+            </div>
+            <div class="col-md-3">
+              <div class="form-group">
+                <input type="text" class="form-control form-control-sm" placeholder="Apellido" id="txtBuscarApellido">
+              </div>
+            </div>
+            <div class="col-md-3">
+              <div class="form-group">
+                {{ formAsignacionSelect.puesto }}
+              </div>
+            </div>
+          </div>
           <div class="table-responsive">
             <table class="table table-bordered" id="tableEmpleados" width="100%" cellspacing="0">
               <thead>
@@ -35,7 +59,7 @@
             </table>
           </div>
         </div>
-      <div class="card-footer small text-muted">Updated yesterday at 11:59 PM</div>
+      <div class="card-footer small text-muted"></div>
     </div>
 
     {% include 'base/modal.html' %}
@@ -55,11 +79,30 @@
       cargarDatos();
     });
 
+    //FILTROS
+    $(document).on("keyup", "#txtBuscarCodigo", function(){
+      $("#tableEmpleados").DataTable().column(0).search($(this).val()).draw();
+    });
+    $(document).on("keyup", "#txtBuscarNombre", function(){
+      $("#tableEmpleados").DataTable().column(1).search($(this).val()).draw();
+    });
+    $(document).on("keyup", "#txtBuscarApellido", function(){
+      $("#tableEmpleados").DataTable().column(2).search($(this).val()).draw();
+    });
+    $(document).on("change", "#selectPuestoBuscar", function(){
+      if($(this).val() == ""){
+        cargarDatos();
+      } else{
+        $("#tableEmpleados").DataTable().column(3).search($("#selectPuestoBuscar option:selected").text()).draw();
+      }
+    });
+
     //Abrir Modal de Formulario de Registro de Empleado
     $(document).on("click", "#btn-registrar-empleado", function(){
       idAsignacion = "";
       $("#cargarForm").html(`{% include 'restaurant_application/empleados/formulario.html' %}`);
       $(".modal-dialog").attr("class", "modal-dialog modal-lg");
+      $(".cancelar").attr("data-dismiss", "modal");
       $("#btn-guardar").attr({value:"{% url 'restaurant:create_empleado' %}"});
       $("#fecha_nacimiento").datepicker({dateFormat: 'dd/mm/yy'});
       $("#fecha_contratacion").datepicker({dateFormat: 'dd/mm/yy'});
@@ -125,12 +168,15 @@
       $("#fecha_contratacion").val(empleado[0].fecha_contratacion);
     });
 
+    //Dar formato a fecha
+    function formatFecha(fecha){
+      return fecha.getFullYear()+"-"+(fecha.getMonth()+1)+"-"+fecha.getDate();
+    }
+
     //Función para guardar el formulario
     $(document).on("click", "#btn-guardar", function(){
-      var fecha_nacimiento = $("#fecha_nacimiento").datepicker('getDate');
-      fecha_nacimiento = fecha_nacimiento.getFullYear()+"-"+(fecha_nacimiento.getMonth()+1)+"-"+fecha_nacimiento.getDate();
-      var fecha_contratacion = $("#fecha_contratacion").datepicker('getDate');
-      fecha_contratacion = fecha_contratacion.getFullYear()+"-"+(fecha_contratacion.getMonth()+1)+"-"+fecha_contratacion.getDate();
+      var fecha_nacimiento = formatFecha($("#fecha_nacimiento").datepicker('getDate'));
+      var fecha_contratacion = formatFecha($("#fecha_contratacion").datepicker('getDate'));
       var nombre = $("#txtNombre").val();
       var apellido = $("#txtApellido").val();
       var dui = $("#txtDUI").val();
@@ -141,8 +187,7 @@
       var parametros;
       if(idAsignacion == ""){
         //En caso que sea Guardar
-        parametros = {
-          'nombre': nombre,
+        parametros = {'nombre': nombre,
           'apellido': apellido,
           'fecha_nacimiento': fecha_nacimiento,
           'dui': dui,
@@ -234,6 +279,7 @@
               }},
             ]
           });
+          $("#tableEmpleados_filter").hide();
         }
       });
     }

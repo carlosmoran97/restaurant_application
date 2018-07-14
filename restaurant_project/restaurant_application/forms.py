@@ -102,3 +102,9 @@ class AsignacionForm(forms.ModelForm):
             'salario':forms.TextInput(attrs={'class':'form-control','id':'txtSalario'}),
             'fecha_contratacion': forms.SelectDateWidget(years=range(1950, int(time.strftime("%Y"))+1),attrs={'class':'form-control'})
         }
+
+class AsignacionFormSelect(forms.ModelForm):
+    class Meta:
+        model = Asignacion
+        fields = ['puesto']
+        widgets = {'puesto':forms.Select(attrs={'class':'form-control form-control-sm','id':'selectPuestoBuscar'})}

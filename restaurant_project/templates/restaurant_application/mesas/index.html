@@ -18,13 +18,27 @@
           <button id="btn-registrar-mesa" type="button" class="btn btn-success btn-sm">Registrar</button>
         </div>
         <div class="card-body">
-          <br>
+          <div class="row">
+            <div class="col-md-3">
+              <div class="input-group mb-3">
+                <div class="input-group-prepend">
+                  <span class="input-group-text" id="basic-addon1"><i class="fa fa-search" aria-hidden="true"></i></span>
+                </div>
+                <input type="text" class="form-control form-control-sm" placeholder="Código" aria-describedby="basic-addon1" id="txtBuscarNumeroMesa">
+              </div>
+            </div>
+            <div class="col-md-3">
+              <div class="form-group">
+                <input type="text" class="form-control form-control-sm" placeholder="Cantidad de Asientos" id="txtBuscarAsientos">
+              </div>
+            </div>
+          </div>
           <div class="table-responsive">
             <table class="table table-bordered" id="tableMesas" width="100%" cellspacing="0">
               <thead>
                 <tr>
                   <th>Número de Mesa</th>
-                  <th>Cantida de Asientos</th>
+                  <th>Cantidad de Asientos</th>
                   <th width="150px"></th>
                 </tr>
               </thead>
@@ -33,7 +47,7 @@
             </table>
           </div>
         </div>
-      <div class="card-footer small text-muted">Updated yesterday at 11:59 PM</div>
+      <div class="card-footer small text-muted"></div>
     </div>
 
     {% include 'base/modal.html' %}
@@ -49,6 +63,14 @@
       codigo_mesa = "";
       //alert('Funciona JQuery!');
       cargarDatos();
+    });
+
+    //FILTROS
+    $(document).on("keyup", "#txtBuscarNumeroMesa", function(){
+      $("#tableMesas").DataTable().column(0).search($(this).val()).draw();
+    });
+    $(document).on("keyup", "#txtBuscarAsientos", function(){
+      $("#tableMesas").DataTable().column(1).search($(this).val()).draw();
     });
 
     //Abrir Modal de Formulario de Registro de Categoría
@@ -143,6 +165,7 @@
               }},
             ]
           });
+          $("#tableMesas_filter").hide();
         }
       });
     }
