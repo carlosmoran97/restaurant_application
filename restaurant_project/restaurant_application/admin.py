@@ -1,12 +1,6 @@
 from django.contrib import admin
-from inventario.models import Producto, Existencia, ReporteDeExistencia
-from restaurant_application.models import Asignacion, CategoriaPlatillo, Empleado, Mesa, Platillo, Puesto
-
-# modelos de la aplicación de inventario
-
-admin.site.register(Producto)
-admin.site.register(Existencia)
-admin.site.register(ReporteDeExistencia)
+from restaurant_application.models import (Asignacion, CategoriaPlatillo, 
+Empleado, Mesa, Platillo, Puesto, Caja, Cliente)
 
 # modelos de la aplicación de restaurante
 
@@ -16,3 +10,5 @@ admin.site.register(Empleado)
 admin.site.register(Mesa)
 admin.site.register(Platillo)
 admin.site.register(Puesto)
+admin.site.register(Caja)
+admin.site.register(Cliente)

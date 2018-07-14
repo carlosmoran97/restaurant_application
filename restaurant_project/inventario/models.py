@@ -1,5 +1,5 @@
 from django.db import models
-
+from django.core.urlresolvers import reverse
 
 class Producto(models.Model):
     KILOGRAMOS = 'kg'
@@ -54,6 +54,8 @@ class ReporteDeExistencia(models.Model):
 
     def __str__(self):
         return 'Reporte de existencias a fecha {}'.format(self.fecha_reporte)
+    def get_absolute_url(self):
+        return reverse("inventario:reporte_detail", kwargs={'pk':self.pk})
 
 class Existencia(models.Model):
     producto = models.ForeignKey(Producto, on_delete=models.CASCADE)

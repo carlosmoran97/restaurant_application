@@ -1,0 +1,34 @@
+{% extends 'base/base.html' %}
+{% load staticfiles %}
+{% block TitlePage %}
+    {{'Inventario | Reportes de existencia'}}
+{% endblock %}
+{% block body %}
+    <div class="container">
+        <!-- breadcrumbs -->
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item">
+            <a href="#">Inventario</a>
+        </li>
+        <li class="breadcrumb-item">
+            <a href="{% url 'inventario:reportes' %}">Reportes</a>
+        </li>
+        <li class="breadcrumb-item active">
+            Eliminar reporte
+        </li>
+    </ol>
+    <div class="jumbotron">
+        <h3>¿Borrar {{ reportedeexistencia|lower }}?</h3>
+        <div class="alert alert-danger" role="alert">
+            Los datos ya no podrán ser recuperados.
+        </div>
+        <form method="POST">{% csrf_token %}
+            <button class="btn btn-danger" type="submit">Borrar</button>
+            <a class="btn btn-primary" href="{% url 'inventario:reporte_detail' pk=reportedeexistencia.pk %}">Cancelar</a>
+        </form>
+    </div>
+{% endblock %}
+
+{% block JavaScriptFiles %}
+
+{% endblock %}

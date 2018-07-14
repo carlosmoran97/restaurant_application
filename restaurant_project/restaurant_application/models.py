@@ -35,7 +35,7 @@ class Empleado(models.Model):
     afp = models.CharField(max_length=20)
 
     def __str__(self):
-        return '{}'.format(self.nombre)
+        return '{} {}'.format(self.nombre, self.apellido)
 
 class Puesto(models.Model):
     idPuesto = models.AutoField(primary_key=True)
@@ -52,3 +52,15 @@ class Asignacion(models.Model):
 
     class Meta:
         unique_together = ('empleado', 'puesto')
+
+class Caja(models.Model):
+    numero_caja = models.PositiveIntegerField()
+
+    def __str__(self):
+        return 'Caja {}'.format(self.numero_caja)
+
+class Cliente(models.Model):
+    nombre = models.CharField(max_length=256)
+    nit = models.CharField(max_length=14)
+    direccion = models.CharField(max_length=512)
+    

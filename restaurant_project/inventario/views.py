@@ -5,10 +5,11 @@ from inventario.models import Producto, ReporteDeExistencia, Existencia
 from inventario.serializers import ProductoSerializer, ExistenciaSerializer, ReporteDeExistenciaSerializer
 from django.http import JsonResponse, HttpResponse
 from inventario.forms import ProductoForm, ExistenciaForm
-from django.views.generic import ListView, DetailView, CreateView
+from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 from django.views import View
 from io import BytesIO
 from reportlab.pdfgen import canvas
+from django.core.urlresolvers import reverse_lazy
 
 
 class Get_producto_Create(APIView):
@@ -64,6 +65,14 @@ class ReporteDeExistenciaCreateView(CreateView):
     model = ReporteDeExistencia
     fields = ['fecha_reporte','observaciones']
 
+class ReporteDeExistenciaUpdateView(UpdateView):
+    model = ReporteDeExistencia
+    fields = ['fecha_reporte', 'observaciones']
+
+class ReporteDeExistenciaDeleteView(DeleteView):
+    model = ReporteDeExistencia
+    success_url = reverse_lazy("inventario:reportes")
+
 class GetExistenciasList(APIView):
     def get(self, request):
         existencias = Existencia.objects.filter(reporte_de_existencia=request.GET['id_reporte']).order_by('id')
@@ -78,7 +87,28 @@ class GetExistenciasCreate(APIView):
         reporte = ReporteDeExistencia.objects.filter(id=id_reporte).get()
         existencia = Existencia.objects.create(reporte_de_existencia=reporte, producto=producto ,existencias=request.GET['existencias'])
         existencia.save()
-        return JsonResponse({'respuesta':'ok'})
+
+        existencias = Existencia.objects.filter(reporte_de_existencia=id_reporte).order_by('id')
+        serialized = ExistenciaSerializer(existencias, many=True)
+        return Response(serialized.data)
+
+class GetExistenciasUpdate(APIView):
+    def get(self, request):
+        id_producto = int(request.GET['id_producto'])
+        producto = Producto.objects.filter(id=id_producto).get()
+        existencia = Existencia.objects.filter(id=request.GET['id']).update(producto=producto ,existencias=request.GET['existencias'])
+        
+        id_reporte = int(request.GET['id_reporte'])
+        existencias = Existencia.objects.filter(reporte_de_existencia=id_reporte).order_by('id')
+        serialized = ExistenciaSerializer(existencias, many=True)
+        return Response(serialized.data)
+
+class GetExistenciasDelete(APIView):
+    def get(self, request):
+        existencia = Existencia.objects.filter(id=request.GET['id']).delete()
+        existencias = Existencia.objects.filter(reporte_de_existencia=request.GET['id_reporte']).order_by('id')
+        serialized = ExistenciaSerializer(existencias, many=True)
+        return Response(serialized.data)
 
 class pdf_view(View):
     def get(self, request, pk):

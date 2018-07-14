@@ -20,16 +20,16 @@
         </ol>
         <div class="card">
             <h5 class="card-header">{{ reporte }}
-                <a href="xlsx">
-                    <button class="btn btn-success" id="reporte-xlsx">
-                    <i class="fa fa-file-excel-o" aria-hidden="true"></i>
-                        Reporte (XLSX)
-                    </button>
+                <a href="{% url 'inventario:reporte_delete' pk=reporte.pk %}">
+                    <button class="btn btn-danger" id="borrar-reporte">Borrar</button>
+                </a>
+                <a href="{% url 'inventario:reporte_update' pk=reporte.pk %}">
+                    <button class="btn btn-warning" id="editar-reporte">Editar</button>
                 </a>
                 <a href="pdf">
                     <button class="btn btn-success" id="reporte-pdf">
-                    <i class="fa fa-file-pdf-o" aria-hidden="true"></i>
-                        Reporte (PDF)
+                        Generar
+                        <i class="fa fa-file-pdf-o" aria-hidden="true"></i>
                     </button>
                 </a>
             </h5>
@@ -59,6 +59,7 @@
                 {{ reporte.observaciones }}
             </div>
         </div>
+        {% include 'inventario/reportedeexistencia_detail_modal.html' %}
     </div>
 <style>
     #reporte-pdf
@@ -66,11 +67,16 @@
         float: right;
         margin-right: 2px;
     }
-    #reporte-xlsx
+    #editar-reporte
+    {
+        float: right;
+        margin-right: 2px;
+    }
+    #borrar-reporte
     {
         float: right;
     }
-    #id_producto
+    select
     {
         min-width: 250px;
     }
@@ -100,11 +106,8 @@
         };
     $(document).ready(function() {
         $('#id_producto').select2();
-        $('#id_producto').css('min-width: 300px;');
-        cargarDatos();
-    });
-    function cargarDatos() {
-        var html = ``;
+        $("#existenciaModalEditar #id_producto").attr('id', 'id_producto_2')
+        
         $.ajax({
             url: "{% url 'inventario:existencias_list' %}",
             data: {
@@ -113,21 +116,26 @@
             type: 'GET',
             dataType: 'json',
             success: (data) => {
-                for(let i = 0; i < data.length; i++){
-                    html += `<tr>
-                                <td>${data[i].producto.id}</td>
-                                <td>${data[i].producto.nombre}</td>
-                                <td>${data[i].existencias}</td>
-                                <td class="${data[i].unidad_de_medida}">${unidad_de_medida[data[i].producto.unidad_de_medida]}</td>
-                                <td>
-                                    <button type="button" class="btn btn-outline-success editar" value=${data[i].id}>Editar</button>
-                                    <button type="button" class="btn btn-outline-danger eliminar" value=${data[i].id}>Eliminar</button>
-                                </td>
-                             </tr>`;
-                }
-                $('#tablaExistencias tbody').html(html);
+                cargarDatos(data);
             }
         });
+    });
+    function cargarDatos(data) {
+        var html = ``;
+        
+        for(let i = 0; i < data.length; i++){
+            html += `<tr>
+                        <td>${data[i].producto.id}</td>
+                        <td>${data[i].producto.nombre}</td>
+                        <td>${data[i].existencias}</td>
+                        <td class="${data[i].unidad_de_medida}">${unidad_de_medida[data[i].producto.unidad_de_medida]}</td>
+                        <td>
+                            <button type="button" class="btn btn-outline-success editar" value=${data[i].id}>Editar</button>
+                            <button type="button" class="btn btn-outline-danger eliminar" value=${data[i].id}>Eliminar</button>
+                        </td>
+                     </tr>`;
+            }
+            $('#tablaExistencias tbody').html(html);
     }
     $("#btn-agregar").on('click', () => {
         $.ajax({
@@ -140,15 +148,71 @@
             type: 'GET',
             dataType: 'json',
             success: (data) => {
-                cargarDatos();
+                cargarDatos(data);
+                limpiar();
+            },
+            error: function (xhr, ajaxOptions, thrownError) {
                 
+                if(xhr.status === 500){
+                    alert('ERROR: Debe seleccionar un producto e introducir una cantidad.');
+                }
+                else{
+                    alert(`Error ${xhr.status}: ${thrownError}`);
+                }
             }
         });
     });
     function limpiar()
     {
-        $('input').val('')
-        $('select').val('')
+        $('input').val('');
+        $('select').val(null);
+        $('#select2-id_producto-container').text('---------')
     }
+    $(document).on('click', '.eliminar', function(){
+        $("#existenciaModalEliminar").modal("show");
+        $("#existenciaModalLabelEliminar").html(`Eliminar el registro?`);
+        $("#eliminar").val($(this).val());
+    });
+    $('#eliminar').on('click', function () {
+        $.ajax({
+            url: "{% url 'inventario:existencias_delete' %}",
+            data: {
+                id: $(this).val(),
+                id_reporte: "{{ reporte.id }}"
+            },
+            type: 'GET',
+            dataType: 'json',
+            success: function (data) {
+                $(".modal").modal("hide");
+                cargarDatos(data);
+            }
+        });
+    });
+    $(document).on('click', '.editar', function(){
+        $("#existenciaModalEditar").modal("show");
+        $("#id_producto_2").val($(this).parents("tr").find("td")[0].innerHTML);
+        $('#id_producto_2').select2({
+            dropdownParent: $('#existenciaModalEditar')
+        });
+        $("#existenciaModalEditar #id_existencias").val($(this).parents("tr").find("td")[2].innerHTML);
+        $("#actualizar").val($(this).val());
+    });
+    $('#actualizar').on('click', function () {
+        $.ajax({
+            url: "{% url 'inventario:existencias_update' %}",
+            data: {
+                id: $(this).val(),
+                id_producto: $("#id_producto_2").val(),
+                existencias: $("#existenciaModalEditar #id_existencias").val(),
+                id_reporte: "{{ reporte.id }}"
+            },
+            type: 'GET',
+            dataType: 'json',
+            success: function (data) {
+                $(".modal").modal("hide");
+                cargarDatos(data);
+            }
+        });
+    });
 </script>
 {% endblock %}

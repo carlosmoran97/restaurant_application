@@ -1,0 +1,43 @@
+{% extends 'base/base.html' %}
+{% load staticfiles %}
+{% block TitlePage %}
+    {{'Mantenimiento | Usuarios'}}
+{% endblock %}
+{% block body %}
+    <div class="container">
+        <!-- breadcrumbs -->
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item">
+                <a href="#">Mantenimiento</a>
+            </li>
+            <li class="breadcrumb-item">
+                <a href="#">Usuarios</a>
+            </li>
+            <li class="breadcrumb-item active">
+                Registro
+            </li>
+        </ol>
+        {% if registered %}
+        <div class="alert alert-success" role="alert">
+            Gracias por registrar el usuario.
+        </div>
+        <a class="btn btn-primary" href="{% url 'procesos:registro_usuarios' %}">Volver</a>
+        {% else %}
+        <div class="alert alert-primary" role="alert">
+            El propósito de este sitio es registrar usuarios.
+        </div>
+        <div class="alert alert-warning" role="alert">
+            Si necesita cambiar datos de los usuarios ingrese <a href="{% url 'admin:index' %}">aquí.</a>
+        </div>
+        <form enctype="multipart/form-data" method="POST">{% csrf_token %}
+            {{ user_form.as_p }}
+            {{ profile_form.as_p }}
+            <input type="submit" value="Registrar" class="btn btn-success">
+        </form>
+        {% endif %}
+    </div>
+{% endblock %}
+
+{% block JavaScriptFiles %}
+
+{% endblock %}

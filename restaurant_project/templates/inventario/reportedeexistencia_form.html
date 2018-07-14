@@ -13,7 +13,11 @@
                 <a href="{% url 'inventario:reportes' %}">Reportes</a>
             </li>
             <li class="breadcrumb-item active">
+                {% if not form.instance.pk %}
                 Crear reporte
+                {% else %}
+                Editar reporte
+                {% endif %}
             </li>
         </ol>
         <form method="post">{% csrf_token %}

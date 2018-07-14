@@ -20,4 +20,5 @@ urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^restaurant/', include('restaurant_application.urls')),
     url(r'^inventario/', include('inventario.urls')),
+    url(r'^procesos/', include('procesos.urls')),
 ]
