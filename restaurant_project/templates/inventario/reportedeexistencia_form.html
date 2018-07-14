@@ -1,0 +1,26 @@
+{% extends 'base/base.html' %}
+{% block TitlePage %}
+    {{'Crear reporte'}}
+{% endblock %}
+{% block body %}
+    <div class="container">
+        <!-- breadcrumbs -->
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item">
+                <a href="#">Inventario</a>
+            </li>
+            <li class="breadcrumb-item">
+                <a href="{% url 'inventario:reportes' %}">Reportes</a>
+            </li>
+            <li class="breadcrumb-item active">
+                Crear reporte
+            </li>
+        </ol>
+        <form method="post">{% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit" class="btn btn-success">Guardar</button>
+        </form>
+    </div>
+{% endblock %}
+{% block JavaScriptFiles %}
+{% endblock %}

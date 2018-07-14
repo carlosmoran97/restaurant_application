@@ -5,7 +5,7 @@ from inventario.models import Producto, ReporteDeExistencia, Existencia
 from inventario.serializers import ProductoSerializer, ExistenciaSerializer, ReporteDeExistenciaSerializer
 from django.http import JsonResponse, HttpResponse
 from inventario.forms import ProductoForm, ExistenciaForm
-from django.views.generic import ListView, DetailView
+from django.views.generic import ListView, DetailView, CreateView
 from django.views import View
 from io import BytesIO
 from reportlab.pdfgen import canvas
@@ -59,6 +59,10 @@ class ReporteDeExistenciaDetail(DetailView):
         context = super().get_context_data(**kwargs)
         context['form'] = self.existenciaForm
         return context
+
+class ReporteDeExistenciaCreateView(CreateView):
+    model = ReporteDeExistencia
+    fields = ['fecha_reporte','observaciones']
 
 class GetExistenciasList(APIView):
     def get(self, request):
