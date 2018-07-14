@@ -30,6 +30,13 @@ class PlatilloForm(forms.ModelForm):
             'categoria_platillo':forms.Select(attrs={'class':'form-control','id':'selectCategoriaPlatillo'})
         }
 
+
+class PlatilloFormSelect(forms.ModelForm):
+    class Meta:
+        model = Platillo
+        fields = ['categoria_platillo']
+        widgets = {'categoria_platillo':forms.Select(attrs={'class':'form-control form-control-sm','id':'selectCategoriaPlatilloBuscar'})}
+
 class MesaForm(forms.ModelForm):
 
     class Meta:

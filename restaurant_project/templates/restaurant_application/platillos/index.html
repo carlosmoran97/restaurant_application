@@ -18,7 +18,31 @@
           <button id="btn-registrar-platillo" type="button" class="btn btn-success btn-sm">Registrar</button>
         </div>
         <div class="card-body">
-          <br>
+          <div class="row">
+            <div class="col-md-3">
+              <div class="input-group mb-3">
+                <div class="input-group-prepend">
+                  <span class="input-group-text" id="basic-addon1"><i class="fa fa-search" aria-hidden="true"></i></span>
+                </div>
+                <input type="text" class="form-control form-control-sm" placeholder="Código" aria-describedby="basic-addon1" id="txtBuscarCodigo">
+              </div>
+            </div>
+            <div class="col-md-3">
+              <div class="form-group">
+                <input type="text" class="form-control form-control-sm" placeholder="Nombre" id="txtBuscarNombre">
+              </div>
+            </div>
+            <div class="col-md-3">
+              <div class="form-group">
+                <input type="text" class="form-control form-control-sm" placeholder="Precio Unitario" id="txtBuscarPrecioUnitario">
+              </div>
+            </div>
+            <div class="col-md-3">
+              <div class="form-group">
+                {{ form_e.categoria_platillo }}
+              </div>
+            </div>
+          </div>
           <div class="table-responsive">
             <table class="table table-bordered" id="tablePlatillos" width="100%" cellspacing="0">
               <thead>
@@ -53,6 +77,24 @@
       cargarDatos();
     });
 
+    //FILTROS
+    $(document).on("keyup", "#txtBuscarCodigo", function(){
+      $("#tablePlatillos").DataTable().column(0).search($(this).val()).draw();
+    });
+    $(document).on("keyup", "#txtBuscarNombre", function(){
+      $("#tablePlatillos").DataTable().column(1).search($(this).val()).draw();
+    });
+    $(document).on("keyup", "#txtBuscarPrecioUnitario", function(){
+      $("#tablePlatillos").DataTable().column(2).search($(this).val()).draw();
+    });
+    $(document).on("change", "#selectCategoriaPlatilloBuscar", function(){
+      if($(this).val() == ""){
+        cargarDatos();
+      } else{
+        $("#tablePlatillos").DataTable().column(3).search($("#selectCategoriaPlatilloBuscar option:selected").text()).draw();
+      }
+    });
+
     //Abrir Modal de Formulario de Registro de Categoría
     $(document).on("click", "#btn-registrar-platillo", function(){
       codigoPlatillo = "";
@@ -77,7 +119,6 @@
 
     //Función para guardar el formulario
     $(document).on("click", "#btn-guardar", function(){
-
       var parametros;
       if(codigoPlatillo == ""){
         //En caso que sea Guardar
@@ -150,6 +191,7 @@
               }},
             ]
           });
+          $("#tablePlatillos_filter").hide();
         }
       });
     }

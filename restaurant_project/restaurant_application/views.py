@@ -3,7 +3,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from .models import CategoriaPlatillo, Platillo, Mesa, Empleado, Puesto, Asignacion
 from .serializers import CategoriaPlatilloSerializer, PlatilloSerializer, MesaSerializer, EmpleadoSerializer, PuestoSerializer, AsignacionSerializer
-from .forms import CategoriaPlatilloForm, PlatilloForm, MesaForm, EmpleadoForm, PuestoForm, AsignacionForm
+from .forms import CategoriaPlatilloForm, PlatilloForm, PlatilloFormSelect, MesaForm, EmpleadoForm, PuestoForm, AsignacionForm
 from django.http import JsonResponse
 
 """
@@ -49,7 +49,8 @@ class CategoriaPlatilloListFilter(APIView):
 
 def index_platillos(request):
     form = PlatilloForm()
-    context = {'form':form}
+    form_e = PlatilloFormSelect()
+    context = {'form':form, 'form_e':form_e}
     return render(request, 'restaurant_application/platillos/index.html', context)
 
 class PlatilloCreate(APIView):
