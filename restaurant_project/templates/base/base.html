@@ -62,6 +62,27 @@
         </div>
       </div>
     </div>
+    <!-- Sesion modal -->
+    <div class="modal" id="sesion-modal" tabindex="-1" role="dialog">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Debe habilitar una sesión.</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <div class="alert alert-danger" role="alert">
+              Para realizar una orden el administrador debe habilitar una sesión en caja.
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-primary">Aceptar</button>
+          </div>
+        </div>
+      </div>
+    </div>
     <!-- Bootstrap core JavaScript-->
     <script src="{% static 'vendor/jquery/jquery.min.js' %}"></script>
     <script src="{% static 'vendor/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
@@ -75,6 +96,34 @@
     <script src="{% static 'js/sb-admin.min.js' %}"></script>
     <!-- JQuery UI -->
     <script src="{% static 'jquery-ui/jquery-ui.min.js' %}"></script>
+    <!-- Valida que existe una sesion para poder realizar una orden -->
+    <script>
+      function comprobarSesion(){
+        $.ajax({
+          url: "{% url 'procesos:lista_sesion_caja' %}",
+          type: 'get',
+          dataType: 'json',
+          success: (data) => {
+            console.log(data);
+            let sesionActiva = false;
+            for(let i = 0; i < data.length; i++)
+            {
+              if(data[i].estado.toLowerCase() === "abierta")
+              {
+                sesionActiva = true;
+              }
+            }
+            if(!sesionActiva)
+            {
+              $("#sesion-modal").modal("show");
+            }
+            else{
+              window.location.href = "{% url 'procesos:panel_mesas' %}";
+            } 
+          }
+        });
+      }
+    </script>
     {% block JavaScriptFiles %}
     {% endblock %}
   </div>
