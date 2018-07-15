@@ -1,0 +1,75 @@
+{% extends 'base/base.html' %}
+{% load staticfiles %}
+{% block TitlePage %}
+    {{'Mantenimiento | Usuarios'}}
+{% endblock %}
+{% block body %}
+    <div class="container">
+        <!-- breadcrumbs -->
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item">
+                <a href="#">Procesos</a>
+            </li>
+            <li class="breadcrumb-item">
+                <a href="#">Ordenes</a>
+            </li>
+            <li class="breadcrumb-item active">
+                Panel de mesas
+            </li>
+        </ol>
+        <div id="mesas">
+
+        </div>
+    </div>
+    
+{% endblock %}
+
+{% block JavaScriptFiles %}
+<script>
+    $(document).ready(() => {
+        $.ajax({
+            url: "{% url 'restaurant:lista_mesas' %}",
+            type: 'GET',
+            dataType: 'json',
+            success: (data) => {
+                let html = ``;
+                for(let i = 0; i < data.length; i++)
+                {
+                    if(!data[i].ocupado){
+                        html += `<div class="card text-white bg-success mb-3 mesa-card" style="max-width: 18rem;">
+                                    <div class="card-header">Mesa ${data[i].numero_mesa}</div>
+                                    <div class="card-body">
+                                        <div class="card-text">
+                                            <i class="fa fa-cutlery fa-4x" aria-hidden="true"></i>
+                                        </div>
+                                    </div>
+                                </div>`;
+                    }
+                    else{
+                        html += `<div class="card text-white bg-danger mb-3 mesa-card" style="max-width: 18rem;">
+                                    <div class="card-header">Mesa ${data[i].numero_mesa}</div>
+                                    <div class="card-body">
+                                        <div class="card-text">
+                                            <i class="fa fa-cutlery fa-4x" aria-hidden="true"></i>
+                                        </div>
+                                    </div>
+                                </div>`;
+                    }
+                }
+                $('#mesas').html(html);
+            }
+        });
+    });
+</script>
+<style>
+    .mesa-card
+    {
+        display: inline-block; cursor: pointer;
+        min-width: 150px;
+        margin: 5px;
+    }
+    .mesa-card .card-text{
+        text-align: center;
+    }
+</style>
+{% endblock %}

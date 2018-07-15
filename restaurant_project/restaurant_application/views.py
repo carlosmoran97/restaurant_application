@@ -104,7 +104,7 @@ class MesaDelete(APIView):
 
 class MesaList(APIView):
     def get(self, request):
-        mesas = Mesa.objects.all().order_by("-codigo_mesa")
+        mesas = Mesa.objects.all().order_by("codigo_mesa")
         serialized = MesaSerializer(mesas, many=True)
         return Response(serialized.data)
 

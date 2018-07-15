@@ -4,7 +4,7 @@ from rest_framework.response import Response
 from procesos.forms import PerfilDeUsuarioForm, UsuarioForm, SesionForm
 from procesos.serializers import SesionSerializer
 from procesos.models import Sesion
-from restaurant_application.models import Asignacion, Empleado, Puesto, Caja, Cliente
+from restaurant_application.models import Asignacion, Empleado, Puesto, Caja, Cliente, Mesa
 from django.http import JsonResponse
 import datetime
 # Create your views here.
@@ -76,3 +76,7 @@ class DetalleSesionCaja(APIView):
         sesiones = Sesion.objects.filter(id=request.GET['id'])
         serialized = SesionSerializer(sesiones, many=True)
         return Response(serialized.data)
+
+class PanelMesasView(ListView):
+    def get(self, request):
+        return render(request, 'procesos/mesas.html')
