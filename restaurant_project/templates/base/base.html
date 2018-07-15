@@ -104,7 +104,6 @@
           type: 'get',
           dataType: 'json',
           success: (data) => {
-            console.log(data);
             let sesionActiva = false;
             for(let i = 0; i < data.length; i++)
             {
@@ -119,7 +118,7 @@
             }
             else{
               window.location.href = "{% url 'procesos:panel_mesas' %}";
-            } 
+            }
           }
         });
       }

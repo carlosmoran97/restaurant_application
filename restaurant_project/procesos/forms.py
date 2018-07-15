@@ -1,6 +1,6 @@
 from django import forms
 from django.contrib.auth.models import User
-from procesos.models import PerfilDeUsuario, Sesion
+from procesos.models import PerfilDeUsuario, Sesion, Orden
 from restaurant_application.models import Asignacion, Empleado, Puesto
 
 class UsuarioForm(forms.ModelForm):
@@ -24,4 +24,13 @@ class SesionForm(forms.ModelForm):
             'cajero':forms.Select(attrs={'class':'form-control','id':'selectCajero'}),
             'monto_apertura':forms.TextInput(attrs={'class':'form-control','id':'txtMontoApertura'}),
             'monto_real':forms.TextInput(attrs={'class':'form-control','id':'txtMontoReal'}),
+        }
+
+class OrdenForm(forms.ModelForm):
+    class Meta():
+        model = Orden
+        fields = ('mesero', 'comentario')
+        widgets = {
+            'mesero':forms.Select(attrs={'class':'form-control','id':'selectMesero'}),
+            'comentario':forms.Textarea({'class':'form-control','rows':'5','id':'txtComentario'})
         }
