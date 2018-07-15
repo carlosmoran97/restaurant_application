@@ -21,12 +21,16 @@
 
         </div>
     </div>
-    
+
+    {% include 'base/modal.html' %}
+
 {% endblock %}
 
 {% block JavaScriptFiles %}
 <script>
+    var idMesa;
     $(document).ready(() => {
+        idMesa = "";
         $.ajax({
             url: "{% url 'restaurant:lista_mesas' %}",
             type: 'GET',
@@ -36,7 +40,7 @@
                 for(let i = 0; i < data.length; i++)
                 {
                     if(!data[i].ocupado){
-                        html += `<div class="card text-white bg-success mb-3 mesa-card" style="max-width: 18rem;">
+                        html += `<div class="card text-white bg-success mb-3 mesa-card" style="max-width: 18rem;" value="${data[i].codigo_mesa}">
                                     <div class="card-header">Mesa ${data[i].numero_mesa}</div>
                                     <div class="card-body">
                                         <div class="card-text">
@@ -46,7 +50,7 @@
                                 </div>`;
                     }
                     else{
-                        html += `<div class="card text-white bg-danger mb-3 mesa-card" style="max-width: 18rem;">
+                        html += `<div class="card text-white bg-danger mb-3 mesa-card" style="max-width: 18rem;" value="${data[i].codigo_mesa}">
                                     <div class="card-header">Mesa ${data[i].numero_mesa}</div>
                                     <div class="card-body">
                                         <div class="card-text">
@@ -59,6 +63,17 @@
                 $('#mesas').html(html);
             }
         });
+    });
+
+    $(document).on("click", ".mesa-card", function(){
+      idMesa = $(this).attr("value");
+      $("#cargarForm").html(`{% include 'procesos/abrir_orden_formulario.html' %}`);
+      $("#labelModal").html("Abrir Orden");
+      $("#modal").modal("show");
+    });
+
+    $(document).on("click", "#btn-guardar", function(){
+      alert(idMesa);
     });
 </script>
 <style>

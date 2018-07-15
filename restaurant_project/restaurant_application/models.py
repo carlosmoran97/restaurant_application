@@ -61,5 +61,5 @@ class Caja(models.Model):
 
 class Cliente(models.Model):
     nombre = models.CharField(max_length=256)
-    nit = models.CharField(max_length=14)
-    direccion = models.CharField(max_length=512)
+    nit = models.CharField(max_length=14, null=True)
+    direccion = models.CharField(max_length=512, null=True)

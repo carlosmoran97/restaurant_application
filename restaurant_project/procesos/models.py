@@ -28,13 +28,13 @@ class Sesion(models.Model):
 class Orden(models.Model):
     sesion = models.ForeignKey(Sesion, related_name="orden")
     mesero = models.ForeignKey(restaurant.models.Empleado)
-    cliente = models.ForeignKey(restaurant.models.Caja, blank=True)
+    cliente = models.CharField(max_length=500, null=True)
     mesa = models.ForeignKey(restaurant.models.Mesa)
 
     fecha_orden = models.DateTimeField(auto_now=True)
-    descuento = models.FloatField(blank=True)
+    descuento = models.FloatField(null=True)
     propina = models.FloatField(default=0.10)
-    estado = models.CharField(max_length=20)
+    estado = models.CharField(max_length=20, default="No Finalizado")
     comentario = models.TextField(max_length=512)
 
     def calcularTotal(self):

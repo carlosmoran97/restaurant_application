@@ -1,13 +1,13 @@
 from django.shortcuts import render
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from procesos.forms import PerfilDeUsuarioForm, UsuarioForm, SesionForm
+from procesos.forms import PerfilDeUsuarioForm, UsuarioForm, SesionForm, OrdenForm
 from procesos.serializers import SesionSerializer
-from procesos.models import Sesion
+from procesos.models import Sesion, Orden
 from restaurant_application.models import Asignacion, Empleado, Puesto, Caja, Cliente, Mesa
 from django.http import JsonResponse
 import datetime
-from django.views.generic import ListView
+from django.views.generic import ListView, CreateView
 # Create your views here.
 
 def registro_usuario(request):
@@ -80,4 +80,11 @@ class DetalleSesionCaja(APIView):
 
 class PanelMesasView(ListView):
     def get(self, request):
-        return render(request, 'procesos/mesas.html')
+        formOrden = OrdenForm()
+        context = {'formOrden':formOrden}
+        return render(request, 'procesos/mesas.html', context)
+
+class PanelMesasView(CreateView):
+    model = Orden
+    template_name = 'procesos/mesas.html'
+    fields = ('mesero', 'comentario')
