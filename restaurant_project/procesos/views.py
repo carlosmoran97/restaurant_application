@@ -7,6 +7,7 @@ from procesos.models import Sesion
 from restaurant_application.models import Asignacion, Empleado, Puesto, Caja, Cliente, Mesa
 from django.http import JsonResponse
 import datetime
+from django.views.generic import ListView
 # Create your views here.
 
 def registro_usuario(request):
