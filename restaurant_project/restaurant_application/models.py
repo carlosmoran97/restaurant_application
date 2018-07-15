@@ -54,7 +54,7 @@ class Asignacion(models.Model):
         unique_together = ('empleado', 'puesto')
 
 class Caja(models.Model):
-    numero_caja = models.PositiveIntegerField()
+    numero_caja = models.PositiveIntegerField(unique=True)
 
     def __str__(self):
         return 'Caja {}'.format(self.numero_caja)
@@ -63,4 +63,3 @@ class Cliente(models.Model):
     nombre = models.CharField(max_length=256)
     nit = models.CharField(max_length=14)
     direccion = models.CharField(max_length=512)
-    

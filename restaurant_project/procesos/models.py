@@ -9,14 +9,14 @@ class PerfilDeUsuario(models.Model):
 
     def __str__(self):
         return self.usuario.username
-    
+
 class Sesion(models.Model):
     caja = models.ForeignKey(restaurant.models.Caja)
     cajero = models.ForeignKey(restaurant.models.Empleado)
     fecha_apertura = models.DateTimeField(auto_now=True)
-    fecha_cierre = models.DateTimeField(blank = True)
-    monto_apertura = models.FloatField()
-    monto_real = models.FloatField()
+    fecha_cierre = models.DateTimeField(null=True)
+    monto_apertura = models.DecimalField(max_digits=20, decimal_places=2)
+    monto_real = models.DecimalField(max_digits=20, decimal_places=2, null=True)
     estado = models.CharField(max_length=20)
 
     def calcularMontoEstimado(self):
@@ -24,7 +24,7 @@ class Sesion(models.Model):
 
     def calcularDiferencia(self):
         pass
-    
+
 class Orden(models.Model):
     sesion = models.ForeignKey(Sesion, related_name="orden")
     mesero = models.ForeignKey(restaurant.models.Empleado)
@@ -40,7 +40,7 @@ class Orden(models.Model):
     def calcularTotal(self):
         pass
 
-    
+
 class DetalleOrden(models.Model):
     orden = models.ForeignKey(Orden, related_name="detalles_de_orden")
     consumible = models.ForeignKey(restaurant.models.Platillo)

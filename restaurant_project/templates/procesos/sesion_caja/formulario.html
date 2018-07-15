@@ -1,0 +1,33 @@
+<div class="modal-body">
+  <div class="row">
+    <div class="col-md-6">
+      <div class="form-group">
+        <label>Caja</label>
+          {{ form.caja }}
+        <small class="form-text text-muted"></small>
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-6">
+      <div class="form-group">
+        <label>Cajero</label>
+          {{ form.cajero }}
+        <small class="form-text text-muted"></small>
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-6">
+      <div class="form-group">
+        <label>Monto de Apertura</label>
+          {{ form.monto_apertura }}
+        <small class="form-text text-muted"></small>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="modal-footer">
+  <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+  <button id="btn-guardar" type="button" class="btn btn-primary" value="">Guardar</button>
+</div>

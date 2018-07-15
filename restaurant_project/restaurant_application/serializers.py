@@ -1,11 +1,10 @@
 from rest_framework import serializers
-from .models import CategoriaPlatillo, Platillo, Mesa, Empleado, Puesto, Asignacion
+from .models import CategoriaPlatillo, Platillo, Mesa, Empleado, Puesto, Asignacion, Caja, Cliente
 
 class CategoriaPlatilloSerializer(serializers.ModelSerializer):
     class Meta:
         model = CategoriaPlatillo
         fields = '__all__'
-
 
 class PlatilloSerializer(serializers.ModelSerializer):
     categoria_platillo = CategoriaPlatilloSerializer(many=False)
@@ -34,3 +33,13 @@ class AsignacionSerializer(serializers.ModelSerializer):
     class Meta:
         model = Asignacion
         fields = ('id', 'empleado', 'puesto', 'salario', 'fecha_contratacion')
+
+class CajaSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Caja
+        fields = '__all__'
+
+class ClienteSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Cliente
+        fields = '__all__'

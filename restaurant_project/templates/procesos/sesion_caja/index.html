@@ -1,0 +1,188 @@
+.{% extends 'base/base.html'%}
+{% block TitlePage %}
+  {{ 'Sesión Caja' }}
+{% endblock %}
+{% block body %}
+    <div class="container">
+      <!-- Breadcrumbs-->
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item">
+          <a href="#">Restaurant</a>
+        </li>
+        <li class="breadcrumb-item active">Sesión Caja</li>
+      </ol>
+      <!-- Example DataTables Card-->
+      <div class="card mb-3">
+        <div class="card-header">
+          <i class="fa fa-table"></i> Sesión Caja
+          <button id="btn-registrar-sesión" type="button" class="btn btn-success btn-sm">Apertura Sesión</button>
+        </div>
+        <div class="card-body">
+          <div class="table-responsive">
+            <table class="table table-bordered" id="tableSesion" width="100%" cellspacing="0">
+              <thead>
+                <tr>
+                  <th>Id</th>
+                  <th>Caja</th>
+                  <th>Cajero</th>
+                  <th>Apertura</th>
+                  <th>Cierre</th>
+                  <th>Estado</th>
+                  <th width="150px"></th>
+                </tr>
+              </thead>
+              <tbody>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      <div class="card-footer small text-muted"></div>
+    </div>
+
+    {% include 'base/modal.html' %}
+
+{% endblock %}
+{% block JavaScriptFiles %}
+  <script type="text/javascript">
+    //Variable global para Editar y Eliminar
+    var idSesion;
+    $(document).ready(function(){
+      //Inicializar variables
+      idSesion = "";
+      //alert('Funciona JQuery!');
+      cargarDatos();
+    });
+
+    //Abrir Modal de Formulario de Registro de Sesión Caja
+    $(document).on("click", "#btn-registrar-sesión", function(){
+      $("#cargarForm").html(`{% include 'procesos/sesion_caja/formulario.html' %}`);
+      $("#btn-guardar").attr({value:"{% url 'procesos:create_sesion_caja' %}"});
+      $("#labelModal").html("Iniciar Sesión Caja");
+      $("#modal").modal("show");
+    });
+
+
+    //Función para guardar el formulario
+    $(document).on("click", "#btn-guardar", function(){
+      $.ajax({
+        url : $(this).attr("value"),
+        data : {numero_caja: $("#selectCaja").val(), idEmpleado: $("#selectCajero").val(), monto_apertura: $("#txtMontoApertura").val()},
+        type: "GET",
+        dataType: "json",
+        success : function (data) {
+          //alert('Registrado '+data.respuesta);
+          $("#modal").modal("hide");
+          cargarDatos();
+        }
+      });
+    });
+
+    $(document).on("click", ".ver", function(){
+      idSesion = $(this).attr("value");
+      $("#cargarForm").html(`{% include 'procesos/sesion_caja/formulario_detalle.html' %}`);
+      $(".modal-dialog").attr("class", "modal-dialog modal-lg");
+      $("#labelModal").html("Detalle de Caja");
+
+      $.ajax({
+        url : "{% url 'procesos:detalle_sesion_caja' %}",
+        data: {id: idSesion},
+        type: 'GET',
+        dataType: "json",
+        success : function (data) {
+          console.log(data);
+          $("#lblEmpleado").html(data[0].cajero.nombre+" "+data[0].cajero.apellido);
+          $("#lblCaja").html(data[0].caja.numero_caja);
+          $("#lblApertura").html(formatFecha(new Date(data[0].fecha_apertura)));
+          if(data[0].fecha_cierre == null){
+            $("#lblCierre").html("");
+          } else{
+            $("#lblCierre").html(formatFecha(new Date(data[0].fecha_cierre)));
+          }
+          $("#lblMontoApertura").html("$ "+data[0].monto_apertura);
+          $("#lblMontoEstimado").html("$ --");
+          $("#lblMontoReal").html("$ "+data[0].monto_real);
+          $("#lblMontoDiferencia").html("$ --");
+          $("#lblEstado").html(data[0].estado);
+        }
+      });
+
+      $("#modal").modal("show");
+    });
+
+    //Abrir ventana para calcular cerrar
+    $(document).on("click", ".cerrar", function(){
+      idSesion = $(this).attr("value");
+      $("#cargarForm").html(`{% include 'procesos/sesion_caja/confirmar_cerrar.html' %}`);
+      $("#labelModal").html("Cerrar Sesión Caja");
+      $("#modal").modal("show");
+    });
+
+    $(document).on("click", "#btn-confirmar-cerrar", function(){
+      $.ajax({
+        url : "{% url 'procesos:cerrar_sesion_caja' %}",
+        data : {id: idSesion, monto_real: $("#txtMontoReal").val()},
+        type: "GET",
+        dataType: "json",
+        success : function (data) {
+          //alert('Registrado '+data.respuesta);
+          $("#modal").modal("hide");
+          cargarDatos();
+        }
+      });
+    });
+
+    //Funcion cargar lista
+    function cargarDatos(){
+      $.ajax({
+        url : "{% url 'procesos:lista_sesion_caja' %}",
+        type: 'GET',
+        dataType: "json",
+        success : function (data) {
+          console.log(data);
+          $("#tableSesion").DataTable({
+            destroy: true,
+            data : data,
+            ordering: false,
+            columns: [
+              { "data": "id" },
+              { "data": "caja.numero_caja" },
+              { sortable: false,
+                "render": function ( data, type, full, meta ) {
+                  var nombre = full.cajero.nombre;
+                  var apellido = full.cajero.apellido;
+                  var nombre_completo = nombre+' '+apellido;
+                    return nombre_completo;
+              }},
+              { sortable: false,
+                "render": function ( data, type, full, meta ) {
+                    return formatFecha(new Date(full.fecha_apertura));
+              }},
+              { sortable: false,
+                "render": function ( data, type, full, meta ) {
+                    if(full.fecha_cierre == null){
+                      return "";
+                    } else{
+                      return formatFecha(new Date(full.fecha_cierre));
+                    }
+              }},
+              { "data": "estado" },
+              { sortable: false,
+                "render": function ( data, type, full, meta ) {
+                  var id = full.id;
+                  var htmlButton = '<button type=\"button\" class=\"btn btn-outline-info btn-sm ver\" value='+id+'><i class="fa fa-eye" aria-hidden="true"></i></button>&nbsp;&nbsp;&nbsp;';
+                  htmlButton += '<button type=\"button\" class=\"btn btn-outline-danger btn-sm cerrar\" value='+id+'><i class="fa fa-lock" aria-hidden="true"></i></button>';
+                    return htmlButton;
+              }},
+            ]
+          });
+          $("#tableSesion_filter").hide();
+        }
+      });
+    }
+
+    //Dar formato a fecha
+    function formatFecha(fecha){
+      return fecha.getFullYear()+"-"+(fecha.getMonth()+1)+"-"+fecha.getDate()+" "+fecha.getHours()+":"+fecha.getMinutes()+":"+fecha.getSeconds();
+    }
+  </script>
+{% endblock %}
