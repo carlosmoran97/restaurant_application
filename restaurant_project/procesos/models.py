@@ -32,7 +32,6 @@ class Orden(models.Model):
     mesa = models.ForeignKey(restaurant.models.Mesa)
 
     fecha_orden = models.DateTimeField(auto_now=True)
-    descuento = models.FloatField(null=True)
     propina = models.FloatField(default=0.10)
     estado = models.CharField(max_length=20, default="No Finalizado")
     comentario = models.TextField(max_length=512)
@@ -40,13 +39,13 @@ class Orden(models.Model):
     def calcularTotal(self):
         pass
 
-
 class DetalleOrden(models.Model):
     orden = models.ForeignKey(Orden, related_name="detalles_de_orden")
     consumible = models.ForeignKey(restaurant.models.Platillo)
     cantidad = models.PositiveIntegerField()
     precio_de_venta = models.FloatField()
     comentario = models.CharField(max_length=128)
+    descuento = models.FloatField(null=True)
 
     def calcularSubtotal(self):
         pass

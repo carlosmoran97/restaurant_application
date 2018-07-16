@@ -60,11 +60,73 @@
 
                   </div>
                 </div>
+                <hr>
                 <div id="total" class="row">
-
+                  <div class="col-md-8">
+                    <label>Total:</label>
+                    <strong>$ <span id="lblTotal">00.00</span></strong>
+                  </div>
                 </div>
+                <hr>
                 <div id="calculadora" class="row">
-
+                  <div class="col-sm-12">
+                    <div class="row">
+                      <div class="col-sm-2">
+                        <h1 class="sobre opcion-numero" value="1"><span class="badge badge-secondary">1</span></h1>&nbsp;&nbsp;
+                      </div>
+                      <div class="col-sm-2">
+                        <h1 class="sobre opcion-numero" value="2"><span class="badge badge-secondary">2</span></h1>&nbsp;&nbsp;
+                      </div>
+                      <div class="col-sm-2">
+                        <h1 class="sobre opcion-numero" value="3"><span class="badge badge-secondary">3</span></h1>&nbsp;&nbsp;
+                      </div>
+                      <div class="col-sm-4">
+                        <h1 id="opcion-cantidad" class="sobre"><span class="badge badge-secondary opcion" value="cantidad">Cantidad</span></h1>
+                      </div>
+                    </div>
+                    <div class="row">
+                      <div class="col-sm-2">
+                        <h1 class="sobre opcion-numero" value="4"><span class="badge badge-secondary">4</span></h1>&nbsp;&nbsp;
+                      </div>
+                      <div class="col-sm-2">
+                        <h1 class="sobre opcion-numero" value="5"><span class="badge badge-secondary">5</span></h1>&nbsp;&nbsp;
+                      </div>
+                      <div class="col-sm-2">
+                        <h1 class="sobre opcion-numero" value="6"><span class="badge badge-secondary">6</span></h1>&nbsp;&nbsp;
+                      </div>
+                      <div class="col-sm-4">
+                        <h1 id="opcion-precio" class="sobre"><span class="badge badge-secondary opcion" value="precio">Precio</span></h1>
+                      </div>
+                    </div>
+                    <div class="row">
+                      <div class="col-sm-2">
+                        <h1 class="sobre opcion-numero" value="7"><span class="badge badge-secondary">7</span></h1>&nbsp;&nbsp;
+                      </div>
+                      <div class="col-sm-2">
+                        <h1 class="sobre opcion-numero" value="8"><span class="badge badge-secondary">8</span></h1>&nbsp;&nbsp;
+                      </div>
+                      <div class="col-sm-2">
+                        <h1 class="sobre opcion-numero" value="9"><span class="badge badge-secondary">9</span></h1>&nbsp;&nbsp;
+                      </div>
+                      <div class="col-sm-4">
+                        <h1 id="opcion-descuento" class="sobre"><span class="badge badge-secondary opcion" value="descuento">Descuento</span></h1>
+                      </div>
+                    </div>
+                    <div class="row">
+                      <div class="col-sm-2">
+                        <h1><span class="badge badge-secondary"></span></h1>&nbsp;&nbsp;
+                      </div>
+                      <div class="col-sm-2">
+                        <h1 class="sobre opcion-numero" value="0"><span class="badge badge-secondary">0</span></h1>&nbsp;&nbsp;
+                      </div>
+                      <div class="col-sm-2">
+                        <h1 class="sobre"><span class="badge badge-secondary">.</span></h1>&nbsp;&nbsp;
+                      </div>
+                      <div class="col-sm-4">
+                        <h1 class="sobre"><span class="badge badge-secondary"><i class="fa fa-window-close" aria-hidden="true"></i></span></h1>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
@@ -80,9 +142,17 @@
 
   <script type="text/javascript">
 
-
+    //Variable codigoPlatillo
+    var codigoPlatillo;
+    var accion;
+    var idDetalle;
+    var contador;
     $(document).ready(function(){
       //alert(getUrlVars()["id"]);
+      codigoPlatillo = "";
+      accion = "";
+      idDetalle = "";
+      contador = 0;
       llenarCategorias();
     });
 
@@ -105,14 +175,14 @@
         dataType: "json",
         success : function (data) {
           //alert(data[0].nombre);
-          var htmlRow = `<div class="row platillo_select" id="${data[0].codigoPlatillo}">
+          var htmlRow = `<div id="${contador}" class="row platillo_select" value="${data[0].codigoPlatillo}">
                           <div class="col-12">
                             <div class="row">
                               <div class="col-8">
                                 <label id="lblNombrePlatillo">${data[0].nombre}</label>
                               </div>
                               <div class="col-4">
-                                <label id="lblPrecio">$&nbsp;${data[0].precioUnitario}</label>
+                                <label>$&nbsp;<span id="lblPrecio">${(parseFloat(data[0].precioUnitario).toFixed(2))}</span></label>
                               </div>
                             </div>
                             <div class="row">
@@ -120,16 +190,59 @@
                                 <label>cant: <span id="lblCantidad">1</span></label>
                               </div>
                               <div class="col-4">
-                                <label id="lblPrecio">$&nbsp;${data[0].precioUnitario}&nbsp;c/u</label>
+                                <label>$&nbsp;<span id="lblPrecioUnitario">${data[0].precioUnitario}</span>&nbsp;c/u</label>
                               </div>
                             </div>
                           </div>
                          </div>`
           $("#agregandoPlatillos").html($("#agregandoPlatillos").html()+htmlRow);
+          contador++;
+          calcularTotal();
         }
       });
     });
+    //Seleccionar platillo en detalle orden
+    $(document).on("click", ".platillo_select", function(){
+      idDetalle = $(this).attr("id");
+      $(".platillo_select").removeClass("platillo_select_elegido");
+      $(this).addClass("platillo_select_elegido");
+      removerClass();
+      $("#opcion-cantidad .badge").addClass("badge-info");
+      accion = "cantidad";
+    });
 
+    //Cambiar de color en las siguientes opciones
+    $(document).on("click", ".opcion", function(){
+      removerClass();
+      $(this).addClass("badge-info");
+      accion = $(this).attr("value");
+    });
+
+    //Agregar Número
+    $(document).on("click", ".opcion-numero", function(){
+      $(".platillo_select #lblCantidad:eq("+idDetalle+")").html($(".platillo_select #lblCantidad:eq("+idDetalle+")").html()+$(this).attr("value"));
+      cantidad = parseFloat($(".platillo_select #lblCantidad:eq("+idDetalle+")").html()).toFixed(2);
+      preciounitario = parseFloat($(".platillo_select #lblPrecioUnitario:eq("+idDetalle+")").html()).toFixed(2);
+      //alert(cantidad*preciounitario);
+      $(".platillo_select #lblPrecio:eq("+idDetalle+")").html(parseFloat(cantidad*preciounitario).toFixed(2));
+      calcularTotal();
+    });
+
+    //Remover color a los demás opciones de calculadora
+    function removerClass(){
+      $(".opcion").removeClass("badge-info");
+      $(".opcion").addClass("badge-secondary");
+    }
+
+    //Calcular total
+    function calcularTotal(){
+      var total = 0;
+      for(var i = 0; i < $(".platillo_select").toArray().length; i++){
+        total += parseFloat($(".platillo_select #lblPrecio:eq("+i+")").html());
+      }
+      //alert(total);
+      $("#lblTotal").html(parseFloat(total).toFixed(2));
+    }
     // Simular click para minimizar el nav
     $("#sidenavToggler > i").click();
 
@@ -214,8 +327,11 @@
     .platillo_select:hover{
       opacity: 0.7;
     }
-    .platillo_select:hover, #lblNombrePlatillo:hover, #lblPrecio:hover{
+    .platillo_select:hover, #lblNombrePlatillo:hover, #lblPrecio:hover, #lblCantidad:hover, #lblPrecioUnitario:hover, .sobre:hover{
       cursor: pointer;
+    }
+    .platillo_select_elegido{
+      opacity: 0.7;
     }
   </style>
 {% endblock %}
