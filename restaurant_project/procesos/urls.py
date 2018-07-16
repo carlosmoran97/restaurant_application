@@ -16,4 +16,8 @@ urlpatterns = [
     url(r'^abrir_orden/', login_required(views.AbrirOrden.as_view()), name='abrir_orden'),
     url(r'^detalle_orden/(?P<pk>\d+)/$', login_required(views.detalle_orden.as_view()), name='detalle_orden'),
     url(r'^orden_detail/', login_required(views.OrdenDetail.as_view()), name='orden_detail'),
+    url(r'^lista_ordenes/', login_required(views.GetOrdenesList.as_view()), name='orden_list'),
+    url(r'^lista_ordenesactivas', login_required(views.GetOrdenesActivasList.as_view()), name='orden_activa_list'),
+    url(r'^ordenes_activas', login_required(views.OrdenesActivas.as_view()), name='ordenes_activas'),
+    url(r'^orden_update', login_required(views.GetOrdenesUpdate.as_view()), name='orden_update'),
 ]
