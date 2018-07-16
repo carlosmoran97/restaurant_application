@@ -7,7 +7,7 @@ from procesos.models import Sesion, Orden
 from restaurant_application.models import Asignacion, Empleado, Puesto, Caja, Cliente, Mesa
 from django.http import JsonResponse
 import datetime
-from django.views.generic import ListView, CreateView
+from django.views.generic import ListView, CreateView, DetailView
 # use estos para el login
 
 from django.core.urlresolvers import reverse
@@ -98,8 +98,9 @@ class AbrirOrden(APIView):
         orden = Orden.objects.create(sesion=sesion[0], mesero=empleado[0], cliente=request.GET['cliente'], mesa=mesa[0], comentario=request.GET['comentario'])
         return JsonResponse({'respuesta':orden.id})
 
-def detalle_orden(request):
-    return render(request, 'procesos/detalle_orden.html')
+class detalle_orden(DetailView):
+    model = Orden
+    template_name = 'procesos/detalle_orden.html'
 
 class OrdenDetail(APIView):
     def get(self, request):

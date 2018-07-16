@@ -84,6 +84,12 @@ class PlatilloList(APIView):
         serialized = PlatilloSerializer(platillos, many=True)
         return Response(serialized.data)
 
+class PlatilloDetail(APIView):
+    def get(self, request):
+        platillo = Platillo.objects.filter(codigoPlatillo=request.GET['codigoPlatillo'])
+        serialized = PlatilloSerializer(platillo, many=True)
+        return Response(serialized.data)
+
 """
     VIEWS PARA MESAS
 """

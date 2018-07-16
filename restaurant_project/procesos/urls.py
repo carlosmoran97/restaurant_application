@@ -14,6 +14,6 @@ urlpatterns = [
     # urls utiles para realizar ordenes
     url(r'^panel_mesas/', login_required(views.PanelMesasView.as_view()), name='panel_mesas'),
     url(r'^abrir_orden/', login_required(views.AbrirOrden.as_view()), name='abrir_orden'),
-    url(r'^detalle_orden/', login_required(views.detalle_orden), name='detalle_orden'),
+    url(r'^detalle_orden/(?P<pk>\d+)/$', login_required(views.detalle_orden.as_view()), name='detalle_orden'),
     url(r'^orden_detail/', login_required(views.OrdenDetail.as_view()), name='orden_detail'),
 ]
