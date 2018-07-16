@@ -1,57 +1,41 @@
 {% extends 'base/base.html'%}
+{% load staticfiles %}
 {% block TitlePage %}
   {{ 'Detalle Orden' }}
 {% endblock %}
 {% block body %}
-    <div class="container">
-      <!-- Breadcrumbs-->
-      <ol class="breadcrumb">
-          <li class="breadcrumb-item">
-              <a href="#">Procesos</a>
-          </li>
-          <li class="breadcrumb-item">
-              <a href="#">Ordenes</a>
-          </li>
-          <li class="breadcrumb-item active">
-              Detalle de Orden
-          </li>
-      </ol>
-
-      <div class="jumbotron">
-        <h1 class="display-5">MESA #<span id="numeroMesa"></span></h1>
-        <hr class="my-4">
-        <div class="row">
-          <div class="col-md-4">
-            <label>Mesero:</label>
-            <strong><span id="lblNombreMesero"></span></strong>
-          </div>
-          <div class="col-md-4">
-            <label>Cliente:</label>
-            <strong><span id="lblNombreCliente"></span></strong>
-          </div>
-          <div class="col-md-4">
-            <label>Estado:</label>
-            <strong><span id="lblEstado"></span></strong>
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-8">
+          <div id="categorias">
+            <ul class="nav nav-tabs" id="tabCategorias" role="tablist">
+              
+            </ul>
+            <div class="tab-content" id="tabPlatillos">
+              
+            </div>
           </div>
         </div>
-        <div class="row">
-          <div class="col-md-4">
-            <label>Comentario:</label>
-            <strong><span id="lblComentario"></span></strong>
-          </div>
+        <div class="col-4">
+          I'm another column!
         </div>
+      </div>
+      
       </div>
 
     {% include 'base/modal.html' %}
 
 {% endblock %}
 {% block JavaScriptFiles %}
+<script src="{% static 'js/accounting.min.js' %}"></script>
+
   <script type="text/javascript">
 
 
     $(document).ready(function(){
       //alert(getUrlVars()["id"]);
       cargarDatos();
+      llenarCategorias();
     });
 
     function cargarDatos(){
@@ -62,12 +46,12 @@
         dataType: "json",
         success : function (data) {
           //console.log(data);
-          //alert('Registro '+data.respuesta);
-          $("#numeroMesa").html(data[0].mesa.numero_mesa);
-          $("#lblNombreMesero").html(data[0].mesero.nombre+" "+data[0].mesero.apellido);
-          $("#lblNombreCliente").html(data[0].cliente);
-          $("#lblEstado").html(data[0].estado);
-          $("#lblComentario").html(data[0].comentario);
+          // //alert('Registro '+data.respuesta);
+          // $("#numeroMesa").html(data[0].mesa.numero_mesa);
+          // $("#lblNombreMesero").html(data[0].mesero.nombre+" "+data[0].mesero.apellido);
+          // $("#lblNombreCliente").html(data[0].cliente);
+          // $("#lblEstado").html(data[0].estado);
+          // $("#lblComentario").html(data[0].comentario);
         }
       });
     }
@@ -80,5 +64,82 @@
       });
       return vars;
     }
+
+    // Simular click para minimizar el nav
+    $("#sidenavToggler > i").click();
+    
+    function llenarCategorias()
+    {
+      let ul = $("#tabCategorias"), htmlUL = ``;
+      let div = $("#tabPlatillos"), htmlDIV = ``;
+      $.ajax({
+        url: "{% url 'restaurant:lista_categoria_platillos_con_platillos' %}",
+        type: 'get',
+        dataType: 'json',
+        success: (data) => {
+          console.log(data);
+          for(let i = 0; i < data.length; i++)
+          {
+            if(i == 0){
+              htmlUL += `<li class="nav-item">
+                          <a class="nav-link active" id="${data[i].idCategoriaPlatillo}-tab" data-toggle="tab" href="#${data[i].idCategoriaPlatillo}" role="tab" aria-controls="${data[i].idCategoriaPlatillo}" aria-selected="true">${data[i].categoria}</a>
+                        </li>`;
+              htmlDIV += `<div class="tab-pane fade show active" id="${data[i].idCategoriaPlatillo}" role="tabpanel" aria-labelledby="${data[i].idCategoriaPlatillo}-tab">`;          
+              for(let j = 0; j < data[i].platillos.length; j++){
+                htmlDIV +=`
+                <div class="card bg-light mb-3  text-center platillo-card" style="width: 12rem;">
+                  <div class="card-body">
+                    <p class="card-text">
+                        ${data[i].platillos[j].nombre}
+                    </p>
+                    <div class="card-footer bg-transparent">
+                        ${accounting.formatMoney(data[i].platillos[j].precioUnitario)}
+                    </div>
+                  </div>
+                </div>
+                `;
+              }
+              htmlDIV += `</div>`;
+            }
+            else{
+              htmlUL +=  `
+              <li class="nav-item">
+                <a class="nav-link" id="${data[i].idCategoriaPlatillo}-tab" data-toggle="tab" href="#${data[i].idCategoriaPlatillo}" role="tab" aria-controls="${data[i].idCategoriaPlatillo}" aria-selected="false">${data[i].categoria}</a>
+              </li>`;
+              htmlDIV += `<div class="tab-pane fade" id="${data[i].idCategoriaPlatillo}" role="tabpanel" aria-labelledby="${data[i].idCategoriaPlatillo}-tab">`;          
+              for(let j = 0; j < data[i].platillos.length; j++){
+                htmlDIV +=`
+                <div class="card bg-light mb-3  text-center platillo-card" style="width: 12rem;">
+                  <div class="card-body">
+                    <p class="card-text">
+                        ${data[i].platillos[j].nombre}
+                    </p>
+                    <div class="card-footer bg-transparent">
+                        ${accounting.formatMoney(data[i].platillos[j].precioUnitario)}
+                    </div>
+                  </div>
+                </div>
+                `;
+              }
+              htmlDIV += `</div>`;
+              
+            }
+            
+          }
+          ul.html(htmlUL);
+          div.html(htmlDIV);
+        }
+      });
+    }
+    
+
   </script>
+  <style>
+    .platillo-card
+    {
+      display: inline-block; cursor: pointer;
+      min-width: 50px;
+      margin: 3px;
+    }
+  </style>
 {% endblock %}

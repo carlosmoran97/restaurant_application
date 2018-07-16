@@ -100,6 +100,7 @@
       codigoPlatillo = "";
       $("#cargarForm").html(`{% include 'restaurant_application/platillos/formulario.html' %}`);
       $("#btn-guardar").attr({value:"{% url 'restaurant:create_platillos' %}"});
+      $("#btn-guardar-otro").attr({value:"{% url 'restaurant:create_platillos' %}"});
       $("#labelModal").html("Registrar Platillo");
       $("#modal").modal("show");
     });
@@ -113,6 +114,7 @@
       //$("#selectCategoriaPlatillo").val($(this).parents("tr").attr("value"));
       $("#selectCategoriaPlatillo").val($(this).attr("id"));
       $("#btn-guardar").attr({value:"{% url 'restaurant:editar_platillos' %}"});
+      $("#btn-guardar-otro").attr({value:"{% url 'restaurant:editar_platillos' %}"});
       $("#labelModal").html("Editar Platillo");
       $("#modal").modal("show");
     });
@@ -137,6 +139,31 @@
           //alert('Registrado '+data.respuesta);
           $("#modal").modal("hide");
           cargarDatos();
+        }
+      });
+    });
+    // funcion para guardar y añadir otro
+    $(document).on("click", "#btn-guardar-otro", function(){
+      var parametros;
+      if(codigoPlatillo == ""){
+        //En caso que sea Guardar
+        parametros = {'nombre': $("#txtNombre").val(), 'precioUnitario':parseFloat($("#txtPrecioUnitario").val()).toFixed(2), 'categoria_platillo':$("#selectCategoriaPlatillo").val()};
+      } else{
+        //En caso que sea Editar
+        parametros = {'codigoPlatillo':codigoPlatillo, 'nombre': $("#txtNombre").val(), 'precioUnitario':parseFloat($("#txtPrecioUnitario").val()).toFixed(2), 'categoria_platillo':$("#selectCategoriaPlatillo").val()};
+      }
+
+      $.ajax({
+        url : $(this).attr("value"),
+        data : parametros,
+        type: "GET",
+        dataType: "json",
+        success : function (data) {
+          cargarDatos();
+          
+          codigoPlatillo = "";
+          $("#cargarForm").html(`{% include 'restaurant_application/platillos/formulario.html' %}`);
+          $("#btn-guardar-otro").attr({value:"{% url 'restaurant:create_platillos' %}"});
         }
       });
     });

@@ -2,7 +2,7 @@ from django.shortcuts import render
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from .models import CategoriaPlatillo, Platillo, Mesa, Empleado, Puesto, Asignacion
-from .serializers import CategoriaPlatilloSerializer, PlatilloSerializer, MesaSerializer, EmpleadoSerializer, PuestoSerializer, AsignacionSerializer
+from .serializers import CategoriaPlatilloSerializer, PlatilloSerializer, MesaSerializer, EmpleadoSerializer, PuestoSerializer, AsignacionSerializer, CategoriaPlatilloConPlatillosSerializer
 from .forms import CategoriaPlatilloForm, PlatilloForm, PlatilloFormSelect, MesaForm, EmpleadoForm, PuestoForm, AsignacionForm, AsignacionFormSelect
 from django.http import JsonResponse
 from django.contrib.auth.decorators import login_required
@@ -35,6 +35,12 @@ class CategoriaPlatilloList(APIView):
     def get(self, request):
         categoriaplatillos = CategoriaPlatillo.objects.all().order_by("-idCategoriaPlatillo")
         serialized = CategoriaPlatilloSerializer(categoriaplatillos, many=True)
+        return Response(serialized.data)
+
+class CategoriaPlatilloConPlatillosList(APIView):
+    def get(self, request):
+        categoriaplatillos = CategoriaPlatillo.objects.all().order_by("-idCategoriaPlatillo")
+        serialized = CategoriaPlatilloConPlatillosSerializer(categoriaplatillos, many=True)
         return Response(serialized.data)
 
 class CategoriaPlatilloListFilter(APIView):

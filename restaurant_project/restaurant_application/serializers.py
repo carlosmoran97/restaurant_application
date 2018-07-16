@@ -38,3 +38,11 @@ class CajaSerializer(serializers.ModelSerializer):
     class Meta:
         model = Caja
         fields = '__all__'
+
+class CategoriaPlatilloConPlatillosSerializer(serializers.ModelSerializer):
+
+    platillos = PlatilloSerializer(many=True, read_only=True)
+
+    class Meta:
+        model = CategoriaPlatillo
+        fields = ('idCategoriaPlatillo', 'categoria', 'platillos')

@@ -12,6 +12,7 @@ urlpatterns = [
     url(r'^categoria_platillos/$', views.index_categoria_platillos, name='index_categoria_platillos'),
     url(r'^create_categoria_platillos/$', login_required(views.CategoriaPlatilloCreate.as_view()), name='create_categoria_platillos'),
     url(r'^lista_categoria_platillos/$', login_required(views.CategoriaPlatilloList.as_view()), name='lista_categoria_platillos'),
+    url(r'^lista_categoria_platillos_con_platillos/$', login_required(views.CategoriaPlatilloConPlatillosList.as_view()), name='lista_categoria_platillos_con_platillos'),
     url(r'^editar_categoria_platillos/$', login_required(views.CategoriaPlatilloUpdate.as_view()), name='editar_categoria_platillos'),
     url(r'^eliminar_categoria_platillos/$', login_required(views.CategoriaPlatilloDelete.as_view()), name='eliminar_categoria_platillos'),
 
