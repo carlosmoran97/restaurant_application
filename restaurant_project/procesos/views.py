@@ -2,7 +2,7 @@ from django.shortcuts import render
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from procesos.forms import PerfilDeUsuarioForm, UsuarioForm, SesionForm, OrdenForm
-from procesos.serializers import SesionSerializer
+from procesos.serializers import SesionSerializer, OrdenSerializer
 from procesos.models import Sesion, Orden
 from restaurant_application.models import Asignacion, Empleado, Puesto, Caja, Cliente, Mesa
 from django.http import JsonResponse
@@ -98,10 +98,14 @@ class AbrirOrden(APIView):
         orden = Orden.objects.create(sesion=sesion[0], mesero=empleado[0], cliente=request.GET['cliente'], mesa=mesa[0], comentario=request.GET['comentario'])
         return JsonResponse({'respuesta':orden.id})
 
-def detalle_orden_ver(request):
-    #form = SesionForm()
-    #context = {'form':form}
+def detalle_orden(request):
     return render(request, 'procesos/detalle_orden.html')
+
+class OrdenDetail(APIView):
+    def get(self, request):
+        orden = Orden.objects.filter(id=request.GET['id'])
+        serialized = OrdenSerializer(orden, many=True)
+        return Response(serialized.data)
 
 def user_login(request):
     if request.method == 'POST':

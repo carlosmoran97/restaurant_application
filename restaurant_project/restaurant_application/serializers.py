@@ -38,8 +38,3 @@ class CajaSerializer(serializers.ModelSerializer):
     class Meta:
         model = Caja
         fields = '__all__'
-
-class ClienteSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Cliente
-        fields = '__all__'

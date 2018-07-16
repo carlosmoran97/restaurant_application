@@ -83,9 +83,10 @@
         type: "GET",
         dataType: "json",
         success : function (data) {
-          alert('Registro '+data.respuesta);
-          $("#modal").modal("hide");
-          cargarDatos();
+          window.location.href = "/procesos/detalle_orden/?id="+data.respuesta;
+          //alert('Registro '+data.respuesta);
+          //$("#modal").modal("hide");
+          //cargarDatos();
         }
       });
     });
