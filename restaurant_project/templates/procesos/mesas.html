@@ -28,9 +28,9 @@
 
 {% block JavaScriptFiles %}
 <script>
-    var idMesa;
+    var codigo_mesa;
     $(document).ready(() => {
-        idMesa = "";
+        codigo_mesa = "";
         $.ajax({
             url: "{% url 'restaurant:lista_mesas' %}",
             type: 'GET',
@@ -66,14 +66,28 @@
     });
 
     $(document).on("click", ".mesa-card", function(){
-      idMesa = $(this).attr("value");
+      codigo_mesa = $(this).attr("value");
       $("#cargarForm").html(`{% include 'procesos/abrir_orden_formulario.html' %}`);
       $("#labelModal").html("Abrir Orden");
       $("#modal").modal("show");
     });
 
     $(document).on("click", "#btn-guardar", function(){
-      alert(idMesa);
+      $.ajax({
+        url : "{% url 'procesos:abrir_orden' %}",
+        data : {
+          idEmpleado: $("#selectMesero").val(),
+          codigo_mesa: codigo_mesa,
+          cliente: $("#txtNombreCliente").val(),
+          comentario: $("#txtComentario").val()},
+        type: "GET",
+        dataType: "json",
+        success : function (data) {
+          alert('Registro '+data.respuesta);
+          $("#modal").modal("hide");
+          cargarDatos();
+        }
+      });
     });
 </script>
 <style>

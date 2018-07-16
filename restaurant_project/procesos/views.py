@@ -83,12 +83,25 @@ class DetalleSesionCaja(APIView):
         serialized = SesionSerializer(sesiones, many=True)
         return Response(serialized.data)
 
+class PanelMesasView(ListView):
+    def get(self, request):
+        formOrdenar = OrdenForm()
+        context = {'formOrdenar':formOrdenar}
+        return render(request, 'procesos/mesas.html', context)
 
+class AbrirOrden(APIView):
+    def get(self, request):
+        sesion = Sesion.objects.filter(id=1)
+        empleado = Empleado.objects.filter(idEmpleado=request.GET['idEmpleado'])
+        mesa = Mesa.objects.filter(codigo_mesa=request.GET['codigo_mesa'])
+        mesa.update(ocupado=True)
+        orden = Orden.objects.create(sesion=sesion[0], mesero=empleado[0], cliente=request.GET['cliente'], mesa=mesa[0], comentario=request.GET['comentario'])
+        return JsonResponse({'respuesta':orden.id})
 
-class PanelMesasView(CreateView):
-    model = Orden
-    template_name = 'procesos/mesas.html'
-    fields = ('mesero', 'comentario')
+def detalle_orden_ver(request):
+    #form = SesionForm()
+    #context = {'form':form}
+    return render(request, 'procesos/detalle_orden.html')
 
 def user_login(request):
     if request.method == 'POST':

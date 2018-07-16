@@ -12,4 +12,6 @@ urlpatterns = [
     url(r'^detalle_sesion_caja/', views.DetalleSesionCaja.as_view(), name='detalle_sesion_caja'),
     # urls utiles para realizar ordenes
     url(r'^panel_mesas/', views.PanelMesasView.as_view(), name='panel_mesas'),
+    url(r'^abrir_orden/', views.AbrirOrden.as_view(), name='abrir_orden'),
+    url(r'^detalle_orden/', views.AbrirOrden.as_view(), name='detalle_orden'),
 ]
