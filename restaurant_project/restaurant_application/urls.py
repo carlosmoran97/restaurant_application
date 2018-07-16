@@ -22,6 +22,7 @@ urlpatterns = [
     url(r'^platillos/$', views.index_platillos, name='index_platillos'),
     url(r'^create_platillos/$', login_required(views.PlatilloCreate.as_view()), name='create_platillos'),
     url(r'^lista_platillos/$', login_required(views.PlatilloList.as_view()), name='lista_platillos'),
+    url(r'^platillo_detail/$', login_required(views.PlatilloDetail.as_view()), name='platillo_detail'),
     url(r'^editar_platillos/$', login_required(views.PlatilloUpdate.as_view()), name='editar_platillos'),
     url(r'^eliminar_platillos/$', login_required(views.PlatilloDelete.as_view()), name='eliminar_platillos'),
 

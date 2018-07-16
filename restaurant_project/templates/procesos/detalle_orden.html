@@ -5,22 +5,71 @@
 {% endblock %}
 {% block body %}
     <div class="container-fluid">
-      <div class="row">
-        <div class="col-8">
-          <div id="categorias">
-            <ul class="nav nav-tabs" id="tabCategorias" role="tablist">
-              
-            </ul>
-            <div class="tab-content" id="tabPlatillos">
-              
+
+        <div class="row">
+          <div class="col-8">
+            <div class="row">
+              <div class="card mb-3">
+                <div class="card-header">
+                  <i class="fa fa-bar-chart"></i>Datos de Orden
+                </div>
+                <div class="card-body">
+                  <div class="row">
+                    <div class="col-md-4">
+                      <label>Empleado:</label>
+                      <strong>{{ object.mesero.nombre }}&nbsp;{{ object.mesero.apellido }}</strong>
+                    </div>
+                    <div class="col-md-4">
+                      <label>Cliente:</label>
+                      <strong>{{ object.cliente }}</strong>
+                    </div>
+                    <div class="col-md-4">
+                      <label>Estado:</label>
+                      <strong>{{ object.estado }}</strong>
+                    </div>
+                  </div>
+                  <hr>
+                  <div class="row">
+                    <div class="col-md-8">
+                      <label>Comentario:</label>
+                      <strong>{{ object.comentario }}</strong>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="row">
+                <div id="categorias">
+                  <ul class="nav nav-tabs" id="tabCategorias" role="tablist">
+
+                  </ul>
+                  <div class="tab-content" id="tabPlatillos">
+
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-4">
+            <div class="card mb-3">
+              <div class="card-header">
+                <i class="fa fa-bar-chart"></i>Detalle de Orden
+              </div>
+              <div class="card-body">
+                <div class="row">
+                  <div id="agregandoPlatillos" class="col-12">
+
+                  </div>
+                </div>
+                <div id="total" class="row">
+
+                </div>
+                <div id="calculadora" class="row">
+
+                </div>
+              </div>
             </div>
           </div>
         </div>
-        <div class="col-4">
-          I'm another column!
-        </div>
-      </div>
-      
       </div>
 
     {% include 'base/modal.html' %}
@@ -34,27 +83,8 @@
 
     $(document).ready(function(){
       //alert(getUrlVars()["id"]);
-      cargarDatos();
       llenarCategorias();
     });
-
-    function cargarDatos(){
-      $.ajax({
-        url : "{% url 'procesos:orden_detail' %}",
-        data : {id: getUrlVars()["id"]},
-        type: "GET",
-        dataType: "json",
-        success : function (data) {
-          //console.log(data);
-          // //alert('Registro '+data.respuesta);
-          // $("#numeroMesa").html(data[0].mesa.numero_mesa);
-          // $("#lblNombreMesero").html(data[0].mesero.nombre+" "+data[0].mesero.apellido);
-          // $("#lblNombreCliente").html(data[0].cliente);
-          // $("#lblEstado").html(data[0].estado);
-          // $("#lblComentario").html(data[0].comentario);
-        }
-      });
-    }
 
     //Para obtener parametros
     function getUrlVars() {
@@ -65,9 +95,44 @@
       return vars;
     }
 
+    //Agregar platillos
+    $(document).on("click", ".platillo-card", function(){
+      var codigoPlatillo = $(this).attr("value");
+      $.ajax({
+        url : "{% url 'restaurant:platillo_detail' %}",
+        data : {codigoPlatillo: codigoPlatillo},
+        type: "GET",
+        dataType: "json",
+        success : function (data) {
+          //alert(data[0].nombre);
+          var htmlRow = `<div class="row platillo_select" id="${data[0].codigoPlatillo}">
+                          <div class="col-12">
+                            <div class="row">
+                              <div class="col-8">
+                                <label id="lblNombrePlatillo">${data[0].nombre}</label>
+                              </div>
+                              <div class="col-4">
+                                <label id="lblPrecio">$&nbsp;${data[0].precioUnitario}</label>
+                              </div>
+                            </div>
+                            <div class="row">
+                              <div class="col-3">
+                                <label>cant: <span id="lblCantidad">1</span></label>
+                              </div>
+                              <div class="col-4">
+                                <label id="lblPrecio">$&nbsp;${data[0].precioUnitario}&nbsp;c/u</label>
+                              </div>
+                            </div>
+                          </div>
+                         </div>`
+          $("#agregandoPlatillos").html($("#agregandoPlatillos").html()+htmlRow);
+        }
+      });
+    });
+
     // Simular click para minimizar el nav
     $("#sidenavToggler > i").click();
-    
+
     function llenarCategorias()
     {
       let ul = $("#tabCategorias"), htmlUL = ``;
@@ -84,10 +149,10 @@
               htmlUL += `<li class="nav-item">
                           <a class="nav-link active" id="${data[i].idCategoriaPlatillo}-tab" data-toggle="tab" href="#${data[i].idCategoriaPlatillo}" role="tab" aria-controls="${data[i].idCategoriaPlatillo}" aria-selected="true">${data[i].categoria}</a>
                         </li>`;
-              htmlDIV += `<div class="tab-pane fade show active" id="${data[i].idCategoriaPlatillo}" role="tabpanel" aria-labelledby="${data[i].idCategoriaPlatillo}-tab">`;          
+              htmlDIV += `<div class="tab-pane fade show active" id="${data[i].idCategoriaPlatillo}" role="tabpanel" aria-labelledby="${data[i].idCategoriaPlatillo}-tab">`;
               for(let j = 0; j < data[i].platillos.length; j++){
                 htmlDIV +=`
-                <div class="card bg-light mb-3  text-center platillo-card" style="width: 12rem;">
+                <div class="card bg-light mb-3  text-center platillo-card" value="${data[i].platillos[j].codigoPlatillo}" style="width: 12rem;">
                   <div class="card-body">
                     <p class="card-text">
                         ${data[i].platillos[j].nombre}
@@ -106,10 +171,10 @@
               <li class="nav-item">
                 <a class="nav-link" id="${data[i].idCategoriaPlatillo}-tab" data-toggle="tab" href="#${data[i].idCategoriaPlatillo}" role="tab" aria-controls="${data[i].idCategoriaPlatillo}" aria-selected="false">${data[i].categoria}</a>
               </li>`;
-              htmlDIV += `<div class="tab-pane fade" id="${data[i].idCategoriaPlatillo}" role="tabpanel" aria-labelledby="${data[i].idCategoriaPlatillo}-tab">`;          
+              htmlDIV += `<div class="tab-pane fade" id="${data[i].idCategoriaPlatillo}" role="tabpanel" aria-labelledby="${data[i].idCategoriaPlatillo}-tab">`;
               for(let j = 0; j < data[i].platillos.length; j++){
                 htmlDIV +=`
-                <div class="card bg-light mb-3  text-center platillo-card" style="width: 12rem;">
+                <div class="card bg-light mb-3  text-center platillo-card" value="${data[i].platillos[j].codigoPlatillo}" style="width: 12rem;">
                   <div class="card-body">
                     <p class="card-text">
                         ${data[i].platillos[j].nombre}
@@ -122,16 +187,16 @@
                 `;
               }
               htmlDIV += `</div>`;
-              
+
             }
-            
+
           }
           ul.html(htmlUL);
           div.html(htmlDIV);
         }
       });
     }
-    
+
 
   </script>
   <style>
@@ -145,6 +210,12 @@
     {
       padding-left: 6px;
       padding-right: 6px;
+    }
+    .platillo_select:hover{
+      opacity: 0.7;
+    }
+    .platillo_select:hover, #lblNombrePlatillo:hover, #lblPrecio:hover{
+      cursor: pointer;
     }
   </style>
 {% endblock %}
