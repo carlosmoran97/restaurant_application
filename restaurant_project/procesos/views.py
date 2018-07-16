@@ -8,8 +8,13 @@ from restaurant_application.models import Asignacion, Empleado, Puesto, Caja, Cl
 from django.http import JsonResponse
 import datetime
 from django.views.generic import ListView, CreateView
-# Create your views here.
+# use estos para el login
 
+from django.core.urlresolvers import reverse
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth import authenticate, login, logout
+from django.http import HttpResponseRedirect, HttpResponse
+# Vistas
 def registro_usuario(request):
     registered = False
 
@@ -78,13 +83,38 @@ class DetalleSesionCaja(APIView):
         serialized = SesionSerializer(sesiones, many=True)
         return Response(serialized.data)
 
-class PanelMesasView(ListView):
-    def get(self, request):
-        formOrden = OrdenForm()
-        context = {'formOrden':formOrden}
-        return render(request, 'procesos/mesas.html', context)
+
 
 class PanelMesasView(CreateView):
     model = Orden
     template_name = 'procesos/mesas.html'
     fields = ('mesero', 'comentario')
+
+def user_login(request):
+    if request.method == 'POST':
+        username = request.POST.get('username')
+        password = request.POST.get('password')
+
+        user = authenticate(username=username, password=password)
+
+        if user:
+            if user.is_active:
+                login(request, user)
+                return HttpResponseRedirect(reverse('index'))
+            else:
+                return HttpResponse('Cuenta no activada')
+        else:
+            print("Alguien intentó ingresar y no pudo.")
+            print("Usuario: {} y contraseña: {}".format(username, password))
+            return HttpResponse("Proprocionó datos de ingreso erróneos.")
+    else:
+        return render(request, 'login.html')
+
+@login_required
+def user_logout(request):
+    logout(request)
+    return HttpResponseRedirect(reverse('login'))
+
+@login_required
+def index(request):
+    return render(request, 'index.html')
