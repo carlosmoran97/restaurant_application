@@ -10,7 +10,7 @@ from django.views import View
 from io import BytesIO
 from reportlab.pdfgen import canvas
 from django.core.urlresolvers import reverse_lazy
-
+from django.contrib.auth.decorators import login_required
 
 class Get_producto_Create(APIView):
     def get(self, request):
@@ -40,7 +40,7 @@ class Get_producto_ListFilter(APIView):
         productos = Producto.objects.filter(nombre__startswith=request.GET['nombre']).order_by('id')
         serialized = ProductoSerializer(productos, many=True)
         return Response(serialized.data)
-
+@login_required
 def productos(request):
     form = ProductoForm()
     context = {'form':form}

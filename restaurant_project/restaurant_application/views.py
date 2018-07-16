@@ -5,11 +5,11 @@ from .models import CategoriaPlatillo, Platillo, Mesa, Empleado, Puesto, Asignac
 from .serializers import CategoriaPlatilloSerializer, PlatilloSerializer, MesaSerializer, EmpleadoSerializer, PuestoSerializer, AsignacionSerializer
 from .forms import CategoriaPlatilloForm, PlatilloForm, PlatilloFormSelect, MesaForm, EmpleadoForm, PuestoForm, AsignacionForm, AsignacionFormSelect
 from django.http import JsonResponse
-
+from django.contrib.auth.decorators import login_required
 """
     VIEWS PARA CATEGORIA PLATILLO
 """
-
+@login_required
 def index_categoria_platillos(request):
     form = CategoriaPlatilloForm()
     context = {'form':form}
@@ -47,6 +47,7 @@ class CategoriaPlatilloListFilter(APIView):
     VIEWS PARA PLATILLOS
 """
 
+@login_required
 def index_platillos(request):
     form = PlatilloForm()
     form_e = PlatilloFormSelect()
@@ -80,7 +81,7 @@ class PlatilloList(APIView):
 """
     VIEWS PARA MESAS
 """
-
+@login_required
 def index_mesas(request):
     form = MesaForm()
     context = {'form':form}
@@ -111,7 +112,7 @@ class MesaList(APIView):
 """
     VIEWS PARA EMPLEADOS
 """
-
+@login_required
 def index_empleados(request):
     formEmpleado = EmpleadoForm()
     formPuesto = PuestoForm()
