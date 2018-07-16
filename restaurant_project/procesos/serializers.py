@@ -16,4 +16,4 @@ class OrdenSerializer(serializers.ModelSerializer):
     mesa = MesaSerializer(many=False)
     class Meta:
         model = Orden
-        fields = ('sesion', 'mesero', 'cliente', 'mesa', 'fecha_orden', 'descuento', 'propina', 'estado', 'comentario')
+        fields = ('id','sesion', 'mesero', 'cliente', 'mesa', 'fecha_orden', 'descuento', 'propina', 'estado', 'comentario')

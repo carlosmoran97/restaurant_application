@@ -30,7 +30,6 @@ class Orden(models.Model):
     mesero = models.ForeignKey(restaurant.models.Empleado)
     cliente = models.CharField(max_length=500, null=True)
     mesa = models.ForeignKey(restaurant.models.Mesa)
-
     fecha_orden = models.DateTimeField(auto_now=True)
     propina = models.FloatField(default=0.10)
     estado = models.CharField(max_length=20, default="No Finalizado")

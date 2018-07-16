@@ -1,0 +1,113 @@
+{% extends 'base/base.html' %}
+{% load staticfiles %}
+{% block TitlePage %}
+    {{'Ordenes | Ordenes activas'}}
+{% endblock %}
+{% block body %}
+<div class="container">
+    <!-- breadcrumbs -->
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item">
+            <a href="#">Procesos</a>
+        </li>
+        <li class="breadcrumb-item">
+            <a href="#">Ordenes</a>
+        </li>
+        <li class="breadcrumb-item active">
+            Ordenes activas
+        </li>
+    </ol>
+    <!-- tabla pedidos -->
+    <table class="table table-striped" id="tabla-ordenes-activas">
+        <thead class="thead-dark">
+            <tr>
+                <th>Orden</th>
+                <th>Hora de la orden</th>
+                <th>Estado</th>
+                <th>Mesa</th>
+                <th>Mesero</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            
+        </tbody>
+    </table>
+    <!-- finalizar modal -->
+    <div class="modal" tabindex="-1" id="finalizar-modal" role="dialog">
+            <div class="modal-dialog" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title">Está seguro de que desea finalizar la orden?</h5>
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>
+                <div class="modal-footer">
+                  <button type="button" id="finalizar-btn" class="btn btn-danger">Finalizar</button>
+                  <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                </div>
+              </div>
+            </div>
+          </div>
+</div>
+{% endblock %}
+
+{% block JavaScriptFiles %}
+    <script>
+        var llenarTabla = () => {
+            $.ajax({
+                url: "{% url 'procesos:orden_activa_list' %}",
+                type: 'GET',
+                dataType: 'json',
+                success: (data) => {
+                    let tbody = $("#tabla-ordenes-activas tbody");
+                    html = ``;
+                    for(let i = 0; i < data.length; i++){
+                        let orden = data[i];
+                        orden.fecha_orden = new Date(orden.fecha_orden)
+                        html += `
+                        <tr>
+                            <td>${orden.id}</td>
+                            <td>${orden.fecha_orden.toLocaleTimeString()}</td>
+                            <td>${orden.estado}</td>
+                            <td>Mesa ${orden.mesa.numero_mesa}</td>
+                            <td>${orden.mesero.nombre} ${orden.mesero.apellido}</td>
+                            <td>
+                                <a href="/procesos/detalle_orden/${orden.id}/" class="btn btn-success">
+                                    Detalles
+                                <a/>
+                                <button class="btn btn-danger btn-finalizar" value="${orden.id}">Finalizar</button>
+                            </td>
+                        </tr>
+                        `;
+                    }
+                    tbody.html(html);
+                }
+                
+            });
+        }
+        $(document)
+        .ready(() => {
+            llenarTabla();
+        });
+        $(document).on("click", ".btn-finalizar", function(){
+            $("#finalizar-modal").modal("show");
+            $("#finalizar-btn").val($(this).val());
+        });
+        $(document).on("click", "#finalizar-btn", function(){
+            $.ajax({
+                url: "{% url 'procesos:orden_update' %}",
+                data: {
+                    id: $(this).val()
+                },
+                dataType: "json",
+                type: "GET",
+                success: (data) => {
+                    $("#finalizar-modal").modal("hide");
+                    llenarTabla();
+                }
+            });
+        });
+    </script>
+{% endblock %}

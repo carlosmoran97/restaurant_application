@@ -8,6 +8,7 @@ from restaurant_application.models import Asignacion, Empleado, Puesto, Caja, Cl
 from django.http import JsonResponse
 import datetime
 from django.views.generic import ListView, CreateView, DetailView
+from django.views import View
 # use estos para el login
 
 from django.core.urlresolvers import reverse
@@ -107,6 +108,35 @@ class OrdenDetail(APIView):
         orden = Orden.objects.filter(id=request.GET['id'])
         serialized = OrdenSerializer(orden, many=True)
         return Response(serialized.data)
+
+class GetOrdenesList(APIView):
+    def get(self, request):
+        ordenes = Orden.objects.all()
+        serialized = OrdenSerializer(ordenes, many=True)
+        return Response(serialized.data)
+
+class GetOrdenesActivasList(APIView):
+    def get(self, request):
+        ordenes = Orden.objects.filter(estado="No Finalizado")
+        serialized = OrdenSerializer(ordenes, many=True)
+        return Response(serialized.data)
+
+class GetOrdenesUpdate(APIView):
+    def get(self, request):
+        id = request.GET["id"]
+        estado = "finalizada"
+        orden = Orden.objects.filter(id=id)
+        orden.update(estado=estado)
+        
+        # devolviendo las nuevas ordenes no finalizadas
+        ordenes = Orden.objects.filter(estado="No Finalizado")
+        serialized = OrdenSerializer(ordenes, many=True)
+        return Response(serialized.data)
+
+
+class OrdenesActivas(View):
+    def get(self, request):
+        return render(request, 'procesos/ordenes_activas.html')
 
 def user_login(request):
     if request.method == 'POST':
