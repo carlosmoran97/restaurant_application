@@ -126,6 +126,7 @@
                         <h1 id="borrar" class="sobre"><span class="badge badge-secondary"><i class="fa fa-window-close" aria-hidden="true"></i></span></h1>
                       </div>
                     </div>
+                    <button id="btn-guardar" type="button" class="btn btn-primary">Guardar</button>
                   </div>
                 </div>
               </div>
@@ -144,6 +145,7 @@
 
     //Variable codigoPlatillo
     var codigoPlatillo;
+    var idDetalleGuardado;
     var accion;
     var idDetalle;
     var contadorClick;
@@ -151,10 +153,12 @@
     $(document).ready(function(){
       codigoPlatillo = "";
       accion = "";
+      idDetalleGuardado = "";
       idDetalle = "";
       contadorClick = 0;
       clickEliminar = 0;
       llenarCategorias();
+      cargarListaDetalles();
     });
 
     //Agregar platillos
@@ -182,7 +186,7 @@
           success : function (data) {
             //alert(data[0].nombre);
             var htmlRow = `<div id="${$(".platillo_select").toArray().length++}" class="row platillo_select" value="${data[0].codigoPlatillo}">
-                            <div class="col-12">
+                            <div class="col-12" value="">
                               <div class="row">
                                 <div class="col-8">
                                   <label id="lblNombrePlatillo">${data[0].nombre}</label>
@@ -203,7 +207,7 @@
                                 </div>
                               </div>
                             </div>
-                           </div>`
+                           </div>`;
             $("#agregandoPlatillos").html($("#agregandoPlatillos").html()+htmlRow);
             calcularTotal();
           }
@@ -211,9 +215,92 @@
       }
 
     });
+
+    //Cargar la lista de los guardados anteriormente
+    function cargarListaDetalles(){
+      $.ajax({
+        url : "{% url 'procesos:detail_detalle_orden' %}",
+        data : {id: {{object.id}}},
+        type: "GET",
+        dataType: "json",
+        success : function (data) {
+          var htmlRegistrado = "";
+          for(var i = 0; i < data.length; i++){
+            htmlRegistrado = `<div id="${$(".platillo_select").toArray().length++}" class="row platillo_select" value="${data[i].consumible.codigoPlatillo}">
+                                <div id="${data[i].id}" class="col-12" value="registrado">
+                                  <div class="row">
+                                    <div class="col-8">
+                                      <label id="lblNombrePlatillo">${data[i].consumible.nombre}</label>
+                                    </div>
+                                    <div class="col-4">
+                                      <label>$&nbsp;<span id="lblPrecio"></span></label>
+                                    </div>
+                                  </div>
+                                  <div class="row">
+                                    <div class="col-3">
+                                      <label>cant: <span id="lblCantidad">1</span></label>
+                                    </div>
+                                    <div class="col-4">
+                                      <label>$&nbsp;<span id="lblPrecioUnitario">${data[i].consumible.precioUnitario}</span>&nbsp;c/u</label>
+                                    </div>
+                                    <div class="col-4">
+                                      <label>
+                                        <span id="porcentajeDescuento">`;
+                                        if(data[i].descuento != 0){
+                                          htmlRegistrado += data[i].descuento+`</span><span id="lblDescuento"></span>`;
+                                        } else{
+                                          htmlRegistrado += `</span><span id="lblDescuento"></span>`;
+                                        }
+
+                                        htmlRegistrado += `
+
+                                      </label>
+                                    </div>
+                                  </div>
+                                </div>
+                               </div>`;
+                               idDetalle = i;
+                               $("#agregandoPlatillos").html($("#agregandoPlatillos").html()+htmlRegistrado);
+                               calcularPrecio();
+
+          }
+        }
+      });
+    }
+
+    //Guardar los detalle de venta
+    $(document).on("click", "#btn-guardar", function(){
+      for(var i = 0; i < $(".platillo_select").toArray().length; i++){
+        var descuento;
+        if($(".platillo_select #porcentajeDescuento:eq("+i+")").html() == ""){
+          descuento = 0;
+        } else{
+          descuento = $(".platillo_select #porcentajeDescuento:eq("+i+")").html();
+        }
+        $.ajax({
+          url : "{% url 'procesos:create_detalle_orden' %}",
+          data : {
+            id: {{object.id}},
+            codigoPlatillo: $(".platillo_select:eq("+i+")").attr("value"),
+            cantidad: $(".platillo_select #lblCantidad:eq("+i+")").html(),
+            precio: $(".platillo_select #lblPrecioUnitario:eq("+i+")").html(),
+            descuento: descuento,
+          },
+          type: "GET",
+          dataType: "json",
+          success : function (data) {
+            alert("Registrado"+data.respuesta);
+          }
+        });
+      }
+    });
     //Seleccionar platillo en detalle orden
     $(document).on("click", ".platillo_select", function(){
       idDetalle = $(this).attr("id");
+      if($(".platillo_select .col-12").attr("value") == "registrado"){
+        idDetalleGuardado = $(".platillo_select .col-12").attr("id");
+      }
+      alert(idDetalleGuardado);
       $(".platillo_select").removeClass("platillo_select_elegido");
       $(this).addClass("platillo_select_elegido");
       removerClass();

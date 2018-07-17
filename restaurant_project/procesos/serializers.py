@@ -1,6 +1,6 @@
 from rest_framework import serializers
-from .models import Sesion, Orden
-from restaurant_application.serializers import CajaSerializer, EmpleadoSerializer, MesaSerializer
+from .models import Sesion, Orden, DetalleOrden
+from restaurant_application.serializers import CajaSerializer, EmpleadoSerializer, MesaSerializer, PlatilloSerializer
 
 class SesionSerializer(serializers.ModelSerializer):
     caja = CajaSerializer(many=False)
@@ -16,4 +16,11 @@ class OrdenSerializer(serializers.ModelSerializer):
     mesa = MesaSerializer(many=False)
     class Meta:
         model = Orden
-        fields = ('id','sesion', 'mesero', 'cliente', 'mesa', 'fecha_orden', 'descuento', 'propina', 'estado', 'comentario')
+        fields = ('id','sesion', 'mesero', 'cliente', 'mesa', 'fecha_orden', 'propina', 'estado', 'comentario')
+
+class DetalleOrdenSerializer(serializers.ModelSerializer):
+    orden = OrdenSerializer(many=False)
+    consumible = PlatilloSerializer(many=False)
+    class Meta:
+        model = DetalleOrden
+        fields = '__all__'

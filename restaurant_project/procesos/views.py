@@ -2,9 +2,9 @@ from django.shortcuts import render
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from procesos.forms import PerfilDeUsuarioForm, UsuarioForm, SesionForm, OrdenForm
-from procesos.serializers import SesionSerializer, OrdenSerializer
-from procesos.models import Sesion, Orden
-from restaurant_application.models import Asignacion, Empleado, Puesto, Caja, Cliente, Mesa
+from procesos.serializers import SesionSerializer, OrdenSerializer, DetalleOrdenSerializer
+from procesos.models import Sesion, Orden, DetalleOrden
+from restaurant_application.models import Asignacion, Empleado, Puesto, Caja, Cliente, Mesa, Platillo
 from django.http import JsonResponse
 import datetime
 from django.views.generic import ListView, CreateView, DetailView
@@ -127,7 +127,7 @@ class GetOrdenesUpdate(APIView):
         estado = "finalizada"
         orden = Orden.objects.filter(id=id)
         orden.update(estado=estado)
-        
+
         # devolviendo las nuevas ordenes no finalizadas
         ordenes = Orden.objects.filter(estado="No Finalizado")
         serialized = OrdenSerializer(ordenes, many=True)
@@ -137,6 +137,20 @@ class GetOrdenesUpdate(APIView):
 class OrdenesActivas(View):
     def get(self, request):
         return render(request, 'procesos/ordenes_activas.html')
+
+class CreateDetalleOrden(APIView):
+    def get(self, request):
+        orden = Orden.objects.filter(id=request.GET['id'])
+        consumible = Platillo.objects.filter(codigoPlatillo=request.GET['codigoPlatillo'])
+        detalleorden = DetalleOrden.objects.create(orden=orden[0], consumible=consumible[0], cantidad=request.GET['cantidad'], precio_de_venta=request.GET['precio'], comentario='', descuento=request.GET['descuento'])
+        return JsonResponse({'respuesta':' correctamente!'})
+
+class DetalleOrdenDetail(APIView):
+    def get(self, request):
+        orden = Orden.objects.filter(id=request.GET['id'])
+        detalleordenes = DetalleOrden.objects.filter(orden=orden[0])
+        serialized = DetalleOrdenSerializer(detalleordenes, many=True)
+        return Response(serialized.data)
 
 def user_login(request):
     if request.method == 'POST':
