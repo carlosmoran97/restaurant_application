@@ -61,7 +61,7 @@ class Existencia(models.Model):
     producto = models.ForeignKey(Producto, on_delete=models.CASCADE)
     reporte_de_existencia = models.ForeignKey(ReporteDeExistencia, on_delete=models.CASCADE, related_name='existencias', default=None)
     existencias = models.PositiveIntegerField()
-
+    
     def __str__(self):
         unidad_de_medida_producto = ''
         for unidad_de_medida in Producto.UNIDAD_DE_MEDIDA_CHOICES:
