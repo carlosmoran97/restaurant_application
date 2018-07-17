@@ -8,9 +8,13 @@ from inventario.forms import ProductoForm, ExistenciaForm
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 from django.views import View
 from io import BytesIO
-from reportlab.pdfgen import canvas
 from django.core.urlresolvers import reverse_lazy
 from django.contrib.auth.decorators import login_required
+from reportlab.lib.pagesizes import letter
+from reportlab.lib.styles import getSampleStyleSheet
+from reportlab.platypus import Paragraph, Table, TableStyle, SimpleDocTemplate
+from reportlab.lib.enums import TA_JUSTIFY, TA_LEFT, TA_CENTER
+from reportlab.lib import colors
 
 class Get_producto_Create(APIView):
     def get(self, request):
@@ -121,23 +125,49 @@ class pdf_view(View):
 
         buffer = BytesIO()
 
-        p = canvas.Canvas(buffer)
+        styles = getSampleStyleSheet()
+        styleN = styles["BodyText"]
+        styleN.alignment = TA_LEFT
+        styleBH = styles["Normal"]
+        styleBH.alignment = TA_CENTER
 
-        p.drawString(100, 750, reporte.__str__())
+        doc = SimpleDocTemplate(buffer, pagesize=letter)
+        
+        elements = []
 
-        start, step = 735, 15
-        i = 0
-        while(i < len(reporte_serialized.data['existencias'])):
+
+        #Encabezado
+        encabezado = Paragraph('''<b>HOTEL Y RESTAURANTE PUNTA ROCA OLAS</b>''', styleBH)
+        subtitulo = Paragraph('''Reporte de existencias a la fecha 16/07/2018.<br/><br/>''', styleBH)
+
+        # Headers
+        hcod = Paragraph('''<b>Cod.</b>''', styleN)
+        hdesc = Paragraph('''<b>Descripción</b>''', styleN)
+        hcant = Paragraph('''<b>Cantidad</b>''', styleN)
+        huni = Paragraph('''<b>Unidad</b>''', styleN)
+        obs = Paragraph('''<br/><b>Observaciones:</b><br/>{}'''.format(reporte_serialized.data['observaciones']),styleN)
+
+        data= [[hcod, hdesc, hcant, huni]]
+
+        for i in range(len(reporte_serialized.data['existencias'])):
             e = reporte_serialized.data['existencias'][i]
-            p.drawString(100, start, "{} - {} - {}".format(e['producto']['id'], e['producto']['nombre'], e['existencias']))
-            start = start - step
-            i = i + 1        
+            unidad_de_medida_producto = ''
+            for unidad_de_medida in Producto.UNIDAD_DE_MEDIDA_CHOICES:
+                if(unidad_de_medida[0] == e['producto']['unidad_de_medida'] ):
+                    unidad_de_medida_producto = unidad_de_medida[1]
+            
+            data.append([e['producto']['id'], e['producto']['nombre'], e['existencias'], unidad_de_medida_producto])
 
-        p.showPage()
-        p.save()
+        t = Table(data)
+        t.setStyle([('INNERGRID', (0,0), (-1,-1), 0.25, colors.black),
+                    ('BOX', (0,0), (-1,-1), 0.25, colors.black)])
 
-        pdf = buffer.getvalue()
+        elements.append(encabezado)
+        elements.append(subtitulo)
+        elements.append(t)
+        elements.append(obs)
+        doc.build(elements)
+        response.write(buffer.getvalue())
         buffer.close()
-        response.write(pdf)
 
         return response
