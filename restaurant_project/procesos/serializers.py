@@ -17,7 +17,6 @@ class OrdenSerializer(serializers.ModelSerializer):
     class Meta:
         model = Orden
         fields = ('id','sesion', 'mesero', 'cliente', 'mesa', 'fecha_orden', 'propina', 'estado', 'comentario')
-<<<<<<< HEAD
 
 class DetalleOrdenSerializer(serializers.ModelSerializer):
     orden = OrdenSerializer(many=False)
@@ -25,5 +24,9 @@ class DetalleOrdenSerializer(serializers.ModelSerializer):
     class Meta:
         model = DetalleOrden
         fields = '__all__'
-=======
->>>>>>> 50155b191a52ed5528ba46edb09bca50346985d3
+
+class Orden_ConDetalle_Serializer(serializers.ModelSerializer):
+    detalle = DetalleOrdenSerializer(many = True)
+    class Meta:
+        model = Orden
+        fields = fields = ('id','sesion', 'mesero', 'cliente', 'mesa', 'fecha_orden', 'propina', 'estado', 'comentario', 'detalle')
