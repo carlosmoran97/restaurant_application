@@ -109,7 +109,7 @@
                         <h1 class="sobre opcion-numero" value="9"><span class="badge badge-secondary">9</span></h1>&nbsp;&nbsp;
                       </div>
                       <div class="col-sm-4">
-                        <h1 id="opcion-descuento" class="sobre"><span class="badge badge-secondary opcion" value="descuento">Descuento</span></h1>
+                        <h1 id="opcion-descuento" class="sobre"><span class="badge badge-secondary opcion" value="descuento">% Desc</span></h1>
                       </div>
                     </div>
                     <div class="row">
@@ -120,10 +120,10 @@
                         <h1 class="sobre opcion-numero" value="0"><span class="badge badge-secondary">0</span></h1>&nbsp;&nbsp;
                       </div>
                       <div class="col-sm-2">
-                        <h1 class="sobre"><span class="badge badge-secondary">.</span></h1>&nbsp;&nbsp;
+                        <h1 class="sobre opcion-numero" value="."><span class="badge badge-secondary">.</span></h1>&nbsp;&nbsp;
                       </div>
                       <div class="col-sm-4">
-                        <h1 class="sobre"><span class="badge badge-secondary"><i class="fa fa-window-close" aria-hidden="true"></i></span></h1>
+                        <h1 id="borrar" class="sobre"><span class="badge badge-secondary"><i class="fa fa-window-close" aria-hidden="true"></i></span></h1>
                       </div>
                     </div>
                   </div>
@@ -146,60 +146,70 @@
     var codigoPlatillo;
     var accion;
     var idDetalle;
-    var contador;
+    var contadorClick;
+    var clickEliminar;
     $(document).ready(function(){
-      //alert(getUrlVars()["id"]);
       codigoPlatillo = "";
       accion = "";
       idDetalle = "";
-      contador = 0;
+      contadorClick = 0;
+      clickEliminar = 0;
       llenarCategorias();
     });
-
-    //Para obtener parametros
-    function getUrlVars() {
-      var vars = {};
-      var parts = window.location.href.replace(/[?&]+([^=&]+)=([^&]*)/gi, function(m,key,value) {
-        vars[key] = value;
-      });
-      return vars;
-    }
 
     //Agregar platillos
     $(document).on("click", ".platillo-card", function(){
       var codigoPlatillo = $(this).attr("value");
-      $.ajax({
-        url : "{% url 'restaurant:platillo_detail' %}",
-        data : {codigoPlatillo: codigoPlatillo},
-        type: "GET",
-        dataType: "json",
-        success : function (data) {
-          //alert(data[0].nombre);
-          var htmlRow = `<div id="${contador}" class="row platillo_select" value="${data[0].codigoPlatillo}">
-                          <div class="col-12">
-                            <div class="row">
-                              <div class="col-8">
-                                <label id="lblNombrePlatillo">${data[0].nombre}</label>
-                              </div>
-                              <div class="col-4">
-                                <label>$&nbsp;<span id="lblPrecio">${(parseFloat(data[0].precioUnitario).toFixed(2))}</span></label>
-                              </div>
-                            </div>
-                            <div class="row">
-                              <div class="col-3">
-                                <label>cant: <span id="lblCantidad">1</span></label>
-                              </div>
-                              <div class="col-4">
-                                <label>$&nbsp;<span id="lblPrecioUnitario">${data[0].precioUnitario}</span>&nbsp;c/u</label>
-                              </div>
-                            </div>
-                          </div>
-                         </div>`
-          $("#agregandoPlatillos").html($("#agregandoPlatillos").html()+htmlRow);
-          contador++;
+      var validar = false;
+      for(var i = 0; i < $(".platillo_select").toArray().length; i++){
+        if($(".platillo_select:eq("+i+")").attr("value") == codigoPlatillo){
+          var cantidad = parseInt($(".platillo_select #lblCantidad:eq("+i+")").html());
+          cantidad++;
+          $(".platillo_select #lblCantidad:eq("+i+")").html(cantidad);
+          idDetalle = i;
+          calcularPrecio();
           calcularTotal();
+          validar = true;
         }
-      });
+      }
+
+      if(!validar){
+        $.ajax({
+          url : "{% url 'restaurant:platillo_detail' %}",
+          data : {codigoPlatillo: codigoPlatillo},
+          type: "GET",
+          dataType: "json",
+          success : function (data) {
+            //alert(data[0].nombre);
+            var htmlRow = `<div id="${$(".platillo_select").toArray().length++}" class="row platillo_select" value="${data[0].codigoPlatillo}">
+                            <div class="col-12">
+                              <div class="row">
+                                <div class="col-8">
+                                  <label id="lblNombrePlatillo">${data[0].nombre}</label>
+                                </div>
+                                <div class="col-4">
+                                  <label>$&nbsp;<span id="lblPrecio">${(parseFloat(data[0].precioUnitario).toFixed(2))}</span></label>
+                                </div>
+                              </div>
+                              <div class="row">
+                                <div class="col-3">
+                                  <label>cant: <span id="lblCantidad">1</span></label>
+                                </div>
+                                <div class="col-4">
+                                  <label>$&nbsp;<span id="lblPrecioUnitario">${data[0].precioUnitario}</span>&nbsp;c/u</label>
+                                </div>
+                                <div class="col-4">
+                                  <label><span id="porcentajeDescuento"></span><span id="lblDescuento"></span></label>
+                                </div>
+                              </div>
+                            </div>
+                           </div>`
+            $("#agregandoPlatillos").html($("#agregandoPlatillos").html()+htmlRow);
+            calcularTotal();
+          }
+        });
+      }
+
     });
     //Seleccionar platillo en detalle orden
     $(document).on("click", ".platillo_select", function(){
@@ -209,6 +219,7 @@
       removerClass();
       $("#opcion-cantidad .badge").addClass("badge-info");
       accion = "cantidad";
+      contadorClick = 1;
     });
 
     //Cambiar de color en las siguientes opciones
@@ -216,16 +227,89 @@
       removerClass();
       $(this).addClass("badge-info");
       accion = $(this).attr("value");
+      contadorClick = 1;
     });
 
     //Agregar Número
     $(document).on("click", ".opcion-numero", function(){
-      $(".platillo_select #lblCantidad:eq("+idDetalle+")").html($(".platillo_select #lblCantidad:eq("+idDetalle+")").html()+$(this).attr("value"));
-      cantidad = parseFloat($(".platillo_select #lblCantidad:eq("+idDetalle+")").html()).toFixed(2);
-      preciounitario = parseFloat($(".platillo_select #lblPrecioUnitario:eq("+idDetalle+")").html()).toFixed(2);
-      //alert(cantidad*preciounitario);
-      $(".platillo_select #lblPrecio:eq("+idDetalle+")").html(parseFloat(cantidad*preciounitario).toFixed(2));
-      calcularTotal();
+      if (accion == "cantidad"){
+        if(contadorClick == 1){
+          $(".platillo_select #lblCantidad:eq("+idDetalle+")").html($(this).attr("value"));
+          contadorClick++;
+        } else if($(".platillo_select #lblCantidad:eq("+idDetalle+")").html().indexOf(".") == -1){
+          $(".platillo_select #lblCantidad:eq("+idDetalle+")").html($(".platillo_select #lblCantidad:eq("+idDetalle+")").html()+$(this).attr("value"));
+        } else{
+          if($(this).attr("value") != "."){
+            $(".platillo_select #lblCantidad:eq("+idDetalle+")").html($(".platillo_select #lblCantidad:eq("+idDetalle+")").html()+$(this).attr("value"));
+          }
+        }
+        clickEliminar = 0;
+      } else if (accion == "precio") {
+        if(contadorClick == 1){
+          $(".platillo_select #lblPrecioUnitario:eq("+idDetalle+")").html($(this).attr("value"));
+          contadorClick++;
+        } else if($(".platillo_select #lblPrecioUnitario:eq("+idDetalle+")").html().indexOf(".") == -1){
+          $(".platillo_select #lblPrecioUnitario:eq("+idDetalle+")").html($(".platillo_select #lblPrecioUnitario:eq("+idDetalle+")").html()+$(this).attr("value"));
+        } else{
+          if($(this).attr("value") != "."){
+            $(".platillo_select #lblPrecioUnitario:eq("+idDetalle+")").html($(".platillo_select #lblPrecioUnitario:eq("+idDetalle+")").html()+$(this).attr("value"));
+          }
+        }
+
+      } else if (accion == "descuento") {
+        var desc;
+        var simbolo_agregado;
+        if($(".platillo_select #porcentajeDescuento:eq("+idDetalle+")").html() == null){
+          alert($(".platillo_select #porcentajeDescuento:eq("+idDetalle+")").html());
+        }
+        if(contadorClick == 1){
+          desc = "";
+          simbolo_agregado = $(this).attr("value");
+          contadorClick++;
+        } else if($(".platillo_select #porcentajeDescuento:eq("+idDetalle+")").html().indexOf(".") == -1){
+          desc = $(".platillo_select #porcentajeDescuento:eq("+idDetalle+")").html();
+          simbolo_agregado = $(this).attr("value");
+        } else{
+          desc = $(".platillo_select #porcentajeDescuento:eq("+idDetalle+")").html();
+          if($(this).attr("value") != "."){
+            simbolo_agregado = $(this).attr("value");
+          } else{
+            simbolo_agregado = "";
+          }
+        }
+        $(".platillo_select #porcentajeDescuento:eq("+idDetalle+")").html(desc+simbolo_agregado);
+        $(".platillo_select #lblDescuento:eq("+idDetalle+")").html("% desc");
+      }
+
+      calcularPrecio();
+    });
+
+    //Borrar ultimo caracter
+    $(document).on("click", "#borrar", function(){
+      var numero;
+      if (accion == "cantidad"){
+        numero = $(".platillo_select #lblCantidad:eq("+idDetalle+")").html().substring(0,$(".platillo_select #lblCantidad:eq("+idDetalle+")").html().length-1);
+        if(numero == ""){
+          $(".platillo_select #lblCantidad:eq("+idDetalle+")").html("0");
+        } else{
+          $(".platillo_select #lblCantidad:eq("+idDetalle+")").html(numero);
+        }
+      } else if (accion == "precio") {
+        numero = $(".platillo_select #lblPrecioUnitario:eq("+idDetalle+")").html().substring(0,$(".platillo_select #lblPrecioUnitario:eq("+idDetalle+")").html().length-1);
+        if(numero == ""){
+          $(".platillo_select #lblPrecioUnitario:eq("+idDetalle+")").html("0");
+        } else{
+          $(".platillo_select #lblPrecioUnitario:eq("+idDetalle+")").html(numero);
+        }
+      } else if (accion == "descuento") {
+        numero = $(".platillo_select #porcentajeDescuento:eq("+idDetalle+")").html().substring(0,$(".platillo_select #porcentajeDescuento:eq("+idDetalle+")").html().length-1);
+        if(numero == ""){
+          $(".platillo_select #porcentajeDescuento:eq("+idDetalle+")").html("0");
+        } else{
+          $(".platillo_select #porcentajeDescuento:eq("+idDetalle+")").html(numero);
+        }
+      }
+      calcularPrecio();
     });
 
     //Remover color a los demás opciones de calculadora
@@ -243,6 +327,33 @@
       //alert(total);
       $("#lblTotal").html(parseFloat(total).toFixed(2));
     }
+
+    //Calcular Precio Unitario al editar
+    function calcularPrecio(){
+      var cantidad = parseFloat($(".platillo_select #lblCantidad:eq("+idDetalle+")").html()).toFixed(2);
+      var preciounitario = parseFloat($(".platillo_select #lblPrecioUnitario:eq("+idDetalle+")").html()).toFixed(2);
+      var descuento;
+      if($(".platillo_select #porcentajeDescuento:eq("+idDetalle+")").html() == ""){
+        descuento = 0;
+      } else{
+        descuento = parseFloat($(".platillo_select #porcentajeDescuento:eq("+idDetalle+")").html()).toFixed(2)/100;
+      }
+      var total = parseFloat(cantidad*preciounitario).toFixed(2)
+      var diferencia = parseFloat(descuento*total).toFixed(2);
+      $(".platillo_select #lblPrecio:eq("+idDetalle+")").html(parseFloat(total-diferencia).toFixed(2));
+      if(cantidad == 0){
+        clickEliminar++;
+      }
+      if(clickEliminar >= 2){
+        $(".platillo_select:eq("+idDetalle+")").remove();
+        for(var i = 0; i < $(".platillo_select").toArray().length; i++){
+          $(".platillo_select:eq("+i+")").attr("id",i);
+        }
+        clickEliminar = 0;
+      }
+      calcularTotal();
+    }
+
     // Simular click para minimizar el nav
     $("#sidenavToggler > i").click();
 
