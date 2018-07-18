@@ -2,7 +2,7 @@ from django.shortcuts import render
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from procesos.forms import PerfilDeUsuarioForm, UsuarioForm, SesionForm, OrdenForm
-from procesos.serializers import SesionSerializer, OrdenSerializer, DetalleOrdenSerializer
+from procesos.serializers import SesionSerializer, OrdenSerializer, DetalleOrdenSerializer, Orden_ConDetalle_Serializer
 from procesos.models import Sesion, Orden, DetalleOrden
 from restaurant_application.models import Asignacion, Empleado, Puesto, Caja, Cliente, Mesa, Platillo
 from django.http import JsonResponse
@@ -109,6 +109,7 @@ class OrdenDetail(APIView):
         serialized = OrdenSerializer(orden, many=True)
         return Response(serialized.data)
 
+<<<<<<< HEAD
 class OrdenDetailMesa(APIView):
     def get(self, request):
         mesa = Mesa.objects.filter(codigo_mesa=request.GET['codigo_mesa'])
@@ -116,6 +117,15 @@ class OrdenDetailMesa(APIView):
         serialized = OrdenSerializer(orden, many=True)
         return Response(serialized.data)
 
+=======
+class OrdenConDetallesDetail(APIView):
+    def get(self, request):
+        orden = Orden.objects.filter(id=request.GET['id'])
+        serialized = Orden_ConDetalle_Serializer(orden, many=True)
+        return Response(serialized.data)
+
+
+>>>>>>> d4f04803eb4b87c7d479a3c65cbf1844b6ad2b44
 class GetOrdenesList(APIView):
     def get(self, request):
         ordenes = Orden.objects.all()
