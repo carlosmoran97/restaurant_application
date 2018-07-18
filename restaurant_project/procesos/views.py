@@ -109,7 +109,6 @@ class OrdenDetail(APIView):
         serialized = OrdenSerializer(orden, many=True)
         return Response(serialized.data)
 
-<<<<<<< HEAD
 class OrdenDetailMesa(APIView):
     def get(self, request):
         mesa = Mesa.objects.filter(codigo_mesa=request.GET['codigo_mesa'])
@@ -117,15 +116,12 @@ class OrdenDetailMesa(APIView):
         serialized = OrdenSerializer(orden, many=True)
         return Response(serialized.data)
 
-=======
 class OrdenConDetallesDetail(APIView):
     def get(self, request):
         orden = Orden.objects.filter(id=request.GET['id'])
         serialized = Orden_ConDetalle_Serializer(orden, many=True)
         return Response(serialized.data)
 
-
->>>>>>> d4f04803eb4b87c7d479a3c65cbf1844b6ad2b44
 class GetOrdenesList(APIView):
     def get(self, request):
         ordenes = Orden.objects.all()
