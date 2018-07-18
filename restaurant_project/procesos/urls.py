@@ -27,6 +27,6 @@ urlpatterns = [
     url(r'^delete_detalle_orden', login_required(views.DeleteDetalleOrden.as_view()), name='delete_detalle_orden'),
     url(r'^detail_detalle_orden', login_required(views.DetalleOrdenDetail.as_view()), name='detail_detalle_orden'),
     # facturar
-    url(r'^facturar', login_required(views.FacturarView.as_view()), name='facturar')
+    url(r'^facturar', login_required(views.FacturarView.as_view()), name='facturar'),
     url(r'^detail_orden_mesa', login_required(views.OrdenDetailMesa.as_view()), name='detail_orden_mesa'),
 ]
