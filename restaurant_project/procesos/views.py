@@ -111,8 +111,8 @@ class OrdenDetail(APIView):
 
 class OrdenConDetallesDetail(APIView):
     def get(self, request):
-        orden = Orden.objects.filter(id=request.GET['id'])
-        serialized = Orden_ConDetalle_Serializer(orden, many=True)
+        ordenes = Orden.objects.filter(estado=request.GET['estado'])
+        serialized = Orden_ConDetalle_Serializer(ordenes, many=True)
         return Response(serialized.data)
 
 
@@ -122,24 +122,24 @@ class GetOrdenesList(APIView):
         serialized = OrdenSerializer(ordenes, many=True)
         return Response(serialized.data)
 
-class GetOrdenesActivasList(APIView):
+class GetOrdenesPorEstadoList(APIView):
     def get(self, request):
-        ordenes = Orden.objects.filter(estado="No Finalizado")
+        ordenes = Orden.objects.filter(estado=request.GET["estado"])
         serialized = OrdenSerializer(ordenes, many=True)
         return Response(serialized.data)
 
 class GetOrdenesUpdate(APIView):
     def get(self, request):
         id = request.GET["id"]
-        estado = "finalizada"
+        estado = request.GET["estado"]
         orden = Orden.objects.filter(id=id)
         orden.update(estado=estado)
 
-        # devolviendo las nuevas ordenes no finalizadas
-        ordenes = Orden.objects.filter(estado="No Finalizado")
-        serialized = OrdenSerializer(ordenes, many=True)
-        return Response(serialized.data)
+        return Response({"respuesto": "ok"})
 
+class FacturarView(View):
+    def get(self, request):
+        return render(request, 'procesos/facturar.html')
 
 class OrdenesActivas(View):
     def get(self, request):

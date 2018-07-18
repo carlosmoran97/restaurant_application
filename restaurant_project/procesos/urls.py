@@ -18,10 +18,12 @@ urlpatterns = [
     url(r'^orden_detail/', login_required(views.OrdenDetail.as_view()), name='orden_detail'),
     url(r'^orden_condetalles_detail/', login_required(views.OrdenConDetallesDetail.as_view()), name='orden_condetalle_detail'),
     url(r'^lista_ordenes/', login_required(views.GetOrdenesList.as_view()), name='orden_list'),
-    url(r'^lista_ordenesactivas', login_required(views.GetOrdenesActivasList.as_view()), name='orden_activa_list'),
+    url(r'^lista_ordenesporestado', login_required(views.GetOrdenesPorEstadoList.as_view()), name='orden_porestado_list'),
     url(r'^ordenes_activas', login_required(views.OrdenesActivas.as_view()), name='ordenes_activas'),
     url(r'^orden_update', login_required(views.GetOrdenesUpdate.as_view()), name='orden_update'),
     # urls utiles para realizar detalle de orden
     url(r'^create_detalle_orden', login_required(views.CreateDetalleOrden.as_view()), name='create_detalle_orden'),
     url(r'^detail_detalle_orden', login_required(views.DetalleOrdenDetail.as_view()), name='detail_detalle_orden'),
+    # facturar
+    url(r'^facturar', login_required(views.FacturarView.as_view()), name='facturar')
 ]

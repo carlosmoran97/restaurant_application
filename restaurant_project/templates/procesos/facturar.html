@@ -1,0 +1,42 @@
+{% extends 'base/base.html' %}
+{% load staticfiles %}
+{% block TitlePage %}
+    {{'Procesos | Facturación'}}
+{% endblock %}
+{% block body %}
+    <div class="container">
+        <!-- breadcrumbs -->
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item">
+                <a href="#">Procesos</a>
+            </li>
+            <li class="breadcrumb-item active">
+                <a href="#">Facturación</a>
+            </li>
+        </ol>
+        <div id="facturar">
+
+        </div>
+    </div>
+
+    {% include 'base/modal.html' %}
+
+{% endblock %}
+
+{% block JavaScriptFiles %}
+<script>
+    var datosObtener = () => {
+        $.ajax({
+            url: "{% url 'procesos:orden_condetalle_detail' %}",
+            data: {
+                estado: "Finalizada"
+            },
+            dataType: "JSON",
+            type: "GET",
+            success: (data) => {
+                console.log(data);
+            }
+        });
+    };
+</script>
+{% endblock %}

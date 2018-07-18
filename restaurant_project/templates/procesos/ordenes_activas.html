@@ -57,7 +57,10 @@
     <script>
         var llenarTabla = () => {
             $.ajax({
-                url: "{% url 'procesos:orden_activa_list' %}",
+                url: "{% url 'procesos:orden_porestado_list' %}",
+                data: {
+                    estado: "No Finalizado"
+                },
                 type: 'GET',
                 dataType: 'json',
                 success: (data) => {
@@ -99,7 +102,8 @@
             $.ajax({
                 url: "{% url 'procesos:orden_update' %}",
                 data: {
-                    id: $(this).val()
+                    id: $(this).val(),
+                    estado: "Finalizada"
                 },
                 dataType: "json",
                 type: "GET",
