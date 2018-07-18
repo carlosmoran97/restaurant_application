@@ -126,7 +126,6 @@
                         <h1 id="borrar" class="sobre"><span class="badge badge-secondary"><i class="fa fa-window-close" aria-hidden="true"></i></span></h1>
                       </div>
                     </div>
-                    <button id="btn-guardar" type="button" class="btn btn-primary">Guardar</button>
                   </div>
                 </div>
               </div>
@@ -172,8 +171,14 @@
           $(".platillo_select #lblCantidad:eq("+i+")").html(cantidad);
           idDetalle = i;
           calcularPrecio();
-          calcularTotal();
           validar = true;
+          var descuento = 0;
+          if($(".platillo_select #porcentajeDescuento:eq("+i+")").html() != ""){
+            decuento = $(".platillo_select #porcentajeDescuento:eq("+i+")").html();
+          }
+          var id = $(".platillo_select .col-12:eq("+i+")").attr("id");
+          var precio = $(".platillo_select #lblPrecioUnitario:eq("+i+")").html();
+          actualizar(id, cantidad, precio, descuento);
         }
       }
 
@@ -184,40 +189,74 @@
           type: "GET",
           dataType: "json",
           success : function (data) {
-            //alert(data[0].nombre);
-            var htmlRow = `<div id="${$(".platillo_select").toArray().length++}" class="row platillo_select" value="${data[0].codigoPlatillo}">
-                            <div class="col-12" value="">
-                              <div class="row">
-                                <div class="col-8">
-                                  <label id="lblNombrePlatillo">${data[0].nombre}</label>
-                                </div>
-                                <div class="col-4">
-                                  <label>$&nbsp;<span id="lblPrecio">${(parseFloat(data[0].precioUnitario).toFixed(2))}</span></label>
-                                </div>
-                              </div>
-                              <div class="row">
-                                <div class="col-3">
-                                  <label>cant: <span id="lblCantidad">1</span></label>
-                                </div>
-                                <div class="col-4">
-                                  <label>$&nbsp;<span id="lblPrecioUnitario">${data[0].precioUnitario}</span>&nbsp;c/u</label>
-                                </div>
-                                <div class="col-4">
-                                  <label><span id="porcentajeDescuento"></span><span id="lblDescuento"></span></label>
-                                </div>
-                              </div>
-                            </div>
-                           </div>`;
-            $("#agregandoPlatillos").html($("#agregandoPlatillos").html()+htmlRow);
-            calcularTotal();
+            var parametros = {
+              id: {{object.id}},
+              codigoPlatillo: codigoPlatillo,
+              precio: data[0].precioUnitario,
+            };
+
+            $.ajax({
+              url : "{% url 'procesos:create_detalle_orden' %}",
+              data : parametros,
+              type: "GET",
+              dataType: "json",
+              success: function(data_create) {
+                var cont = $(".platillo_select").toArray().length++;
+                var htmlRow = `<div id="${cont}" class="row platillo_select" value="${data[0].codigoPlatillo}">
+                                  <div id="${data_create.id}" class="col-12" value="registrado">
+                                    <div class="row">
+                                      <div class="col-8">
+                                        <label id="lblNombrePlatillo">${data[0].nombre}</label>
+                                      </div>
+                                      <div class="col-4">
+                                        <label>$&nbsp;<span id="lblPrecio">${(parseFloat(data[0].precioUnitario).toFixed(2))}</span></label>
+                                      </div>
+                                    </div>
+                                    <div class="row">
+                                      <div class="col-3">
+                                        <label>cant: <span id="lblCantidad">1</span></label>
+                                      </div>
+                                      <div class="col-4">
+                                        <label>$&nbsp;<span id="lblPrecioUnitario">${data[0].precioUnitario}</span>&nbsp;c/u</label>
+                                      </div>
+                                      <div class="col-4">
+                                        <label><span id="porcentajeDescuento"></span><span id="lblDescuento"></span></label>
+                                      </div>
+                                    </div>
+                                  </div>
+                                 </div>`;
+                  $("#agregandoPlatillos").html($("#agregandoPlatillos").html()+htmlRow);
+                  idDetalle = cont;
+                  calcularPrecio();
+              }
+            });
+
           }
         });
       }
-
     });
+
+    //Actualizar
+    function actualizar(id, cantidad, precio, descuento){
+      $.ajax({
+        url : "{% url 'procesos:update_detalle_orden' %}",
+        data : {
+          id: id,
+          cantidad: cantidad,
+          precio: precio,
+          descuento: descuento
+        },
+        type: "GET",
+        dataType: "json",
+        success: function (data) {
+          //alert("Actualizado"+data.respuesta);
+        }
+      });
+    }
 
     //Cargar la lista de los guardados anteriormente
     function cargarListaDetalles(){
+      $("#agregandoPlatillos").html("");
       $.ajax({
         url : "{% url 'procesos:detail_detalle_orden' %}",
         data : {id: {{object.id}}},
@@ -238,16 +277,16 @@
                                   </div>
                                   <div class="row">
                                     <div class="col-3">
-                                      <label>cant: <span id="lblCantidad">1</span></label>
+                                      <label>cant: <span id="lblCantidad">${data[i].cantidad}</span></label>
                                     </div>
                                     <div class="col-4">
-                                      <label>$&nbsp;<span id="lblPrecioUnitario">${data[i].consumible.precioUnitario}</span>&nbsp;c/u</label>
+                                      <label>$&nbsp;<span id="lblPrecioUnitario">${data[i].precio_de_venta}</span>&nbsp;c/u</label>
                                     </div>
                                     <div class="col-4">
                                       <label>
                                         <span id="porcentajeDescuento">`;
                                         if(data[i].descuento != 0){
-                                          htmlRegistrado += data[i].descuento+`</span><span id="lblDescuento"></span>`;
+                                          htmlRegistrado += data[i].descuento+`</span><span id="lblDescuento">% desc</span>`;
                                         } else{
                                           htmlRegistrado += `</span><span id="lblDescuento"></span>`;
                                         }
@@ -268,39 +307,10 @@
       });
     }
 
-    //Guardar los detalle de venta
-    $(document).on("click", "#btn-guardar", function(){
-      for(var i = 0; i < $(".platillo_select").toArray().length; i++){
-        var descuento;
-        if($(".platillo_select #porcentajeDescuento:eq("+i+")").html() == ""){
-          descuento = 0;
-        } else{
-          descuento = $(".platillo_select #porcentajeDescuento:eq("+i+")").html();
-        }
-        $.ajax({
-          url : "{% url 'procesos:create_detalle_orden' %}",
-          data : {
-            id: {{object.id}},
-            codigoPlatillo: $(".platillo_select:eq("+i+")").attr("value"),
-            cantidad: $(".platillo_select #lblCantidad:eq("+i+")").html(),
-            precio: $(".platillo_select #lblPrecioUnitario:eq("+i+")").html(),
-            descuento: descuento,
-          },
-          type: "GET",
-          dataType: "json",
-          success : function (data) {
-            alert("Registrado"+data.respuesta);
-          }
-        });
-      }
-    });
     //Seleccionar platillo en detalle orden
     $(document).on("click", ".platillo_select", function(){
       idDetalle = $(this).attr("id");
-      if($(".platillo_select .col-12").attr("value") == "registrado"){
-        idDetalleGuardado = $(".platillo_select .col-12").attr("id");
-      }
-      alert(idDetalleGuardado);
+      idDetalleGuardado = $(".platillo_select .col-12:eq("+idDetalle+")").attr("id");
       $(".platillo_select").removeClass("platillo_select_elegido");
       $(this).addClass("platillo_select_elegido");
       removerClass();
@@ -319,84 +329,106 @@
 
     //Agregar Número
     $(document).on("click", ".opcion-numero", function(){
-      if (accion == "cantidad"){
-        if(contadorClick == 1){
-          $(".platillo_select #lblCantidad:eq("+idDetalle+")").html($(this).attr("value"));
-          contadorClick++;
-        } else if($(".platillo_select #lblCantidad:eq("+idDetalle+")").html().indexOf(".") == -1){
-          $(".platillo_select #lblCantidad:eq("+idDetalle+")").html($(".platillo_select #lblCantidad:eq("+idDetalle+")").html()+$(this).attr("value"));
-        } else{
-          if($(this).attr("value") != "."){
+      if(idDetalleGuardado == ""){
+        //alert("No se puede");
+        noSeleccionado();
+      } else{
+        if (accion == "cantidad"){
+          if(contadorClick == 1){
+            $(".platillo_select #lblCantidad:eq("+idDetalle+")").html($(this).attr("value"));
+            contadorClick++;
+          } else if($(".platillo_select #lblCantidad:eq("+idDetalle+")").html().indexOf(".") == -1){
             $(".platillo_select #lblCantidad:eq("+idDetalle+")").html($(".platillo_select #lblCantidad:eq("+idDetalle+")").html()+$(this).attr("value"));
+          } else{
+            if($(this).attr("value") != "."){
+              $(".platillo_select #lblCantidad:eq("+idDetalle+")").html($(".platillo_select #lblCantidad:eq("+idDetalle+")").html()+$(this).attr("value"));
+            }
           }
-        }
-        clickEliminar = 0;
-      } else if (accion == "precio") {
-        if(contadorClick == 1){
-          $(".platillo_select #lblPrecioUnitario:eq("+idDetalle+")").html($(this).attr("value"));
-          contadorClick++;
-        } else if($(".platillo_select #lblPrecioUnitario:eq("+idDetalle+")").html().indexOf(".") == -1){
-          $(".platillo_select #lblPrecioUnitario:eq("+idDetalle+")").html($(".platillo_select #lblPrecioUnitario:eq("+idDetalle+")").html()+$(this).attr("value"));
-        } else{
-          if($(this).attr("value") != "."){
+          clickEliminar = 0;
+        } else if (accion == "precio") {
+          if(contadorClick == 1){
+            $(".platillo_select #lblPrecioUnitario:eq("+idDetalle+")").html($(this).attr("value"));
+            contadorClick++;
+          } else if($(".platillo_select #lblPrecioUnitario:eq("+idDetalle+")").html().indexOf(".") == -1){
             $(".platillo_select #lblPrecioUnitario:eq("+idDetalle+")").html($(".platillo_select #lblPrecioUnitario:eq("+idDetalle+")").html()+$(this).attr("value"));
+          } else{
+            if($(this).attr("value") != "."){
+              $(".platillo_select #lblPrecioUnitario:eq("+idDetalle+")").html($(".platillo_select #lblPrecioUnitario:eq("+idDetalle+")").html()+$(this).attr("value"));
+            }
           }
-        }
 
-      } else if (accion == "descuento") {
-        var desc;
-        var simbolo_agregado;
-        if($(".platillo_select #porcentajeDescuento:eq("+idDetalle+")").html() == null){
-          alert($(".platillo_select #porcentajeDescuento:eq("+idDetalle+")").html());
-        }
-        if(contadorClick == 1){
-          desc = "";
-          simbolo_agregado = $(this).attr("value");
-          contadorClick++;
-        } else if($(".platillo_select #porcentajeDescuento:eq("+idDetalle+")").html().indexOf(".") == -1){
-          desc = $(".platillo_select #porcentajeDescuento:eq("+idDetalle+")").html();
-          simbolo_agregado = $(this).attr("value");
-        } else{
-          desc = $(".platillo_select #porcentajeDescuento:eq("+idDetalle+")").html();
-          if($(this).attr("value") != "."){
+        } else if (accion == "descuento") {
+          var desc;
+          var simbolo_agregado;
+          if($(".platillo_select #porcentajeDescuento:eq("+idDetalle+")").html() == null){
+            alert($(".platillo_select #porcentajeDescuento:eq("+idDetalle+")").html());
+          }
+          if(contadorClick == 1){
+            desc = "";
+            simbolo_agregado = $(this).attr("value");
+            contadorClick++;
+          } else if($(".platillo_select #porcentajeDescuento:eq("+idDetalle+")").html().indexOf(".") == -1){
+            desc = $(".platillo_select #porcentajeDescuento:eq("+idDetalle+")").html();
             simbolo_agregado = $(this).attr("value");
           } else{
-            simbolo_agregado = "";
+            desc = $(".platillo_select #porcentajeDescuento:eq("+idDetalle+")").html();
+            if($(this).attr("value") != "."){
+              simbolo_agregado = $(this).attr("value");
+            } else{
+              simbolo_agregado = "";
+            }
           }
+          $(".platillo_select #porcentajeDescuento:eq("+idDetalle+")").html(desc+simbolo_agregado);
+          $(".platillo_select #lblDescuento:eq("+idDetalle+")").html("% desc");
         }
-        $(".platillo_select #porcentajeDescuento:eq("+idDetalle+")").html(desc+simbolo_agregado);
-        $(".platillo_select #lblDescuento:eq("+idDetalle+")").html("% desc");
+        guardarCambios();
       }
-
-      calcularPrecio();
     });
+
+    function noSeleccionado(){
+      $("#cargarForm").html(`
+                              <div class="modal-body">
+                                  <h3><strong>No se ha seleccionado detalle.</strong></h3>
+                              </div>
+                              <div class="modal-footer">
+                              </div>
+                            `);
+      $("#labelModal").html("Seleccionar Detalle");
+      $("#modal").modal("show");
+    }
 
     //Borrar ultimo caracter
     $(document).on("click", "#borrar", function(){
-      var numero;
-      if (accion == "cantidad"){
-        numero = $(".platillo_select #lblCantidad:eq("+idDetalle+")").html().substring(0,$(".platillo_select #lblCantidad:eq("+idDetalle+")").html().length-1);
-        if(numero == ""){
-          $(".platillo_select #lblCantidad:eq("+idDetalle+")").html("0");
-        } else{
-          $(".platillo_select #lblCantidad:eq("+idDetalle+")").html(numero);
+      if(idDetalleGuardado == ""){
+        //alert("No se puede");
+        noSeleccionado();
+      } else{
+
+        var numero;
+        if (accion == "cantidad"){
+          numero = $(".platillo_select #lblCantidad:eq("+idDetalle+")").html().substring(0,$(".platillo_select #lblCantidad:eq("+idDetalle+")").html().length-1);
+          if(numero == ""){
+            $(".platillo_select #lblCantidad:eq("+idDetalle+")").html("0");
+          } else{
+            $(".platillo_select #lblCantidad:eq("+idDetalle+")").html(numero);
+          }
+        } else if (accion == "precio") {
+          numero = $(".platillo_select #lblPrecioUnitario:eq("+idDetalle+")").html().substring(0,$(".platillo_select #lblPrecioUnitario:eq("+idDetalle+")").html().length-1);
+          if(numero == ""){
+            $(".platillo_select #lblPrecioUnitario:eq("+idDetalle+")").html("0");
+          } else{
+            $(".platillo_select #lblPrecioUnitario:eq("+idDetalle+")").html(numero);
+          }
+        } else if (accion == "descuento") {
+          numero = $(".platillo_select #porcentajeDescuento:eq("+idDetalle+")").html().substring(0,$(".platillo_select #porcentajeDescuento:eq("+idDetalle+")").html().length-1);
+          if(numero == ""){
+            $(".platillo_select #porcentajeDescuento:eq("+idDetalle+")").html("0");
+          } else{
+            $(".platillo_select #porcentajeDescuento:eq("+idDetalle+")").html(numero);
+          }
         }
-      } else if (accion == "precio") {
-        numero = $(".platillo_select #lblPrecioUnitario:eq("+idDetalle+")").html().substring(0,$(".platillo_select #lblPrecioUnitario:eq("+idDetalle+")").html().length-1);
-        if(numero == ""){
-          $(".platillo_select #lblPrecioUnitario:eq("+idDetalle+")").html("0");
-        } else{
-          $(".platillo_select #lblPrecioUnitario:eq("+idDetalle+")").html(numero);
-        }
-      } else if (accion == "descuento") {
-        numero = $(".platillo_select #porcentajeDescuento:eq("+idDetalle+")").html().substring(0,$(".platillo_select #porcentajeDescuento:eq("+idDetalle+")").html().length-1);
-        if(numero == ""){
-          $(".platillo_select #porcentajeDescuento:eq("+idDetalle+")").html("0");
-        } else{
-          $(".platillo_select #porcentajeDescuento:eq("+idDetalle+")").html(numero);
-        }
+        guardarCambios();
       }
-      calcularPrecio();
     });
 
     //Remover color a los demás opciones de calculadora
@@ -428,17 +460,42 @@
       var total = parseFloat(cantidad*preciounitario).toFixed(2)
       var diferencia = parseFloat(descuento*total).toFixed(2);
       $(".platillo_select #lblPrecio:eq("+idDetalle+")").html(parseFloat(total-diferencia).toFixed(2));
+
       if(cantidad == 0){
         clickEliminar++;
       }
       if(clickEliminar >= 2){
         $(".platillo_select:eq("+idDetalle+")").remove();
+        $.ajax({
+          url : "{% url 'procesos:delete_detalle_orden' %}",
+          data : {id: idDetalleGuardado},
+          type: "GET",
+          dataType: "json",
+          success : function (data) {
+            console.log("Eliminado"+data.respuesta);
+            idDetalleGuardado = "";
+          }
+        });
         for(var i = 0; i < $(".platillo_select").toArray().length; i++){
           $(".platillo_select:eq("+i+")").attr("id",i);
         }
         clickEliminar = 0;
       }
       calcularTotal();
+    }
+
+    //Hacer efecto al borrar caracter o agregar caracter
+    function guardarCambios(){
+      var id = $(".platillo_select .col-12:eq("+idDetalle+")").attr("id");
+      var cantidad = $(".platillo_select #lblCantidad:eq("+idDetalle+")").html();
+      var precio = $(".platillo_select #lblPrecioUnitario:eq("+idDetalle+")").html();
+      var descuento = 0;
+      if($(".platillo_select #porcentajeDescuento:eq("+idDetalle+")").html() != ""){
+        descuento = $(".platillo_select #porcentajeDescuento:eq("+idDetalle+")").html();
+      }
+
+      actualizar(id, cantidad, precio, descuento);
+      calcularPrecio();
     }
 
     // Simular click para minimizar el nav
@@ -453,7 +510,7 @@
         type: 'get',
         dataType: 'json',
         success: (data) => {
-          console.log(data);
+          //console.log(data);
           for(let i = 0; i < data.length; i++)
           {
             if(i == 0){

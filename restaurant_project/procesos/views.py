@@ -109,6 +109,13 @@ class OrdenDetail(APIView):
         serialized = OrdenSerializer(orden, many=True)
         return Response(serialized.data)
 
+class OrdenDetailMesa(APIView):
+    def get(self, request):
+        mesa = Mesa.objects.filter(codigo_mesa=request.GET['codigo_mesa'])
+        orden = Orden.objects.filter(mesa=mesa[0], estado="No Finalizado")
+        serialized = OrdenSerializer(orden, many=True)
+        return Response(serialized.data)
+
 class GetOrdenesList(APIView):
     def get(self, request):
         ordenes = Orden.objects.all()
@@ -127,12 +134,13 @@ class GetOrdenesUpdate(APIView):
         estado = "finalizada"
         orden = Orden.objects.filter(id=id)
         orden.update(estado=estado)
+        mesa = Mesa.objects.filter(codigo_mesa=orden[0].mesa.codigo_mesa)
+        mesa.update(ocupado=False)
 
         # devolviendo las nuevas ordenes no finalizadas
         ordenes = Orden.objects.filter(estado="No Finalizado")
         serialized = OrdenSerializer(ordenes, many=True)
         return Response(serialized.data)
-
 
 class OrdenesActivas(View):
     def get(self, request):
@@ -142,7 +150,17 @@ class CreateDetalleOrden(APIView):
     def get(self, request):
         orden = Orden.objects.filter(id=request.GET['id'])
         consumible = Platillo.objects.filter(codigoPlatillo=request.GET['codigoPlatillo'])
-        detalleorden = DetalleOrden.objects.create(orden=orden[0], consumible=consumible[0], cantidad=request.GET['cantidad'], precio_de_venta=request.GET['precio'], comentario='', descuento=request.GET['descuento'])
+        detalleorden = DetalleOrden.objects.create(orden=orden[0], consumible=consumible[0], cantidad=1, precio_de_venta=request.GET['precio'], comentario='', descuento=0)
+        return JsonResponse({'id':detalleorden.id})
+
+class UpdateDetalleOrden(APIView):
+    def get(self, request):
+        detalleorden = DetalleOrden.objects.filter(id=request.GET['id']).update(cantidad=request.GET['cantidad'], precio_de_venta=request.GET['precio'], comentario='', descuento=request.GET['descuento'])
+        return JsonResponse({'respuesta':' correctamente!'})
+
+class DeleteDetalleOrden(APIView):
+    def get(self, request):
+        detalleorden = DetalleOrden.objects.filter(id=request.GET['id']).delete()
         return JsonResponse({'respuesta':' correctamente!'})
 
 class DetalleOrdenDetail(APIView):
