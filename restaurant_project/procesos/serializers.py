@@ -24,7 +24,7 @@ class DetalleOrdenSerializer(serializers.ModelSerializer):
     class Meta:
         model = DetalleOrden
         fields = '__all__'
-
+        
 class Orden_ConDetalle_Serializer(serializers.ModelSerializer):
     detalles_de_orden = DetalleOrdenSerializer(many = True)
     class Meta:

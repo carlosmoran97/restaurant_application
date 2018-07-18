@@ -23,7 +23,10 @@ urlpatterns = [
     url(r'^orden_update', login_required(views.GetOrdenesUpdate.as_view()), name='orden_update'),
     # urls utiles para realizar detalle de orden
     url(r'^create_detalle_orden', login_required(views.CreateDetalleOrden.as_view()), name='create_detalle_orden'),
+    url(r'^update_detalle_orden', login_required(views.UpdateDetalleOrden.as_view()), name='update_detalle_orden'),
+    url(r'^delete_detalle_orden', login_required(views.DeleteDetalleOrden.as_view()), name='delete_detalle_orden'),
     url(r'^detail_detalle_orden', login_required(views.DetalleOrdenDetail.as_view()), name='detail_detalle_orden'),
     # facturar
     url(r'^facturar', login_required(views.FacturarView.as_view()), name='facturar')
+    url(r'^detail_orden_mesa', login_required(views.OrdenDetailMesa.as_view()), name='detail_orden_mesa'),
 ]
