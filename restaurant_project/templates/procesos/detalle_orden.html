@@ -68,62 +68,62 @@
                   </div>
                 </div>
                 <hr>
-                <div id="calculadora" class="row">
+                <div id="calculadora" class="row lado-izquierdo">
                   <div class="col-sm-12">
                     <div class="row">
-                      <div class="col-sm-2">
-                        <h1 class="sobre opcion-numero" value="1"><span class="badge badge-secondary">1</span></h1>&nbsp;&nbsp;
+                      <div class="sobre opcion-numero" value="1">
+                        <h1>1</h1>
                       </div>
-                      <div class="col-sm-2">
-                        <h1 class="sobre opcion-numero" value="2"><span class="badge badge-secondary">2</span></h1>&nbsp;&nbsp;
+                      <div class="sobre opcion-numero" value="2">
+                        <h1>2</h1>
                       </div>
-                      <div class="col-sm-2">
-                        <h1 class="sobre opcion-numero" value="3"><span class="badge badge-secondary">3</span></h1>&nbsp;&nbsp;
+                      <div class="sobre opcion-numero" value="3">
+                        <h1>3</h1>
                       </div>
-                      <div class="col-sm-4">
-                        <h1 id="opcion-cantidad" class="sobre"><span class="badge badge-secondary opcion" value="cantidad">Cantidad</span></h1>
-                      </div>
-                    </div>
-                    <div class="row">
-                      <div class="col-sm-2">
-                        <h1 class="sobre opcion-numero" value="4"><span class="badge badge-secondary">4</span></h1>&nbsp;&nbsp;
-                      </div>
-                      <div class="col-sm-2">
-                        <h1 class="sobre opcion-numero" value="5"><span class="badge badge-secondary">5</span></h1>&nbsp;&nbsp;
-                      </div>
-                      <div class="col-sm-2">
-                        <h1 class="sobre opcion-numero" value="6"><span class="badge badge-secondary">6</span></h1>&nbsp;&nbsp;
-                      </div>
-                      <div class="col-sm-4">
-                        <h1 id="opcion-precio" class="sobre"><span class="badge badge-secondary opcion" value="precio">Precio</span></h1>
+                      <div id="opcion-cantidad" class="sobre opcion config-opcion opcion-deseleccionada" value="cantidad">
+                        <h3>Cantidad</h3>
                       </div>
                     </div>
                     <div class="row">
-                      <div class="col-sm-2">
-                        <h1 class="sobre opcion-numero" value="7"><span class="badge badge-secondary">7</span></h1>&nbsp;&nbsp;
+                      <div class="sobre opcion-numero" value="4">
+                        <h1>4</h1>
                       </div>
-                      <div class="col-sm-2">
-                        <h1 class="sobre opcion-numero" value="8"><span class="badge badge-secondary">8</span></h1>&nbsp;&nbsp;
+                      <div class="sobre opcion-numero" value="5">
+                        <h1>5</h1>
                       </div>
-                      <div class="col-sm-2">
-                        <h1 class="sobre opcion-numero" value="9"><span class="badge badge-secondary">9</span></h1>&nbsp;&nbsp;
+                      <div class="sobre opcion-numero" value="6">
+                        <h1>6</h1>
                       </div>
-                      <div class="col-sm-4">
-                        <h1 id="opcion-descuento" class="sobre"><span class="badge badge-secondary opcion" value="descuento">% Desc</span></h1>
+                      <div id="opcion-precio" class="sobre opcion config-opcion opcion-deseleccionada" value="precio">
+                        <h3>Precio</h3>
                       </div>
                     </div>
                     <div class="row">
-                      <div class="col-sm-2">
-                        <h1><span class="badge badge-secondary"></span></h1>&nbsp;&nbsp;
+                      <div class="sobre opcion-numero" value="7">
+                        <h1>7</h1>
                       </div>
-                      <div class="col-sm-2">
-                        <h1 class="sobre opcion-numero" value="0"><span class="badge badge-secondary">0</span></h1>&nbsp;&nbsp;
+                      <div class="sobre opcion-numero" value="8">
+                        <h1>8</h1>
                       </div>
-                      <div class="col-sm-2">
-                        <h1 class="sobre opcion-numero" value="."><span class="badge badge-secondary">.</span></h1>&nbsp;&nbsp;
+                      <div class="sobre opcion-numero" value="9">
+                        <h1>9</h1>
                       </div>
-                      <div class="col-sm-4">
-                        <h1 id="borrar" class="sobre"><span class="badge badge-secondary"><i class="fa fa-window-close" aria-hidden="true"></i></span></h1>
+                      <div id="opcion-descuento" class="sobre opcion config-opcion opcion-deseleccionada" value="descuento">
+                        <h3>% Descuento</h3>
+                      </div>
+                    </div>
+                    <div class="row">
+                      <div class="sin-digito">
+                        <h1></h1>
+                      </div>
+                      <div class="sobre opcion-numero" value="0">
+                        <h1>0</h1>
+                      </div>
+                      <div class="sobre opcion-numero" value=".">
+                        <h1>.</h1>
+                      </div>
+                      <div id="borrar" class="sobre config-opcion opcion-borrar">
+                        <h1><i class="fa fa-times" aria-hidden="true"></i></h1>
                       </div>
                     </div>
                   </div>
@@ -314,7 +314,7 @@
       $(".platillo_select").removeClass("platillo_select_elegido");
       $(this).addClass("platillo_select_elegido");
       removerClass();
-      $("#opcion-cantidad .badge").addClass("badge-info");
+      $("#opcion-cantidad").addClass("opcion-seleccionada");
       accion = "cantidad";
       contadorClick = 1;
     });
@@ -322,7 +322,7 @@
     //Cambiar de color en las siguientes opciones
     $(document).on("click", ".opcion", function(){
       removerClass();
-      $(this).addClass("badge-info");
+      $(this).addClass("opcion-seleccionada");
       accion = $(this).attr("value");
       contadorClick = 1;
     });
@@ -335,7 +335,11 @@
       } else{
         if (accion == "cantidad"){
           if(contadorClick == 1){
-            $(".platillo_select #lblCantidad:eq("+idDetalle+")").html($(this).attr("value"));
+            if($(this).attr("value") == "."){
+              $(".platillo_select #lblCantidad:eq("+idDetalle+")").html("0.");
+            } else{
+              $(".platillo_select #lblCantidad:eq("+idDetalle+")").html($(this).attr("value"));
+            }
             contadorClick++;
           } else if($(".platillo_select #lblCantidad:eq("+idDetalle+")").html().indexOf(".") == -1){
             $(".platillo_select #lblCantidad:eq("+idDetalle+")").html($(".platillo_select #lblCantidad:eq("+idDetalle+")").html()+$(this).attr("value"));
@@ -347,7 +351,11 @@
           clickEliminar = 0;
         } else if (accion == "precio") {
           if(contadorClick == 1){
-            $(".platillo_select #lblPrecioUnitario:eq("+idDetalle+")").html($(this).attr("value"));
+            if($(this).attr("value") == "."){
+              $(".platillo_select #lblPrecioUnitario:eq("+idDetalle+")").html("0.");
+            } else{
+              $(".platillo_select #lblPrecioUnitario:eq("+idDetalle+")").html($(this).attr("value"));
+            }
             contadorClick++;
           } else if($(".platillo_select #lblPrecioUnitario:eq("+idDetalle+")").html().indexOf(".") == -1){
             $(".platillo_select #lblPrecioUnitario:eq("+idDetalle+")").html($(".platillo_select #lblPrecioUnitario:eq("+idDetalle+")").html()+$(this).attr("value"));
@@ -365,7 +373,11 @@
           }
           if(contadorClick == 1){
             desc = "";
-            simbolo_agregado = $(this).attr("value");
+            if($(this).attr("value") == "."){
+              simbolo_agregado = "0.";
+            } else{
+              simbolo_agregado = $(this).attr("value");
+            }
             contadorClick++;
           } else if($(".platillo_select #porcentajeDescuento:eq("+idDetalle+")").html().indexOf(".") == -1){
             desc = $(".platillo_select #porcentajeDescuento:eq("+idDetalle+")").html();
@@ -433,8 +445,8 @@
 
     //Remover color a los demás opciones de calculadora
     function removerClass(){
-      $(".opcion").removeClass("badge-info");
-      $(".opcion").addClass("badge-secondary");
+      $(".opcion").removeClass("opcion-seleccionada");
+      $(".opcion").addClass("opcion-deseleccionada");
     }
 
     //Calcular total
@@ -579,14 +591,56 @@
       padding-left: 6px;
       padding-right: 6px;
     }
-    .platillo_select:hover{
-      opacity: 0.7;
+    .platillo_select:hover, .platillo_select_elegido{
+      color: black;
+      border-left-width: 5px;
+      border-left-style: solid;
+      border-left-color: #0097A7;
     }
-    .platillo_select:hover, #lblNombrePlatillo:hover, #lblPrecio:hover, #lblCantidad:hover, #lblPrecioUnitario:hover, .sobre:hover{
+    .opcion-numero{
+      background-color: #00BCD4;
+      width: 50px;
+      height: 50px;
+      margin-top: 5px;
+      margin-right: 5px;
+      border-radius: 5px;
+      text-align: center;
+    }
+    .opcion-numero:hover{
+      background-color: #0097A7;
+
+    }
+    .sin-digito{
+      width: 50px;
+      height: 50px;
+      margin-top: 5px;
+      margin-right: 5px;
+      border-radius: 5px;
+    }
+    .platillo_select:hover, #lblNombrePlatillo:hover, #lblPrecio:hover, #lblCantidad:hover, #lblPrecioUnitario:hover, #porcentajeDescuento:hover, .sobre:hover{
       cursor: pointer;
     }
-    .platillo_select_elegido{
-      opacity: 0.7;
+    .config-opcion{
+      width: 165px;
+      height: 50px;
+      margin-top: 5px;
+      margin-right: 5px;
+      padding-top: 7px;
+      border-radius: 5px;
+      text-align: center;
+    }
+    .opcion-seleccionada{
+      background-color: #795548 !important;
+    }
+    .opcion-deseleccionada{
+      background-color: #C0CA33;
+    }
+    .opcion-borrar{
+      background-color: #ef5350;
+      padding-top: 2px !important;
+    }
+    .lado-izquierdo{
+      margin-left: 10px;
     }
   </style>
 {% endblock %}
