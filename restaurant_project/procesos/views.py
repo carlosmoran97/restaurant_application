@@ -3,7 +3,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from procesos.forms import PerfilDeUsuarioForm, UsuarioForm, SesionForm, OrdenForm
 from procesos.serializers import SesionSerializer, OrdenSerializer, DetalleOrdenSerializer, Orden_ConDetalle_Serializer
-from procesos.models import Sesion, Orden, DetalleOrden
+from procesos.models import Sesion, Orden, DetalleOrden, cantidad_ordenes_del_dia
 from restaurant_application.models import Asignacion, Empleado, Puesto, Caja, Cliente, Mesa, Platillo
 from django.http import JsonResponse
 import datetime
@@ -96,7 +96,7 @@ class AbrirOrden(APIView):
         empleado = Empleado.objects.filter(idEmpleado=request.GET['idEmpleado'])
         mesa = Mesa.objects.filter(codigo_mesa=request.GET['codigo_mesa'])
         mesa.update(ocupado=True)
-        orden = Orden.objects.create(sesion=sesion[0], mesero=empleado[0], cliente=request.GET['cliente'], mesa=mesa[0], comentario=request.GET['comentario'])
+        orden = Orden.objects.create(sesion=sesion[0],numero_orden=cantidad_ordenes_del_dia() + 1, mesero=empleado[0], cliente=request.GET['cliente'], mesa=mesa[0], comentario=request.GET['comentario'])
         return JsonResponse({'respuesta':orden.id})
 
 class detalle_orden(DetailView):

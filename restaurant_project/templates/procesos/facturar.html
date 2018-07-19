@@ -14,8 +14,38 @@
                 <a href="#">Facturación</a>
             </li>
         </ol>
+        <h3>Ordenes pendientes de facturación</h3>
         <div id="facturar">
+            <table class="table table-striped">
+                <thead class="thead-dark">
+                    <tr>
+                        <th>
+                            Orden
+                        </th>
+                        <th>
+                            Hora
+                        </th>
+                        <th>
+                            Estado
+                        </th>
+                        <th>
+                            Mesa
+                        </th>
+                        <th>
+                            Mesero
+                        </th>
+                        <th>
+                            Total
+                        </th>
+                        <th>
+                            Opciones
+                        </th>
+                    </tr>
+                </thead>
+                <tbody id="bfacturar">
 
+                </tbody>
+            </table>
         </div>
     </div>
 
@@ -24,8 +54,9 @@
 {% endblock %}
 
 {% block JavaScriptFiles %}
+<script src="{% static 'js/accounting.min.js' %}"></script>
 <script>
-    var datosObtener = () => {
+    var obtenerDatos = () => {
         $.ajax({
             url: "{% url 'procesos:orden_condetalle_detail' %}",
             data: {
@@ -35,8 +66,31 @@
             type: "GET",
             success: (data) => {
                 console.log(data);
+                let html = ``;
+                for(let i = 0; i < data.length; i++)
+                {
+                    orden = data[i];
+                    orden.fecha_orden = new Date(orden.fecha_orden);
+                    html += `<tr>
+                        <td>${orden.numero_orden}</td>
+                        <td>${orden.fecha_orden.toLocaleTimeString()}</td>
+                        <td>${orden.estado}</td>
+                        <td>${orden.mesa.numero_mesa}</td>
+                        <td>${orden.mesero.nombre} ${orden.mesero.apellido}</td>
+                        <td>${orden.total}</td>
+                        <td>
+                            <button class="btn btn-success">
+                                Facturar
+                            </button>
+                        </td>
+                    </tr>`;
+                }
+                $("#bfacturar").html(html);
             }
         });
     };
+    $(document).ready(function(){
+        obtenerDatos();
+    });
 </script>
 {% endblock %}

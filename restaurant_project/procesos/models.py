@@ -1,6 +1,7 @@
 from django.db import models
 import restaurant_application as restaurant
 from django.contrib.auth.models import User
+from datetime import datetime
 
 class PerfilDeUsuario(models.Model):
     usuario = models.OneToOneField(User, related_name='perfil')
@@ -27,6 +28,7 @@ class Sesion(models.Model):
 
 class Orden(models.Model):
     sesion = models.ForeignKey(Sesion, related_name="orden")
+    numero_orden = models.PositiveIntegerField(default=0)
     mesero = models.ForeignKey(restaurant.models.Empleado)
     cliente = models.CharField(max_length=500, null=True)
     mesa = models.ForeignKey(restaurant.models.Mesa)
@@ -35,16 +37,32 @@ class Orden(models.Model):
     estado = models.CharField(max_length=20, default="No Finalizado")
     comentario = models.TextField(max_length=512)
 
-    def calcularTotal(self):
-        pass
+    @property
+    def total(self):
+        total = 0
+        detalles = DetalleOrden.objects.filter(orden=self.id)
+        for detalle in detalles:
+            total = total + detalle.subtotal
+        return total
+
+def cantidad_ordenes_del_dia():
+    numero = 0
+    for orden in Orden.objects.all():
+        if orden.fecha_orden.year == datetime.now().year and orden.fecha_orden.month == datetime.now().month and orden.fecha_orden.day == datetime.now().day:
+            numero = numero + 1
+
+    return numero
+
 
 class DetalleOrden(models.Model):
     orden = models.ForeignKey(Orden, related_name="detalles_de_orden")
     consumible = models.ForeignKey(restaurant.models.Platillo)
     cantidad = models.PositiveIntegerField()
+    ordenados = models.PositiveIntegerField(default=0)
     precio_de_venta = models.FloatField()
     comentario = models.CharField(max_length=128)
     descuento = models.FloatField(null=True)
 
-    def calcularSubtotal(self):
-        pass
+    @property
+    def subtotal(self):
+        return (self.precio_de_venta * self.cantidad) * (1-(self.descuento / 100))
