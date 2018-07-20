@@ -3,12 +3,16 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from procesos.forms import PerfilDeUsuarioForm, UsuarioForm, SesionForm, OrdenForm
 from procesos.serializers import SesionSerializer, OrdenSerializer, DetalleOrdenSerializer, Orden_ConDetalle_Serializer
-from procesos.models import Sesion, Orden, DetalleOrden, cantidad_ordenes_del_dia
+from procesos.models import Sesion, Orden, DetalleOrden, cantidad_ordenes_del_dia, Pago
 from restaurant_application.models import Asignacion, Empleado, Puesto, Caja, Cliente, Mesa, Platillo
 from django.http import JsonResponse
 import datetime
 from django.views.generic import ListView, CreateView, DetailView
 from django.views import View
+from io import BytesIO
+from reportlab.pdfgen import canvas
+from reportlab.lib.units import cm
+from reportlab.lib.pagesizes import letter
 # use estos para el login
 
 from django.core.urlresolvers import reverse
@@ -116,10 +120,16 @@ class OrdenDetailMesa(APIView):
         serialized = OrdenSerializer(orden, many=True)
         return Response(serialized.data)
 
-class OrdenConDetallesDetail(APIView):
+class OrdenConDetallesDetailList(APIView):
     def get(self, request):
         ordenes = Orden.objects.filter(estado=request.GET['estado'])
         serialized = Orden_ConDetalle_Serializer(ordenes, many=True)
+        return Response(serialized.data)
+
+class OrdenPago(APIView):
+    def get(self, request):
+        orden = Orden.objects.filter(id=request.GET['id']).get()
+        serialized = Orden_ConDetalle_Serializer(orden, many=False)
         return Response(serialized.data)
 
 class GetOrdenesList(APIView):
@@ -205,3 +215,74 @@ def user_logout(request):
 @login_required
 def index(request):
     return render(request, 'index.html')
+
+class PagoView(View):
+    def get(self, request, pk):
+        return render(request, "procesos/pago.html", {"pk":pk})
+
+
+class Pagar(APIView):
+    def get(self, request):
+        entregado = request.GET['entregado']
+        orden = Orden.objects.filter(id=request.GET['id'])
+
+        pago = Pago.objects.create(orden=orden, entregado=entregado)
+        return JsonResponse({"respuesta":"ok"})
+
+
+class FacturaView(View):
+    def get(self, request, pk):
+        orden = Orden.objects.get(id=pk)
+
+        orden_serialized = Orden_ConDetalle_Serializer(orden, many=False)
+
+        datos = orden_serialized.data
+
+        response = HttpResponse(content_type='application/pdf')
+        response['Content-Disposition'] = 'attachment; filename="{}.pdf"'.format(pk)
+
+        buffer = BytesIO()
+
+        p = canvas.Canvas(buffer, pagesize=letter)
+        width, height = letter
+        p.rotate(90)
+        p.setFont("Helvetica", 9)
+
+        # generando el pdf
+
+        p.drawString(height - 2.5 * cm, -(8.15 + (0.6 * 15)) * cm, "${:.2f}".format(datos['total']))
+        p.drawString(height - 2.5 * cm, -(8.15 + (0.6 * 20)) * cm, "${:.2f}".format(datos['total']))
+        p.drawString(height - 2.5 * cm, -(8.15 + (0.6 * 14)) * cm, "${:.2f}".format(datos['total'] / (1+datos["propina"])*datos["propina"]))
+        p.drawString(height - 13.3 * cm, -(8.15 + (0.6 * 14)) * cm, "{}%".format(int(datos["propina"]*100)))
+        p.drawString(height - 12.2 * cm, -(8.15 + (0.6 * 14)) * cm, "Propina")
+        i = 0
+
+        for detalle in datos['detalles_de_orden']:
+            p.drawString(height - 13.2 * cm, -(8.15+(0.6*i)) * cm, str(detalle["cantidad"]))
+            p.drawString(height - 12.2 * cm, -(8.15+(0.6*i)) * cm, detalle["consumible"]["nombre"])
+            precio_unitario = "${:.2f}".format(detalle["precio_de_venta"]*(1-detalle["descuento"]/100))
+            p.drawString(height - 6 * cm, -(8.15+(0.6*i)) * cm, precio_unitario)
+            subtotal = "${:.2f}".format(detalle["subtotal"])
+            p.drawString(height - 2.5 * cm, -(8.15+(0.6*i)) * cm, subtotal)
+            i = i + 1
+
+        # finalizado
+        p.showPage()
+        p.save()
+
+        response.write(buffer.getvalue())
+        buffer.close()
+
+        return response
+
+
+class GetCreatePago(APIView):
+    def get(self, request):
+        id = request.GET['id']
+        entregado = request.GET['entregado']
+
+        orden = Orden.objects.filter(id=id).get()
+
+        pago = Pago.objects.create(orden=orden, entregado=entregado)
+
+        return JsonResponse({"respuesta":"ok"})

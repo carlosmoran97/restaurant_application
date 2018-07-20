@@ -3,13 +3,15 @@ import restaurant_application as restaurant
 from django.contrib.auth.models import User
 from datetime import datetime
 
+
 class PerfilDeUsuario(models.Model):
     usuario = models.OneToOneField(User, related_name='perfil')
     empleado = models.OneToOneField(restaurant.models.Empleado)
-    foto_de_perfil = models.ImageField(upload_to = 'profile_pics',blank=True)
+    foto_de_perfil = models.ImageField(upload_to='profile_pics', blank=True)
 
     def __str__(self):
         return self.usuario.username
+
 
 class Sesion(models.Model):
     caja = models.ForeignKey(restaurant.models.Caja)
@@ -25,6 +27,7 @@ class Sesion(models.Model):
 
     def calcularDiferencia(self):
         pass
+
 
 class Orden(models.Model):
     sesion = models.ForeignKey(Sesion, related_name="orden")
@@ -43,7 +46,9 @@ class Orden(models.Model):
         detalles = DetalleOrden.objects.filter(orden=self.id)
         for detalle in detalles:
             total = total + detalle.subtotal
+        total = total * (1 + self.propina)
         return total
+
 
 def cantidad_ordenes_del_dia():
     numero = 0
@@ -65,4 +70,14 @@ class DetalleOrden(models.Model):
 
     @property
     def subtotal(self):
-        return (self.precio_de_venta * self.cantidad) * (1-(self.descuento / 100))
+        return (self.precio_de_venta * self.cantidad) * (1 - (self.descuento / 100))
+
+
+class Pago(models.Model):
+    orden = models.ForeignKey(Orden, related_name="pago")
+    entregado = models.PositiveIntegerField()
+
+    @property
+    def cambio(self):
+        orden = Orden.objects.filter(id=self.orden).get()
+        return self.entregado - orden.total

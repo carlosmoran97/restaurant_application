@@ -1,0 +1,187 @@
+{% extends 'base/base.html' %}
+{% load staticfiles %}
+{% block TitlePage %}
+    {{'Procesos | Pago'}}
+{% endblock %}
+{% block body %}
+
+    <div class="container">
+        <!-- breadcrumbs -->
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item">
+                <a href="#">Procesos</a>
+            </li>
+            <li class="breadcrumb-item active">
+                <a href="#">Pago</a>
+            </li>
+        </ol>
+
+        <form class="form" id="form-pago">
+            <table style="display: inline-block;">
+                <tr>
+                    <td><label for="debe">Debe</label></td>
+                    <td><label for="entregado">Entregado</label></td>
+                    <td><label for="cambio">Cambio</label></td>
+                </tr>
+                <tr>
+                    <td><span id="debe"></span></td>
+                    <td><input type="text" id="entregado" placeholder="Efectivo entregado"/></td>
+                    <td><span id="cambio"></span></td>
+                </tr>
+            </table>
+            <a class="btn btn-primary" id="btn-pago" href="pdf">Validar</a>
+            <br><br>
+        </form>
+        <table class="table table-striped">
+                <thead class="thead-dark">
+                    <tr>
+                        <th>
+                            Orden
+                        </th>
+                        <th>
+                            Hora
+                        </th>
+                        <th>
+                            Mesa
+                        </th>
+                        <th>
+                            Cliente
+                        </th>
+                        <th>
+                            Mesero
+                        </th>
+                        <th>
+                            Propina
+                        </th>
+                        <th>
+                            Total
+                        </th>
+                    </tr>
+                </thead>
+                <tbody id="bpagar">
+
+                </tbody>
+            </table>
+    </div>
+
+
+{% endblock %}
+
+{% block JavaScriptFiles %}
+<script src="{% static 'js/accounting.min.js' %}"></script>
+<script>
+    $(document).ready(function(){
+        $.ajax({
+            url: "{% url 'procesos:orden_id' %}",
+            data: {
+                id:"{{ pk }}"
+            },
+            dataType: "JSON",
+            type: "GET",
+            success: (data) => {
+                data.fecha_orden = new Date(data.fecha_orden);
+                html = `<tr>
+                    <td>${data.numero_orden}</td>
+                    <td>${data.fecha_orden.toLocaleTimeString()}</td>
+                    <td>${data.mesa.numero_mesa}</td>
+                    <td>${data.cliente}</td>
+                    <td>${data.mesero.nombre} ${data.mesero.apellido}</td>
+                    <td>${data.propina*100}%</td>
+                    <td>${accounting.formatMoney(data.total)}</td>
+                </tr>`;
+                $("#bpagar").html(html);
+                $("#debe").text(accounting.formatMoney(data.total));
+                $("#cambio").text(accounting.formatMoney(0));
+            }
+
+        });
+    });
+
+    $('#entregado').on('input propertychange paste', function() {
+        if($.isNumeric($("#entregado").val()))
+        {
+            $("#cambio").text(accounting.formatMoney(parseFloat(accounting.unformat($("#debe").text())) - $("#entregado").val()));
+        }
+        if($("#entregado").val() == "")
+        {
+            $("#cambio").text(accounting.formatMoney(0));
+        }
+    });
+
+    $(document).on("click", "#btn-pago", function(){
+        if($.isNumeric($("#entregado").val()))
+        {
+            if($("#entregado").val() > parseFloat(accounting.unformat($("#debe").text()))){
+                // generar pdf de la factura
+                let downloadPromise = new Promise((resolve, reject) => {
+                    $.ajax({
+                        url: '{% url 'procesos:factura_pdf' pk=pk %}',
+                        method: 'GET',
+                        xhrFields: {
+                            responseType: 'blob'
+                        },
+                        success: function(data)
+                        {
+                            let a = document.createElement('a');
+                            let url = window.URL.createObjectURL(data);
+                            a.href = url;
+                            a.download = 'factura.pdf';
+                            a.click();
+                            window.URL.revokeObjectURL(url);
+                            $.ajax({
+                                url: '{% url 'procesos:orden_update' %}',
+                                type: 'GET',
+                                data: {
+                                    id: "{{ pk }}",
+                                    estado: "Facturada"
+                                },
+                                dataType: 'JSON',
+                                success: function(data){
+                                    $.ajax({
+                                        url: "{% url 'procesos:create_pago' %}",
+                                        type: 'GET',
+                                        data: {
+                                            id: "{{ pk }}",
+                                            entregado: $("#entregado").val()
+                                        },
+                                        dataType: "JSON",
+                                        success: function(data){
+                                            resolve("{% url 'procesos:facturar' %}");
+                                        }
+                                    });
+                                }
+                            });
+                        }
+                    });
+                }); //fin del promise
+                downloadPromise.then(function(val){
+                    window.location.href = val;
+                    return false;
+                })
+                .catch(function(err){
+                    alert(err);
+                });
+            }
+            else
+            {
+                alert("El efectivo entregado debe ser mayor a lo que debe el cliente.");
+            }
+        }
+        else{
+            alert("Ingrese un valor numerico");
+        }
+        return false;
+    });
+</script>
+<style>
+    td
+    {
+        padding-left: 10px;
+        padding-right: 10px;
+    }
+    .form-group mb-2{
+        padding-left: 10px;
+        padding-right: 10px;
+    }
+</style>
+{% endblock %}

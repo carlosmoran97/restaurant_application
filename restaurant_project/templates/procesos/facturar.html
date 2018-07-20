@@ -32,6 +32,9 @@
                             Mesa
                         </th>
                         <th>
+                            Cliente
+                        </th>
+                        <th>
                             Mesero
                         </th>
                         <th>
@@ -67,7 +70,7 @@
             success: (data) => {
                 console.log(data);
                 let html = ``;
-                for(let i = 0; i < data.length; i++)
+                for(let i = data.length - 1; i >= 0; i--)
                 {
                     orden = data[i];
                     orden.fecha_orden = new Date(orden.fecha_orden);
@@ -76,12 +79,13 @@
                         <td>${orden.fecha_orden.toLocaleTimeString()}</td>
                         <td>${orden.estado}</td>
                         <td>${orden.mesa.numero_mesa}</td>
+                        <td>${orden.cliente}</td>
                         <td>${orden.mesero.nombre} ${orden.mesero.apellido}</td>
-                        <td>${orden.total}</td>
+                        <td>${accounting.formatMoney(orden.total)}</td>
                         <td>
-                            <button class="btn btn-success">
-                                Facturar
-                            </button>
+                            <a href="/procesos/pago/${orden.id}/">
+                                <button class="btn btn-success">Pagar</button>
+                            </a>
                         </td>
                     </tr>`;
                 }

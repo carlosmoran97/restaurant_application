@@ -1,0 +1,69 @@
+{% extends 'base/base.html' %}
+{% load staticfiles %}
+{% block TitlePage %}
+    {{'Procesos | Pago'}}
+{% endblock %}
+{% block body %}
+
+    <div class="container">
+        <button id="print">Imprimir</button>
+
+        <canvas id="the-canvas"></canvas>
+
+    </div>
+
+{% endblock %}
+
+{% block JavaScriptFiles %}
+<script type="text/javascript" src="{% static 'js/pdf.js' %}"></script>
+
+<script>
+    // URL of PDF document
+    var url = "{% url 'procesos:factura_pdf' pk=pk %}";
+
+    // Asynchronous download PDF
+    PDFJS.getDocument(url)
+      .then(function(pdf) {
+        return pdf.getPage(1);
+      })
+      .then(function(page) {
+        // Set scale (zoom) level
+        var scale = 1;
+
+        // Get viewport (dimensions)
+        var viewport = page.getViewport(scale);
+
+        // Get canvas#the-canvas
+        var canvas = document.getElementById('the-canvas');
+
+        // Fetch canvas' 2d context
+        var context = canvas.getContext('2d');
+
+        // Set dimensions to Canvas
+        canvas.height = viewport.height;
+        canvas.width = viewport.width;
+
+        // Prepare object needed by render method
+        var renderContext = {
+          canvasContext: context,
+          viewport: viewport
+        };
+
+        // Render PDF page
+        page.render(renderContext);
+      });
+
+      $(document).on("click", "#print", function()
+      {
+        var canvas = document.getElementById("the-canvas");
+        var win = window.open('','','');
+        var html = "<img src='" + canvas.toDataURL() + "'>";
+        win.document.write(html);
+        win.document.close();
+        win.focus();
+        win.print();
+        win.close();
+      });
+
+</script>
+{% endblock %}
