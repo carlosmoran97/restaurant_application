@@ -336,17 +336,15 @@
         if (accion == "cantidad"){
           if(contadorClick == 1){
             if($(this).attr("value") == "."){
-              $(".platillo_select #lblCantidad:eq("+idDetalle+")").html("0.");
+              $(".platillo_select #lblCantidad:eq("+idDetalle+")").html("0");
             } else{
               $(".platillo_select #lblCantidad:eq("+idDetalle+")").html($(this).attr("value"));
             }
             contadorClick++;
-          } else if($(".platillo_select #lblCantidad:eq("+idDetalle+")").html().indexOf(".") == -1){
-            $(".platillo_select #lblCantidad:eq("+idDetalle+")").html($(".platillo_select #lblCantidad:eq("+idDetalle+")").html()+$(this).attr("value"));
+          } else if($(this).attr("value") == "."){
+            $(".platillo_select #lblCantidad:eq("+idDetalle+")").html($(".platillo_select #lblCantidad:eq("+idDetalle+")").html()+"");
           } else{
-            if($(this).attr("value") != "."){
-              $(".platillo_select #lblCantidad:eq("+idDetalle+")").html($(".platillo_select #lblCantidad:eq("+idDetalle+")").html()+$(this).attr("value"));
-            }
+            $(".platillo_select #lblCantidad:eq("+idDetalle+")").html($(".platillo_select #lblCantidad:eq("+idDetalle+")").html()+$(this).attr("value"));
           }
           clickEliminar = 0;
         } else if (accion == "precio") {
