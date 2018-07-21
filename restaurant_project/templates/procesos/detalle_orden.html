@@ -176,7 +176,11 @@
           }
           var id = $(".platillo_select .col-12:eq("+i+")").attr("id");
           var precio = $(".platillo_select #lblPrecioUnitario:eq("+i+")").html();
-          actualizar(id, cantidad, precio, descuento);
+          calcularEntregados();
+          var ordenados = $(".platillo_select #ordenados:eq("+idDetalle+")").html();
+          var entregados = $(".platillo_select #entregados:eq("+idDetalle+")").html();
+
+          actualizar(id, cantidad, precio, descuento, ordenados, entregados);
         }
       }
 
@@ -221,6 +225,14 @@
                                         <label><span id="porcentajeDescuento"></span><span id="lblDescuento"></span></label>
                                       </div>
                                     </div>
+                                    <div class="row">
+                                      <div class="col-7">
+                                        <label>En espera: <span class="badge badge-success" id="ordenados">1</span></label><button type="button" class="btn btn-link btn-sm">Entregado</button>
+                                      </div>
+                                      <div class="col-5">
+                                        <label>Entregados: <span class="badge badge-success" id="entregados">0</span></label>
+                                      </div>
+                                    </div>
                                   </div>
                                  </div>`;
                   $("#agregandoPlatillos").html($("#agregandoPlatillos").html()+htmlRow);
@@ -235,14 +247,16 @@
     });
 
     //Actualizar
-    function actualizar(id, cantidad, precio, descuento){
+    function actualizar(id, cantidad, precio, descuento, ordenados, entregados){
       $.ajax({
         url : "{% url 'procesos:update_detalle_orden' %}",
         data : {
           id: id,
           cantidad: cantidad,
           precio: precio,
-          descuento: descuento
+          descuento: descuento,
+          ordenados: ordenados,
+          entregados: entregados
         },
         type: "GET",
         dataType: "json",
@@ -294,6 +308,14 @@
                                       </label>
                                     </div>
                                   </div>
+                                  <div class="row">
+                                    <div class="col-7">
+                                      <label>En espera: <span class="badge badge-success" id="ordenados">${data[i].ordenados}</span></label><button type="button" class="btn btn-link btn-sm">Entregado</button>
+                                    </div>
+                                    <div class="col-5">
+                                      <label>Entregados: <span class="badge badge-success" id="entregados">${data[i].entregados}</span></label>
+                                    </div>
+                                  </div>
                                 </div>
                                </div>`;
                                idDetalle = i;
@@ -332,57 +354,57 @@
         noSeleccionado();
       } else{
         if (accion == "cantidad"){
+          var cantidad_dom = $(".platillo_select #lblCantidad:eq("+idDetalle+")");
           if(contadorClick == 1){
             if($(this).attr("value") == "."){
-              $(".platillo_select #lblCantidad:eq("+idDetalle+")").html("0");
+              cantidad_dom.html("0");
             } else{
-              $(".platillo_select #lblCantidad:eq("+idDetalle+")").html($(this).attr("value"));
+              cantidad_dom.html($(this).attr("value"));
             }
             contadorClick++;
           } else if($(this).attr("value") == "."){
-            $(".platillo_select #lblCantidad:eq("+idDetalle+")").html($(".platillo_select #lblCantidad:eq("+idDetalle+")").html()+"");
+            cantidad_dom.html(cantidad_dom.html()+"");
           } else{
-            $(".platillo_select #lblCantidad:eq("+idDetalle+")").html($(".platillo_select #lblCantidad:eq("+idDetalle+")").html()+$(this).attr("value"));
+            cantidad_dom.html(cantidad_dom.html()+$(this).attr("value"));
           }
 
-          if($(".platillo_select #lblCantidad:eq("+idDetalle+")").html().length > 1){
-            if($(".platillo_select #lblCantidad:eq("+idDetalle+")").html().charAt(0) == "0" || $(".platillo_select #lblCantidad:eq("+idDetalle+")").html().charAt(0) == "."){
-              $(".platillo_select #lblCantidad:eq("+idDetalle+")").html($(".platillo_select #lblCantidad:eq("+idDetalle+")").html().substr(1, $(".platillo_select #lblCantidad:eq("+idDetalle+")").html().length));
+          if(cantidad_dom.html().length > 1){
+            if(cantidad_dom.html().charAt(0) == "0" || cantidad_dom.html().charAt(0) == "."){
+              cantidad_dom.html(cantidad_dom.html().substr(1, cantidad_dom.html().length));
             }
           }
           clickEliminar = 0;
 
         } else if (accion == "precio") {
+          var precio_dom = $(".platillo_select #lblPrecioUnitario:eq("+idDetalle+")");
           if(contadorClick == 1){
             if($(this).attr("value") == "."){
-              $(".platillo_select #lblPrecioUnitario:eq("+idDetalle+")").html("0.");
+              precio_dom.html("0.");
             } else{
-              $(".platillo_select #lblPrecioUnitario:eq("+idDetalle+")").html($(this).attr("value"));
+              precio_dom.html($(this).attr("value"));
             }
             contadorClick++;
-          } else if($(".platillo_select #lblPrecioUnitario:eq("+idDetalle+")").html().indexOf(".") == -1){
-            $(".platillo_select #lblPrecioUnitario:eq("+idDetalle+")").html($(".platillo_select #lblPrecioUnitario:eq("+idDetalle+")").html()+$(this).attr("value"));
+          } else if(precio_dom.html().indexOf(".") == -1){
+            precio_dom.html(precio_dom.html()+$(this).attr("value"));
           } else{
             if($(this).attr("value") != "."){
-              $(".platillo_select #lblPrecioUnitario:eq("+idDetalle+")").html($(".platillo_select #lblPrecioUnitario:eq("+idDetalle+")").html()+$(this).attr("value"));
+              precio_dom.html(precio_dom.html()+$(this).attr("value"));
             }
           }
 
-          if($(".platillo_select #lblPrecioUnitario:eq("+idDetalle+")").html().length > 1){
-            if($(".platillo_select #lblPrecioUnitario:eq("+idDetalle+")").html().charAt(0) == "0"){
-              $(".platillo_select #lblPrecioUnitario:eq("+idDetalle+")").html($(".platillo_select #lblPrecioUnitario:eq("+idDetalle+")").html().substr(1, $(".platillo_select #lblPrecioUnitario:eq("+idDetalle+")").html().length));
+          if(precio_dom.html().length > 1){
+            if(precio_dom.html().charAt(0) == "0"){
+              precio_dom.html(precio_dom.html().substr(1, precio_dom.html().length));
             }
           }
-          if($(".platillo_select #lblPrecioUnitario:eq("+idDetalle+")").html().charAt(0) == "."){
-            $(".platillo_select #lblPrecioUnitario:eq("+idDetalle+")").html("0");
+          if(precio_dom.html().charAt(0) == "."){
+            precio_dom.html("0");
           }
           clickEliminar = 0;
         } else if (accion == "descuento") {
+          var descuento_dom = $(".platillo_select #porcentajeDescuento:eq("+idDetalle+")");
           var desc;
           var simbolo_agregado;
-          if($(".platillo_select #porcentajeDescuento:eq("+idDetalle+")").html() == null){
-            alert($(".platillo_select #porcentajeDescuento:eq("+idDetalle+")").html());
-          }
           if(contadorClick == 1){
             desc = "";
             if($(this).attr("value") == "."){
@@ -391,29 +413,30 @@
               simbolo_agregado = $(this).attr("value");
             }
             contadorClick++;
-          } else if($(".platillo_select #porcentajeDescuento:eq("+idDetalle+")").html().indexOf(".") == -1){
-            desc = $(".platillo_select #porcentajeDescuento:eq("+idDetalle+")").html();
+          } else if(descuento_dom.html().indexOf(".") == -1){
+            desc = descuento_dom.html();
             simbolo_agregado = $(this).attr("value");
           } else{
-            desc = $(".platillo_select #porcentajeDescuento:eq("+idDetalle+")").html();
+            desc = descuento_dom.html();
             if($(this).attr("value") != "."){
               simbolo_agregado = $(this).attr("value");
             } else{
               simbolo_agregado = "";
             }
           }
-          $(".platillo_select #porcentajeDescuento:eq("+idDetalle+")").html(desc+simbolo_agregado);
+          descuento_dom.html(desc+simbolo_agregado);
           $(".platillo_select #lblDescuento:eq("+idDetalle+")").html("% desc");
-          if($(".platillo_select #porcentajeDescuento:eq("+idDetalle+")").html().length > 1){
-            if($(".platillo_select #porcentajeDescuento:eq("+idDetalle+")").html().charAt(0) == "0" || $(".platillo_select #porcentajeDescuento:eq("+idDetalle+")").html().charAt(0) == "."){
-              $(".platillo_select #porcentajeDescuento:eq("+idDetalle+")").html($(".platillo_select #porcentajeDescuento:eq("+idDetalle+")").html().substr(1, $(".platillo_select #porcentajeDescuento:eq("+idDetalle+")").html().length));
+          if(descuento_dom.html().length > 1){
+            if(descuento_dom.html().charAt(0) == "0" || descuento_dom.html().charAt(0) == "."){
+              descuento_dom.html(descuento_dom.html().substr(1, descuento_dom.html().length));
             }
           }
-          if($(".platillo_select #porcentajeDescuento:eq("+idDetalle+")").html().charAt(0) == "."){
-            $(".platillo_select #porcentajeDescuento:eq("+idDetalle+")").html("0");
+          if(descuento_dom.html().charAt(0) == "."){
+            descuento_dom.html("0");
           }
           clickEliminar = 0;
         }
+
         guardarCambios();
       }
     });
@@ -439,25 +462,28 @@
 
         var numero;
         if (accion == "cantidad"){
-          numero = $(".platillo_select #lblCantidad:eq("+idDetalle+")").html().substring(0,$(".platillo_select #lblCantidad:eq("+idDetalle+")").html().length-1);
+          var cantidad_dom = $(".platillo_select #lblCantidad:eq("+idDetalle+")");
+          numero = cantidad_dom.html().substring(0, cantidad_dom.html().length-1);
           if(numero == ""){
-            $(".platillo_select #lblCantidad:eq("+idDetalle+")").html("0");
+            cantidad_dom.html("0");
           } else{
-            $(".platillo_select #lblCantidad:eq("+idDetalle+")").html(numero);
+            cantidad_dom.html(numero);
           }
         } else if (accion == "precio") {
-          numero = $(".platillo_select #lblPrecioUnitario:eq("+idDetalle+")").html().substring(0,$(".platillo_select #lblPrecioUnitario:eq("+idDetalle+")").html().length-1);
+          var precio_dom = $(".platillo_select #lblPrecioUnitario:eq("+idDetalle+")");
+          numero = precio_dom.html().substring(0, precio_dom.html().length-1);
           if(numero == ""){
-            $(".platillo_select #lblPrecioUnitario:eq("+idDetalle+")").html("0");
+            precio_dom.html("0");
           } else{
-            $(".platillo_select #lblPrecioUnitario:eq("+idDetalle+")").html(numero);
+            precio_dom.html(numero);
           }
         } else if (accion == "descuento") {
-          numero = $(".platillo_select #porcentajeDescuento:eq("+idDetalle+")").html().substring(0,$(".platillo_select #porcentajeDescuento:eq("+idDetalle+")").html().length-1);
+          var descuento_dom = $(".platillo_select #porcentajeDescuento:eq("+idDetalle+")");
+          numero = descuento_dom.html().substring(0, descuento_dom.html().length-1);
           if(numero == ""){
-            $(".platillo_select #porcentajeDescuento:eq("+idDetalle+")").html("0");
+            descuento_dom.html("0");
           } else{
-            $(".platillo_select #porcentajeDescuento:eq("+idDetalle+")").html(numero);
+            descuento_dom.html(numero);
           }
         }
         guardarCambios();
@@ -527,9 +553,39 @@
         descuento = $(".platillo_select #porcentajeDescuento:eq("+idDetalle+")").html();
       }
 
-      actualizar(id, cantidad, precio, descuento);
+      calcularEntregados();
+
+      var ordenados = $(".platillo_select #ordenados:eq("+idDetalle+")").html();
+      var entregados = $(".platillo_select #entregados:eq("+idDetalle+")").html();
+
+      actualizar(id, cantidad, precio, descuento, ordenados, entregados);
       calcularPrecio();
     }
+
+    //Calcular la cantidad de ordenes que quedán pendientes de entregar de acuerdo a las ya entregadas
+    function calcularEntregados(){
+      var cantidad = parseInt($(".platillo_select #lblCantidad:eq("+idDetalle+")").html());
+      var ordenados = parseInt($(".platillo_select #ordenados:eq("+idDetalle+")").html());
+      var entregados = parseInt($(".platillo_select #entregados:eq("+idDetalle+")").html());
+      var resultado = cantidad-entregados;
+      if(resultado >= 0){
+        $(".platillo_select #ordenados:eq("+idDetalle+")").html(resultado);
+      } else{
+        $(".platillo_select #ordenados:eq("+idDetalle+")").html(cantidad);
+      }
+      if(cantidad < entregados){
+        $(".platillo_select #entregados:eq("+idDetalle+")").html(cantidad);
+      }
+    }
+
+    $(document).on("click", ".btn-link", function(){
+      var ordenados = parseInt($(".platillo_select #ordenados:eq("+idDetalle+")").html());
+      var entregados = parseInt($(".platillo_select #entregados:eq("+idDetalle+")").html());
+      entregados += ordenados;
+      $(".platillo_select #ordenados:eq("+idDetalle+")").html("0");
+      $(".platillo_select #entregados:eq("+idDetalle+")").html(entregados);
+      guardarCambios();
+    });
 
     // Simular click para minimizar el nav
     $("#sidenavToggler > i").click();

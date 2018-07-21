@@ -62,11 +62,12 @@ def cantidad_ordenes_del_dia():
 class DetalleOrden(models.Model):
     orden = models.ForeignKey(Orden, related_name="detalles_de_orden")
     consumible = models.ForeignKey(restaurant.models.Platillo)
-    cantidad = models.PositiveIntegerField()
-    ordenados = models.PositiveIntegerField(default=0)
+    cantidad = models.PositiveIntegerField(default=1)
+    ordenados = models.PositiveIntegerField(default=1)
+    entregados = models.PositiveIntegerField(default=0)
     precio_de_venta = models.FloatField()
     comentario = models.CharField(max_length=128)
-    descuento = models.FloatField(null=True)
+    descuento = models.FloatField(null=True, default=0)
 
     @property
     def subtotal(self):

@@ -23,7 +23,7 @@ class DetalleOrdenSerializer(serializers.ModelSerializer):
     consumible = PlatilloSerializer(many=False)
     class Meta:
         model = DetalleOrden
-        fields = ('id','orden','consumible','cantidad','ordenados','precio_de_venta','comentario','descuento','subtotal')
+        fields = '__all__'
 
 
 class Orden_ConDetalle_Serializer(serializers.ModelSerializer):
