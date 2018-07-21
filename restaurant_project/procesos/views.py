@@ -167,12 +167,12 @@ class CreateDetalleOrden(APIView):
     def get(self, request):
         orden = Orden.objects.filter(id=request.GET['id'])
         consumible = Platillo.objects.filter(codigoPlatillo=request.GET['codigoPlatillo'])
-        detalleorden = DetalleOrden.objects.create(orden=orden[0], consumible=consumible[0], cantidad=1, precio_de_venta=request.GET['precio'], comentario='', descuento=0)
+        detalleorden = DetalleOrden.objects.create(orden=orden[0], consumible=consumible[0], precio_de_venta=request.GET['precio'], comentario='')
         return JsonResponse({'id':detalleorden.id})
 
 class UpdateDetalleOrden(APIView):
     def get(self, request):
-        detalleorden = DetalleOrden.objects.filter(id=request.GET['id']).update(cantidad=request.GET['cantidad'], precio_de_venta=request.GET['precio'], comentario='', descuento=request.GET['descuento'])
+        detalleorden = DetalleOrden.objects.filter(id=request.GET['id']).update(cantidad=request.GET['cantidad'], ordenados=request.GET['ordenados'], entregados=request.GET['entregados'], precio_de_venta=request.GET['precio'], comentario='', descuento=request.GET['descuento'])
         return JsonResponse({'respuesta':' correctamente!'})
 
 class DeleteDetalleOrden(APIView):
