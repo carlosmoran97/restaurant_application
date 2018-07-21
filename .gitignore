@@ -1,2 +1,9 @@
 *.pyc
 .vscode
+restaurant_project/.vscode
+restaurant_project/inventario/__pycache__/*
+restaurant_project/inventario/migrations/*
+restaurant_project/procesos/__pycache__/*
+restaurant_project/procesos/migrations/*
+restaurant_project/restaurant_application/__pycache__/*
+restaurant_project/restaurant_application/migrations/*
