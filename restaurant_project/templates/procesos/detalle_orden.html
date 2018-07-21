@@ -9,10 +9,7 @@
         <div class="row">
           <div class="col-8">
             <div class="row">
-              <div class="card mb-3">
-                <div class="card-header">
-                  <i class="fa fa-bar-chart"></i>Datos de Orden
-                </div>
+              <div class="card mb-2">
                 <div class="card-body">
                   <div class="row">
                     <div class="col-md-4">
@@ -30,7 +27,7 @@
                   </div>
                   <hr>
                   <div class="row">
-                    <div class="col-md-8">
+                    <div class="col-md-12">
                       <label>Comentario:</label>
                       <strong>{{ object.comentario }}</strong>
                     </div>
@@ -149,6 +146,7 @@
     var idDetalle;
     var contadorClick;
     var clickEliminar;
+
     $(document).ready(function(){
       codigoPlatillo = "";
       accion = "";
@@ -346,7 +344,14 @@
           } else{
             $(".platillo_select #lblCantidad:eq("+idDetalle+")").html($(".platillo_select #lblCantidad:eq("+idDetalle+")").html()+$(this).attr("value"));
           }
+
+          if($(".platillo_select #lblCantidad:eq("+idDetalle+")").html().length > 1){
+            if($(".platillo_select #lblCantidad:eq("+idDetalle+")").html().charAt(0) == "0" || $(".platillo_select #lblCantidad:eq("+idDetalle+")").html().charAt(0) == "."){
+              $(".platillo_select #lblCantidad:eq("+idDetalle+")").html($(".platillo_select #lblCantidad:eq("+idDetalle+")").html().substr(1, $(".platillo_select #lblCantidad:eq("+idDetalle+")").html().length));
+            }
+          }
           clickEliminar = 0;
+
         } else if (accion == "precio") {
           if(contadorClick == 1){
             if($(this).attr("value") == "."){
@@ -363,6 +368,15 @@
             }
           }
 
+          if($(".platillo_select #lblPrecioUnitario:eq("+idDetalle+")").html().length > 1){
+            if($(".platillo_select #lblPrecioUnitario:eq("+idDetalle+")").html().charAt(0) == "0"){
+              $(".platillo_select #lblPrecioUnitario:eq("+idDetalle+")").html($(".platillo_select #lblPrecioUnitario:eq("+idDetalle+")").html().substr(1, $(".platillo_select #lblPrecioUnitario:eq("+idDetalle+")").html().length));
+            }
+          }
+          if($(".platillo_select #lblPrecioUnitario:eq("+idDetalle+")").html().charAt(0) == "."){
+            $(".platillo_select #lblPrecioUnitario:eq("+idDetalle+")").html("0");
+          }
+          clickEliminar = 0;
         } else if (accion == "descuento") {
           var desc;
           var simbolo_agregado;
@@ -390,6 +404,15 @@
           }
           $(".platillo_select #porcentajeDescuento:eq("+idDetalle+")").html(desc+simbolo_agregado);
           $(".platillo_select #lblDescuento:eq("+idDetalle+")").html("% desc");
+          if($(".platillo_select #porcentajeDescuento:eq("+idDetalle+")").html().length > 1){
+            if($(".platillo_select #porcentajeDescuento:eq("+idDetalle+")").html().charAt(0) == "0" || $(".platillo_select #porcentajeDescuento:eq("+idDetalle+")").html().charAt(0) == "."){
+              $(".platillo_select #porcentajeDescuento:eq("+idDetalle+")").html($(".platillo_select #porcentajeDescuento:eq("+idDetalle+")").html().substr(1, $(".platillo_select #porcentajeDescuento:eq("+idDetalle+")").html().length));
+            }
+          }
+          if($(".platillo_select #porcentajeDescuento:eq("+idDetalle+")").html().charAt(0) == "."){
+            $(".platillo_select #porcentajeDescuento:eq("+idDetalle+")").html("0");
+          }
+          clickEliminar = 0;
         }
         guardarCambios();
       }
@@ -482,7 +505,7 @@
           type: "GET",
           dataType: "json",
           success : function (data) {
-            console.log("Eliminado"+data.respuesta);
+            //console.log("Eliminado"+data.respuesta);
             idDetalleGuardado = "";
           }
         });
@@ -574,8 +597,6 @@
         }
       });
     }
-
-
   </script>
   <style>
     .platillo-card
@@ -639,6 +660,10 @@
     }
     .lado-izquierdo{
       margin-left: 10px;
+    }
+    #agregandoPlatillos{
+      overflow-y: scroll;
+      height: 400px;
     }
   </style>
 {% endblock %}
