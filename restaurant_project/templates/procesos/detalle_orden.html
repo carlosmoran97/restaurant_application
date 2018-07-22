@@ -59,9 +59,9 @@
                 </div>
                 <hr>
                 <div id="total" class="row">
-                  <div class="col-md-8">
+                  <div class="col-md-12">
                     <label>Total:</label>
-                    <strong>$ <span id="lblTotal">00.00</span></strong>
+                    <strong>$ <span id="lblTotal">00.00</span></strong>&nbsp;&nbsp;&nbsp;&nbsp;<button id="btn-entregados-todos" type="button" class="btn btn-secondary btn-sm">Entregados Todos</button>
                   </div>
                 </div>
                 <hr>
@@ -579,13 +579,24 @@
     }
 
     $(document).on("click", ".btn-link", function(){
+      modificarEntregados();
+    });
+
+    $(document).on("click", "#btn-entregados-todos", function(){
+      for(var i = 0; i < $(".platillo_select").toArray().length; i++){
+        idDetalle = i;
+        modificarEntregados();
+      }
+    });
+
+    function modificarEntregados(){
       var ordenados = parseInt($(".platillo_select #ordenados:eq("+idDetalle+")").html());
       var entregados = parseInt($(".platillo_select #entregados:eq("+idDetalle+")").html());
       entregados += ordenados;
       $(".platillo_select #ordenados:eq("+idDetalle+")").html("0");
       $(".platillo_select #entregados:eq("+idDetalle+")").html(entregados);
       guardarCambios();
-    });
+    }
 
     // Simular click para minimizar el nav
     $("#sidenavToggler > i").click();
