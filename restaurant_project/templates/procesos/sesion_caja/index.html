@@ -51,7 +51,7 @@
       idSesion = "";
       //alert('Funciona JQuery!');
       cargarDatos();
-      
+
     });
 
     //Abrir Modal de Formulario de Registro de Sesión Caja
@@ -66,11 +66,10 @@
         dataType: "json",
         success: function(data)
         {
-          console.log(data);
           html = `<option value="" selected>-------</option>`;
           for(let i = 0; i < data.length; i++)
           {
-            if(data[i].puesto.puesto == "cajero"){
+            if(data[i].puesto.puesto.toLowerCase() == "cajero"){
               html += `<option value="${data[i].empleado.idEmpleado}">${data[i].empleado.nombre} ${data[i].empleado.apellido}</option>`;
             }
           }
@@ -198,7 +197,9 @@
                 "render": function ( data, type, full, meta ) {
                   var id = full.id;
                   var htmlButton = '<button type=\"button\" class=\"btn btn-outline-info btn-sm ver\" value='+id+'><i class="fa fa-eye" aria-hidden="true"></i></button>&nbsp;&nbsp;&nbsp;';
-                  htmlButton += '<button type=\"button\" class=\"btn btn-outline-danger btn-sm cerrar\" value='+id+'><i class="fa fa-lock" aria-hidden="true"></i></button>';
+                  if(full.estado == "Abierta"){
+                    htmlButton += '<button type=\"button\" class=\"btn btn-outline-danger btn-sm cerrar\" value='+id+'><i class="fa fa-lock" aria-hidden="true"></i></button>';
+                  }
                     return htmlButton;
               }},
             ]

@@ -79,6 +79,7 @@
             orden_id = data[0].id;
           }
         });
+
         $("#cargarForm").html(`
                                 <div class="modal-body">
                                     <h3>Está mesa se encuentra ocupada, <strong>¿Desea ver la orden de está mesa?</strong></h3>
@@ -93,6 +94,22 @@
         $("#cargarForm").html(`{% include 'procesos/abrir_orden_formulario.html' %}`);
         $("#labelModal").html("Abrir Orden");
       }
+      $.ajax({
+        url: "{% url 'restaurant:lista_empleados' %}",
+        type: "get",
+        dataType: "json",
+        success: function(data)
+        {
+          html = `<option value="" selected>-------</option>`;
+          for(let i = 0; i < data.length; i++)
+          {
+            if(data[i].puesto.puesto.toLowerCase() == "mesero"){
+              html += `<option value="${data[i].empleado.idEmpleado}">${data[i].empleado.nombre} ${data[i].empleado.apellido}</option>`;
+            }
+          }
+          $("#selectMesero").html(html);
+        }
+      });
       $("#modal").modal("show");
     });
 

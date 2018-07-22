@@ -2,6 +2,7 @@ from django.db import models
 import restaurant_application as restaurant
 from django.contrib.auth.models import User
 from datetime import datetime
+from django.core.validators import MinValueValidator
 
 
 class PerfilDeUsuario(models.Model):
@@ -76,7 +77,7 @@ class DetalleOrden(models.Model):
 
 class Pago(models.Model):
     orden = models.ForeignKey(Orden, related_name="pago")
-    entregado = models.PositiveIntegerField()
+    entregado = models.FloatField(validators=[MinValueValidator(0.0)])
 
     @property
     def cambio(self):
