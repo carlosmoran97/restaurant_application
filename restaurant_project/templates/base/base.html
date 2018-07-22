@@ -74,7 +74,7 @@
           </div>
           <div class="modal-body">
             <div class="alert alert-danger" role="alert">
-              Para realizar una orden el administrador debe habilitar una sesión en caja.
+              Usted no tiene asignada una sesión de caja.
             </div>
           </div>
           <div class="modal-footer">
@@ -98,30 +98,52 @@
     <script src="{% static 'jquery-ui/jquery-ui.min.js' %}"></script>
     <!-- Valida que existe una sesion para poder realizar una orden -->
     <script>
+      function empleado(usuario_id, perfiles)
+      {
+          let empleado_id = null;
+          for(let i = 0; i < perfiles.length; i++)
+          {
+              if(perfiles[i].usuario == usuario_id)
+              {
+                  empleado_id = perfiles[i].empleado;
+              }
+          }
+          return empleado_id;
+      }
       function comprobarSesion(){
         $.ajax({
           url: "{% url 'procesos:lista_sesion_caja' %}",
           type: 'get',
           dataType: 'json',
-          success: (data) => {
-            let sesionActiva = false;
-            for(let i = 0; i < data.length; i++)
-            {
-              if(data[i].estado.toLowerCase() === "abierta")
+          success: (dataSesion) => {
+            $.ajax({
+              url: "{% url 'procesos:lista_perfiles' %}",
+              type: 'get',
+              dataType: 'json',
+              success: function(dataPerfiles)
               {
-                sesionActiva = true;
+                let sesionActiva = false;
+                for(let i = 0; i < dataSesion.length; i++)
+                {
+                  if(dataSesion[i].estado.toLowerCase() === "abierta" && empleado(parseInt("{{ user.id }}"), dataPerfiles) == dataSesion[i].cajero.idEmpleado)
+                  {
+                    sesionActiva = true;
+                  }
+                }
+                if(!sesionActiva)
+                {
+                  $("#sesion-modal").modal("show");
+                }
+                else{
+                  window.location.href = "{% url 'procesos:panel_mesas' %}";
+                }
               }
-            }
-            if(!sesionActiva)
-            {
-              $("#sesion-modal").modal("show");
-            }
-            else{
-              window.location.href = "{% url 'procesos:panel_mesas' %}";
-            }
+            });
+            
           }
         });
       }
+      
     </script>
     {% block JavaScriptFiles %}
     {% endblock %}

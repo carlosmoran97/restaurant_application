@@ -22,6 +22,7 @@ urlpatterns = [
     url(r'^ordenes_activas', login_required(views.OrdenesActivas.as_view()), name='ordenes_activas'),
     url(r'^orden_update', login_required(views.GetOrdenesUpdate.as_view()), name='orden_update'),
     url(r'^orden_id', login_required(views.OrdenPago.as_view()), name="orden_id"),
+    url(r'^lista_perfiles', login_required(views.PerfilDeUsuarioList.as_view()), name="lista_perfiles"),
     # urls utiles para realizar detalle de orden
     url(r'^create_detalle_orden', login_required(views.CreateDetalleOrden.as_view()), name='create_detalle_orden'),
     url(r'^update_detalle_orden', login_required(views.UpdateDetalleOrden.as_view()), name='update_detalle_orden'),

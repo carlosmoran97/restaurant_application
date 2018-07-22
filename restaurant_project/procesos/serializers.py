@@ -1,6 +1,11 @@
 from rest_framework import serializers
-from .models import Sesion, Orden, DetalleOrden
+from .models import Sesion, Orden, DetalleOrden, PerfilDeUsuario
 from restaurant_application.serializers import CajaSerializer, EmpleadoSerializer, MesaSerializer, PlatilloSerializer
+
+class PerfilDeUsuarioSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = PerfilDeUsuario
+        fields = ('id','usuario', 'empleado')
 
 class SesionSerializer(serializers.ModelSerializer):
     caja = CajaSerializer(many=False)

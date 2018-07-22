@@ -2,8 +2,8 @@ from django.shortcuts import render
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from procesos.forms import PerfilDeUsuarioForm, UsuarioForm, SesionForm, OrdenForm
-from procesos.serializers import SesionSerializer, OrdenSerializer, DetalleOrdenSerializer, Orden_ConDetalle_Serializer
-from procesos.models import Sesion, Orden, DetalleOrden, cantidad_ordenes_del_dia, Pago
+from procesos.serializers import SesionSerializer, OrdenSerializer, DetalleOrdenSerializer, Orden_ConDetalle_Serializer, PerfilDeUsuarioSerializer
+from procesos.models import Sesion, Orden, DetalleOrden, cantidad_ordenes_del_dia, Pago, PerfilDeUsuario
 from restaurant_application.models import Asignacion, Empleado, Puesto, Caja, Cliente, Mesa, Platillo
 from django.http import JsonResponse
 import datetime
@@ -66,7 +66,22 @@ class CreateSesionCaja(APIView):
     def get(self, request):
         caja = Caja.objects.filter(id=request.GET['numero_caja']).get()
         cajero = Empleado.objects.filter(idEmpleado=request.GET['idEmpleado']).get()
-        sesion = Sesion.objects.create(caja = caja, cajero=cajero, monto_apertura=request.GET['monto_apertura'], estado="Abierta")
+        tiene_sesion = False
+        # verificando si ese cajero ya tiene sesion
+        sesiones = Sesion.objects.all()
+        for sesion in sesiones:
+            if sesion.cajero.idEmpleado == cajero.idEmpleado and sesion.estado == "Abierta":
+                tiene_sesion = True
+            # end if
+        #end for
+        try:
+            if not tiene_sesion:
+                sesion = Sesion.objects.create(caja = caja, cajero=cajero, monto_apertura=request.GET['monto_apertura'], estado="Abierta")
+            else:
+                raise NameError("El cajero ya tiene una sesión activa")
+            #end if
+        except NameError:
+            raise
         return JsonResponse({'respuesta':'correctamente!'})
 
 class CerrarSesionCaja(APIView):
@@ -96,7 +111,9 @@ class PanelMesasView(ListView):
 
 class AbrirOrden(APIView):
     def get(self, request):
-        sesion = Sesion.objects.filter(id=1)
+        user_id = request.user.id
+        perfil = PerfilDeUsuario.objects.filter(usuario=user_id).get()
+        sesion = Sesion.objects.filter(cajero=perfil.empleado.idEmpleado, estado="Abierta")
         empleado = Empleado.objects.filter(idEmpleado=request.GET['idEmpleado'])
         mesa = Mesa.objects.filter(codigo_mesa=request.GET['codigo_mesa'])
         mesa.update(ocupado=True)
@@ -124,6 +141,12 @@ class OrdenConDetallesDetailList(APIView):
     def get(self, request):
         ordenes = Orden.objects.filter(estado=request.GET['estado'])
         serialized = Orden_ConDetalle_Serializer(ordenes, many=True)
+        return Response(serialized.data)
+
+class PerfilDeUsuarioList(APIView):
+    def get(self, request):
+        perfiles = PerfilDeUsuario.objects.all()
+        serialized = PerfilDeUsuarioSerializer(perfiles, many=True)
         return Response(serialized.data)
 
 class OrdenPago(APIView):

@@ -51,6 +51,7 @@
       idSesion = "";
       //alert('Funciona JQuery!');
       cargarDatos();
+      
     });
 
     //Abrir Modal de Formulario de Registro de Sesión Caja
@@ -58,6 +59,24 @@
       $("#cargarForm").html(`{% include 'procesos/sesion_caja/formulario.html' %}`);
       $("#btn-guardar").attr({value:"{% url 'procesos:create_sesion_caja' %}"});
       $("#labelModal").html("Iniciar Sesión Caja");
+      // cargando los cajeros
+      $.ajax({
+        url: "{% url 'restaurant:lista_empleados' %}",
+        type: "get",
+        dataType: "json",
+        success: function(data)
+        {
+          console.log(data);
+          html = `<option value="" selected>-------</option>`;
+          for(let i = 0; i < data.length; i++)
+          {
+            if(data[i].puesto.puesto == "cajero"){
+              html += `<option value="${data[i].empleado.idEmpleado}">${data[i].empleado.nombre} ${data[i].empleado.apellido}</option>`;
+            }
+          }
+          $("#selectCajero").html(html);
+        }
+      });
       $("#modal").modal("show");
     });
 
@@ -73,6 +92,15 @@
           //alert('Registrado '+data.respuesta);
           $("#modal").modal("hide");
           cargarDatos();
+        },
+        error: function (xhr, ajaxOptions, thrownError) {
+          if(xhr.responseText.includes("sesión activa"))
+          {
+            alert("El cajero seleccionado ya tiene una sesión activa");
+          }
+          else{
+            alert(xhr.responseText);
+          }
         }
       });
     });
@@ -138,7 +166,7 @@
         type: 'GET',
         dataType: "json",
         success : function (data) {
-          console.log(data);
+          //console.log(data);
           $("#tableSesion").DataTable({
             destroy: true,
             data : data,

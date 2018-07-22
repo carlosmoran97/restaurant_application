@@ -16,6 +16,7 @@ class PerfilDeUsuarioForm(forms.ModelForm):
         fields = ('empleado', 'foto_de_perfil')
 
 class SesionForm(forms.ModelForm):
+
     class Meta():
         model = Sesion
         fields = ('caja', 'cajero', 'fecha_cierre', 'monto_apertura', 'monto_real', 'estado')
