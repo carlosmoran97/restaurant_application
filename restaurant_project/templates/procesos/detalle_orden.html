@@ -61,7 +61,7 @@
                 <div id="total" class="row">
                   <div class="col-md-12">
                     <label>Total:</label>
-                    <strong>$ <span id="lblTotal">00.00</span></strong>&nbsp;&nbsp;&nbsp;&nbsp;<button id="btn-entregados-todos" type="button" class="btn btn-secondary btn-sm">Entregados Todos</button>
+                    <strong>$ <span id="lblTotal">00.00</span></strong>&nbsp;&nbsp;&nbsp;&nbsp;<button id="btn-entregados-todos" type="button" class="btn btn-secondary btn-sm">Ordenar</button>
                   </div>
                 </div>
                 <hr>
@@ -227,7 +227,7 @@
                                     </div>
                                     <div class="row">
                                       <div class="col-7">
-                                        <label>En espera: <span class="badge badge-success" id="ordenados">1</span></label><button type="button" class="btn btn-link btn-sm">Entregado</button>
+                                        <label>En espera: <span class="badge badge-success" id="ordenados">1</span></label>
                                       </div>
                                       <div class="col-5">
                                         <label>Entregados: <span class="badge badge-success" id="entregados">0</span></label>
@@ -310,7 +310,7 @@
                                   </div>
                                   <div class="row">
                                     <div class="col-7">
-                                      <label>En espera: <span class="badge badge-success" id="ordenados">${data[i].ordenados}</span></label><button type="button" class="btn btn-link btn-sm">Entregado</button>
+                                      <label>En espera: <span class="badge badge-success" id="ordenados">${data[i].ordenados}</span></label>
                                     </div>
                                     <div class="col-5">
                                       <label>Entregados: <span class="badge badge-success" id="entregados">${data[i].entregados}</span></label>
@@ -577,10 +577,6 @@
         $(".platillo_select #entregados:eq("+idDetalle+")").html(cantidad);
       }
     }
-
-    $(document).on("click", ".btn-link", function(){
-      modificarEntregados();
-    });
 
     $(document).on("click", "#btn-entregados-todos", function(){
       for(var i = 0; i < $(".platillo_select").toArray().length; i++){
