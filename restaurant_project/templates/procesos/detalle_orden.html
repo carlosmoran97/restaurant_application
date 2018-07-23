@@ -9,38 +9,33 @@
         <div class="row">
           <div class="col-8">
             <div class="row">
-              <div class="card mb-2">
-                <div class="card-body">
-                  <div class="row">
-                    <div class="col-md-4">
-                      <label>Empleado:</label>
-                      <strong>{{ object.mesero.nombre }}&nbsp;{{ object.mesero.apellido }}</strong>
-                    </div>
-                    <div class="col-md-4">
-                      <label>Cliente:</label>
-                      <strong>{{ object.cliente }}</strong>
-                    </div>
-                    <div class="col-md-4">
-                      <label>Estado:</label>
-                      <strong>{{ object.estado }}</strong>
-                    </div>
-                  </div>
-                  <hr>
-                  <div class="row">
-                    <div class="col-md-12">
-                      <label>Comentario:</label>
-                      <strong>{{ object.comentario }}</strong>
-                    </div>
-                  </div>
+              <div class="col-12">
+                <div class="card" style="width: 48rem;">
+                  <ul class="list-group list-group-flush">
+                    <li class="list-group-item">
+                        <label>Mesero:</label>
+                        <strong>{{ object.mesero.nombre }}&nbsp;{{ object.mesero.apellido }}</strong>
+                        &emsp;&emsp;
+                        <label>Cliente:</label>
+                        <strong>{{ object.cliente }}</strong>
+                        <br>
+                        <label>Estado:</label>
+                        <strong>{{ object.estado }}</strong>
+                        &emsp;&emsp;
+                        <label>Comentario:</label>
+                        <strong>{{ object.comentario }}</strong>
+                    </li>
+                  </ul>
                 </div>
               </div>
             </div>
+            <br>
             <div class="row">
-                <div id="categorias">
-                  <ul class="nav nav-tabs" id="tabCategorias" role="tablist">
+              <div id="categorias">
+                <ul class="nav nav-tabs" id="tabCategorias" role="tablist">
 
-                  </ul>
-                  <div class="tab-content" id="tabPlatillos">
+                </ul>
+                <div class="tab-content" id="tabPlatillos">
 
                 </div>
               </div>
@@ -211,26 +206,26 @@
                                         <label id="lblNombrePlatillo">${data[0].nombre}</label>
                                       </div>
                                       <div class="col-4">
-                                        <label>$&nbsp;<span id="lblPrecio">${(parseFloat(data[0].precioUnitario).toFixed(2))}</span></label>
+                                        <label class="sobre">$&nbsp;<span id="lblPrecio">${(parseFloat(data[0].precioUnitario).toFixed(2))}</span></label>
                                       </div>
                                     </div>
                                     <div class="row">
                                       <div class="col-3">
-                                        <label>cant: <span id="lblCantidad">1</span></label>
+                                        <label class="sobre">cant: <span id="lblCantidad">1</span></label>
                                       </div>
                                       <div class="col-4">
-                                        <label>$&nbsp;<span id="lblPrecioUnitario">${data[0].precioUnitario}</span>&nbsp;c/u</label>
+                                        <label class="sobre">$&nbsp;<span id="lblPrecioUnitario">${data[0].precioUnitario}</span>&nbsp;c/u</label>
                                       </div>
                                       <div class="col-4">
-                                        <label><span id="porcentajeDescuento"></span><span id="lblDescuento"></span></label>
+                                        <label class="sobre"><span id="porcentajeDescuento"></span><span id="lblDescuento"></span></label>
                                       </div>
                                     </div>
                                     <div class="row">
                                       <div class="col-7">
-                                        <label>En espera: <span class="badge badge-success" id="ordenados">1</span></label>
+                                        <label class="sobre">En espera: <span class="badge badge-success" id="ordenados">1</span></label>
                                       </div>
                                       <div class="col-5">
-                                        <label>Entregados: <span class="badge badge-success" id="entregados">0</span></label>
+                                        <label class="sobre">Entregados: <span class="badge badge-success" id="entregados">0</span></label>
                                       </div>
                                     </div>
                                   </div>
@@ -284,23 +279,23 @@
                                       <label id="lblNombrePlatillo">${data[i].consumible.nombre}</label>
                                     </div>
                                     <div class="col-4">
-                                      <label>$&nbsp;<span id="lblPrecio"></span></label>
+                                      <label class="sobre">$&nbsp;<span id="lblPrecio"></span></label>
                                     </div>
                                   </div>
                                   <div class="row">
                                     <div class="col-3">
-                                      <label>cant: <span id="lblCantidad">${data[i].cantidad}</span></label>
+                                      <label class="sobre">cant: <span id="lblCantidad">${data[i].cantidad}</span></label>
                                     </div>
                                     <div class="col-4">
-                                      <label>$&nbsp;<span id="lblPrecioUnitario">${data[i].precio_de_venta}</span>&nbsp;c/u</label>
+                                      <label class="sobre">$&nbsp;<span id="lblPrecioUnitario">${data[i].precio_de_venta}</span>&nbsp;c/u</label>
                                     </div>
                                     <div class="col-4">
                                       <label>
-                                        <span id="porcentajeDescuento">`;
+                                        <span class="sobre" id="porcentajeDescuento">`;
                                         if(data[i].descuento != 0){
-                                          htmlRegistrado += data[i].descuento+`</span><span id="lblDescuento">% desc</span>`;
+                                          htmlRegistrado += data[i].descuento+`</span><span class="sobre" id="lblDescuento">% desc</span>`;
                                         } else{
-                                          htmlRegistrado += `</span><span id="lblDescuento"></span>`;
+                                          htmlRegistrado += `</span><span class="sobre" id="lblDescuento"></span>`;
                                         }
 
                                         htmlRegistrado += `
@@ -310,10 +305,10 @@
                                   </div>
                                   <div class="row">
                                     <div class="col-7">
-                                      <label>En espera: <span class="badge badge-success" id="ordenados">${data[i].ordenados}</span></label>
+                                      <label class="sobre">En espera: <span class="badge badge-success" id="ordenados">${data[i].ordenados}</span></label>
                                     </div>
                                     <div class="col-5">
-                                      <label>Entregados: <span class="badge badge-success" id="entregados">${data[i].entregados}</span></label>
+                                      <label class="sobre">Entregados: <span class="badge badge-success" id="entregados">${data[i].entregados}</span></label>
                                     </div>
                                   </div>
                                 </div>
@@ -546,6 +541,7 @@
     //Hacer efecto al borrar caracter o agregar caracter
     function guardarCambios(){
       var id = $(".platillo_select .col-12:eq("+idDetalle+")").attr("id");
+      //alert($(".platillo_select .col-12:eq("+idDetalle+")").attr("id"));
       var cantidad = $(".platillo_select #lblCantidad:eq("+idDetalle+")").html();
       var precio = $(".platillo_select #lblPrecioUnitario:eq("+idDetalle+")").html();
       var descuento = 0;
@@ -617,7 +613,7 @@
               for(let j = 0; j < data[i].platillos.length; j++){
                 htmlDIV +=`
                 <div class="card bg-light mb-3  text-center platillo-card" value="${data[i].platillos[j].codigoPlatillo}" style="width: 12rem;">
-                  <div class="card-body">
+                  <div class="card-body card-body-platillo">
                     <p class="card-text">
                         ${data[i].platillos[j].nombre}
                     </p>
@@ -639,7 +635,7 @@
               for(let j = 0; j < data[i].platillos.length; j++){
                 htmlDIV +=`
                 <div class="card bg-light mb-3  text-center platillo-card" value="${data[i].platillos[j].codigoPlatillo}" style="width: 12rem;">
-                  <div class="card-body">
+                  <div class="card-body card-body-platillo">
                     <p class="card-text">
                         ${data[i].platillos[j].nombre}
                     </p>
@@ -662,14 +658,18 @@
     }
   </script>
   <style>
-    .platillo-card
-    {
-      display: inline-block; cursor: pointer;
-      min-width: 50px;
+    body{
+      height: 100%;
+    }
+    .platillo-card{
+      display: inline-block;
       margin: 3px;
     }
-    .nav-link
-    {
+    .card-body-platillo{
+      padding: 5px;
+      margin: 0;
+    }
+    .nav-link{
       padding-left: 6px;
       padding-right: 6px;
     }
@@ -699,8 +699,12 @@
       margin-right: 5px;
       border-radius: 5px;
     }
-    .platillo_select:hover, #lblNombrePlatillo:hover, #lblPrecio:hover, #lblCantidad:hover, #lblPrecioUnitario:hover, #porcentajeDescuento:hover, .sobre:hover{
+    .platillo_select:hover, #lblNombrePlatillo:hover, #lblPrecio:hover, #lblCantidad:hover, #lblPrecioUnitario:hover, #porcentajeDescuento:hover, .sobre:hover, .platillo-card:hover{
       cursor: pointer;
+      -webkit-user-select: none;
+      -moz-user-select: none;
+      -khtml-user-select: none;
+      -ms-user-select:none;
     }
     .config-opcion{
       width: 165px;
@@ -726,7 +730,7 @@
     }
     #agregandoPlatillos{
       overflow-y: scroll;
-      height: 225px;
+      height: 200px;;
     }
   </style>
 {% endblock %}

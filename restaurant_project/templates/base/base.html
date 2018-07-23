@@ -1,153 +1,153 @@
 {% load static %}
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 
-<head>
-  <meta charset="utf-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <meta name="description" content="">
-  <meta name="author" content="">
-  <title>
-    {% block TitlePage %}
-    {% endblock %}
-  </title>
-  <!-- Bootstrap core CSS-->
-  <link href="{% static 'vendor/bootstrap/css/bootstrap.min.css' %}" rel="stylesheet">
-  <!-- Custom fonts for this template-->
-  <link href="{% static 'vendor/font-awesome/css/font-awesome.min.css' %}" rel="stylesheet" type="text/css">
-  <!-- Page level plugin CSS-->
-  <link href="{% static 'vendor/datatables/dataTables.bootstrap4.css' %}" rel="stylesheet">
-  <!-- Custom styles for this template-->
-  <link href="{% static 'css/sb-admin.css' %}" rel="stylesheet">
-  <!-- JQuery UI -->
-  <link href="{% static 'jquery-ui/jquery-ui.min.css' %}" rel="stylesheet">
-</head>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <title>
+      {% block TitlePage %}
+      {% endblock %}
+    </title>
+    <!-- Bootstrap core CSS-->
+    <link href="{% static 'vendor/bootstrap/css/bootstrap.min.css' %}" rel="stylesheet">
+    <!-- Custom fonts for this template-->
+    <link href="{% static 'vendor/font-awesome/css/font-awesome.min.css' %}" rel="stylesheet" type="text/css">
+    <!-- Page level plugin CSS-->
+    <link href="{% static 'vendor/datatables/dataTables.bootstrap4.css' %}" rel="stylesheet">
+    <!-- Custom styles for this template-->
+    <link href="{% static 'css/sb-admin.css' %}" rel="stylesheet">
+    <!-- JQuery UI -->
+    <link href="{% static 'jquery-ui/jquery-ui.min.css' %}" rel="stylesheet">
+  </head>
 
-<body class="fixed-nav sticky-footer bg-dark" id="page-top">
-  {% include 'base/navigation.html' %}
-  <div class="content-wrapper">
-    <div class="container-fluid">
+  <body class="fixed-nav sticky-footer bg-dark" id="page-top">
+    {% include 'base/navigation.html' %}
+    <div class="content-wrapper">
+      <div class="container-fluid">
 
-    {% block body %}
-    {% endblock %}
-    <!-- /.container-fluid-->
-    <!-- /.content-wrapper-->
-    <footer class="sticky-footer">
-      <div class="container">
-        <div class="text-center">
-          <small>Copyright © 2018</small>
-        </div>
-      </div>
-    </footer>
-    <!-- Scroll to Top Button-->
-    <a class="scroll-to-top rounded" href="#page-top">
-      <i class="fa fa-angle-up"></i>
-    </a>
-    <!-- Logout Modal-->
-    <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-      <div class="modal-dialog" role="document">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title" id="exampleModalLabel">Ready to Leave?</h5>
-            <button class="close" type="button" data-dismiss="modal" aria-label="Close">
-              <span aria-hidden="true">×</span>
-            </button>
-          </div>
-          <div class="modal-body">Select "Logout" below if you are ready to end your current session.</div>
-          <div class="modal-footer">
-            <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
-            <a class="btn btn-primary" href="{% url 'logout' %}">Logout</a>
+      {% block body %}
+      {% endblock %}
+      <!-- /.container-fluid-->
+      <!-- /.content-wrapper-->
+      <footer class="sticky-footer">
+        <div class="container">
+          <div class="text-center">
+            <small>Copyright © 2018</small>
           </div>
         </div>
-      </div>
-    </div>
-    <!-- Sesion modal -->
-    <div class="modal" id="sesion-modal" tabindex="-1" role="dialog">
-      <div class="modal-dialog" role="document">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title">Debe habilitar una sesión.</h5>
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-              <span aria-hidden="true">&times;</span>
-            </button>
-          </div>
-          <div class="modal-body">
-            <div class="alert alert-danger" role="alert">
-              Usted no tiene asignada una sesión de caja.
+      </footer>
+      <!-- Scroll to Top Button-->
+      <a class="scroll-to-top rounded" href="#page-top">
+        <i class="fa fa-angle-up"></i>
+      </a>
+      <!-- Logout Modal-->
+      <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="exampleModalLabel">Ready to Leave?</h5>
+              <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">×</span>
+              </button>
+            </div>
+            <div class="modal-body">Select "Logout" below if you are ready to end your current session.</div>
+            <div class="modal-footer">
+              <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
+              <a class="btn btn-primary" href="{% url 'logout' %}">Logout</a>
             </div>
           </div>
-          <div class="modal-footer">
-            <a href="{% url 'procesos:sesion_caja' %}"><button type="button" class="btn btn-primary" data-dismiss="modal">Aceptar</button>
+        </div>
+      </div>
+      <!-- Sesion modal -->
+      <div class="modal" id="sesion-modal" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title">Debe habilitar una sesión.</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+              <div class="alert alert-danger" role="alert">
+                Usted no tiene asignada una sesión de caja.
+              </div>
+            </div>
+            <div class="modal-footer">
+              <a href="{% url 'procesos:sesion_caja' %}"><button type="button" class="btn btn-primary" data-dismiss="modal">Aceptar</button>
+            </div>
           </div>
         </div>
       </div>
-    </div>
-    <!-- Bootstrap core JavaScript-->
-    <script src="{% static 'vendor/jquery/jquery.min.js' %}"></script>
-    <script src="{% static 'vendor/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
-    <!-- Core plugin JavaScript-->
-    <script src="{% static 'vendor/jquery-easing/jquery.easing.min.js' %}"></script>
-    <!-- Page level plugin JavaScript-->
-    <script src="{% static 'vendor/chart.js/Chart.min.js' %}"></script>
-    <script src="{% static 'vendor/datatables/jquery.dataTables.js' %}"></script>
-    <script src="{% static 'vendor/datatables/dataTables.bootstrap4.js' %}"></script>
-    <!-- Custom scripts for all pages-->
-    <script src="{% static 'js/sb-admin.min.js' %}"></script>
-    <!-- JQuery UI -->
-    <script src="{% static 'jquery-ui/jquery-ui.min.js' %}"></script>
-    <!-- Valida que existe una sesion para poder realizar una orden -->
-    <script>
-      function empleado(usuario_id, perfiles)
-      {
-          let empleado_id = null;
-          for(let i = 0; i < perfiles.length; i++)
-          {
-              if(perfiles[i].usuario == usuario_id)
-              {
-                  empleado_id = perfiles[i].empleado;
-              }
-          }
-          return empleado_id;
-      }
-      function comprobarSesion(){
-        $.ajax({
-          url: "{% url 'procesos:lista_sesion_caja' %}",
-          type: 'get',
-          dataType: 'json',
-          success: (dataSesion) => {
-            $.ajax({
-              url: "{% url 'procesos:lista_perfiles' %}",
-              type: 'get',
-              dataType: 'json',
-              success: function(dataPerfiles)
-              {
-                let sesionActiva = false;
-                for(let i = 0; i < dataSesion.length; i++)
+      <!-- Bootstrap core JavaScript-->
+      <script src="{% static 'vendor/jquery/jquery.min.js' %}"></script>
+      <script src="{% static 'vendor/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+      <!-- Core plugin JavaScript-->
+      <script src="{% static 'vendor/jquery-easing/jquery.easing.min.js' %}"></script>
+      <!-- Page level plugin JavaScript-->
+      <script src="{% static 'vendor/chart.js/Chart.min.js' %}"></script>
+      <script src="{% static 'vendor/datatables/jquery.dataTables.js' %}"></script>
+      <script src="{% static 'vendor/datatables/dataTables.bootstrap4.js' %}"></script>
+      <!-- Custom scripts for all pages-->
+      <script src="{% static 'js/sb-admin.min.js' %}"></script>
+      <!-- JQuery UI -->
+      <script src="{% static 'jquery-ui/jquery-ui.min.js' %}"></script>
+      <!-- Valida que existe una sesion para poder realizar una orden -->
+      <script>
+        function empleado(usuario_id, perfiles)
+        {
+            let empleado_id = null;
+            for(let i = 0; i < perfiles.length; i++)
+            {
+                if(perfiles[i].usuario == usuario_id)
                 {
-                  if(dataSesion[i].estado.toLowerCase() === "abierta" && empleado(parseInt("{{ user.id }}"), dataPerfiles) == dataSesion[i].cajero.idEmpleado)
+                    empleado_id = perfiles[i].empleado;
+                }
+            }
+            return empleado_id;
+        }
+        function comprobarSesion(){
+          $.ajax({
+            url: "{% url 'procesos:lista_sesion_caja' %}",
+            type: 'get',
+            dataType: 'json',
+            success: (dataSesion) => {
+              $.ajax({
+                url: "{% url 'procesos:lista_perfiles' %}",
+                type: 'get',
+                dataType: 'json',
+                success: function(dataPerfiles)
+                {
+                  let sesionActiva = false;
+                  for(let i = 0; i < dataSesion.length; i++)
                   {
-                    sesionActiva = true;
+                    if(dataSesion[i].estado.toLowerCase() === "abierta" && empleado(parseInt("{{ user.id }}"), dataPerfiles) == dataSesion[i].cajero.idEmpleado)
+                    {
+                      sesionActiva = true;
+                    }
+                  }
+                  if(!sesionActiva)
+                  {
+                    $("#sesion-modal").modal("show");
+                  }
+                  else{
+                    window.location.href = "{% url 'procesos:panel_mesas' %}";
                   }
                 }
-                if(!sesionActiva)
-                {
-                  $("#sesion-modal").modal("show");
-                }
-                else{
-                  window.location.href = "{% url 'procesos:panel_mesas' %}";
-                }
-              }
-            });
-            
-          }
-        });
-      }
-      
-    </script>
-    {% block JavaScriptFiles %}
-    {% endblock %}
-  </div>
-</body>
+              });
+
+            }
+          });
+        }
+
+      </script>
+      {% block JavaScriptFiles %}
+      {% endblock %}
+    </div>
+  </body>
 
 </html>
