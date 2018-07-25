@@ -34,4 +34,6 @@ urlpatterns = [
     url(r'^pago/(?P<pk>\d+)/$', login_required(views.PagoView.as_view()), name="pago"),
     url(r'^pago/(?P<pk>\d+)/pdf/$', login_required(views.FacturaView.as_view()), name="factura_pdf"),
     url(r'^create_pago', login_required(views.GetCreatePago.as_view()), name="create_pago"),
+    # historial de ordenes
+    url(r'^historial', login_required(views.HistorialList.as_view()), name='historial'),
 ]

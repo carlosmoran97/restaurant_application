@@ -152,7 +152,7 @@ class PerfilDeUsuarioList(APIView):
 class OrdenPago(APIView):
     def get(self, request):
         orden = Orden.objects.filter(id=request.GET['id']).get()
-        serialized = Orden_ConDetalle_Serializer(orden, many=False)
+
         return Response(serialized.data)
 
 class GetOrdenesList(APIView):
@@ -178,6 +178,13 @@ class GetOrdenesUpdate(APIView):
 
         return Response({"respuesto": "ok"})
 
+class HistorialList(ListView):
+    queryset = Orden.objects.filter(estado='finalizada')
+    template_name = 'procesos/historial.html'
+
+class detalle_orden(DetailView):
+    model = Orden
+    template_name = 'procesos/detalle_orden.html'
 class FacturarView(View):
     def get(self, request):
         return render(request, 'procesos/facturar.html')

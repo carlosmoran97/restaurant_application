@@ -26,6 +26,11 @@
           <li>
             <a href="{% url 'procesos:facturar' %}">Facturar</a>
           </li>
+          {% if user.is_staff %}
+            <li>
+              <a href="{% url 'procesos:historial' %}">Historial</a>
+            </li>
+          {% endif %}
         </ul>
       </li>
       {% if user.is_staff %}
@@ -69,7 +74,7 @@
       </li>
       {% endif %}
     </ul>
-    
+
     <ul class="navbar-nav sidenav-toggler">
       <li class="nav-item">
         <a class="nav-link text-center" id="sidenavToggler">
@@ -83,7 +88,7 @@
           <h3 style="color: white;">Usuario: {{ user.username }}</h3>
         </li>
         <li class="nav-item">
-          
+
           <a class="nav-link" data-toggle="modal" data-target="#exampleModal">
             <i class="fa fa-fw fa-sign-out"></i>Logout</a>
 
