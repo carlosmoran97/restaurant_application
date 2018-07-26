@@ -2,6 +2,7 @@ from django.db import models
 import restaurant_application as restaurant
 from django.contrib.auth.models import User
 from datetime import datetime
+from decimal import Decimal
 from django.core.validators import MinValueValidator
 
 
@@ -23,11 +24,22 @@ class Sesion(models.Model):
     monto_real = models.DecimalField(max_digits=20, decimal_places=2, null=True)
     estado = models.CharField(max_length=20)
 
-    def calcularMontoEstimado(self):
-        pass
+    @property
+    def monto_estimado(self):
+        monto_estimado = 0
+        sesion = Sesion.objects.filter(id=self.id)
+        ordenes = Orden.objects.filter(sesion=sesion[0])
+        for orden in ordenes:
+            monto_estimado = monto_estimado + orden.total
+        return "{0:.2f}".format(monto_estimado)
 
-    def calcularDiferencia(self):
-        pass
+    @property
+    def diferencia(self):
+        diferencia = 0
+        sesion = Sesion.objects.filter(id=self.id)
+        #diferencia = Decimal(sesion[0].monto_estimado)-sesion[0].monto_real
+        diferencia = Decimal(sesion[0].monto_estimado)
+        return "{0:.2f}".format(diferencia)
 
 
 class Orden(models.Model):

@@ -1,0 +1,74 @@
+body{
+  height: 100%;
+}
+.platillo-card{
+  display: inline-block;
+  margin: 3px;
+}
+.card-body-platillo{
+  padding: 5px;
+  margin: 0;
+}
+.nav-link{
+  padding-left: 6px;
+  padding-right: 6px;
+}
+.platillo_select:hover, .platillo_select_elegido{
+  color: black;
+  border-left-width: 5px;
+  border-left-style: solid;
+  border-left-color: #0097A7;
+}
+.opcion-numero{
+  background-color: #00BCD4;
+  width: 50px;
+  height: 50px;
+  margin-top: 5px;
+  margin-right: 5px;
+  border-radius: 5px;
+  text-align: center;
+}
+.opcion-numero:hover{
+  background-color: #0097A7;
+
+}
+.sin-digito{
+  width: 50px;
+  height: 50px;
+  margin-top: 5px;
+  margin-right: 5px;
+  border-radius: 5px;
+}
+.platillo_select:hover, #lblNombrePlatillo:hover, #lblPrecio:hover, #lblCantidad:hover, #lblPrecioUnitario:hover, #porcentajeDescuento:hover, .sobre:hover, .platillo-card:hover{
+  cursor: pointer;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -khtml-user-select: none;
+  -ms-user-select:none;
+}
+.config-opcion{
+  width: 165px;
+  height: 50px;
+  margin-top: 5px;
+  margin-right: 5px;
+  padding-top: 7px;
+  border-radius: 5px;
+  text-align: center;
+}
+.opcion-seleccionada{
+  background-color: #00BCD4 !important;
+}
+.opcion-deseleccionada{
+  background-color: #546E7A;
+}
+.opcion-borrar{
+  background-color: #ef5350;
+  padding-top: 2px !important;
+}
+.lado-izquierdo{
+  margin-left: 10px;
+}
+#agregandoPlatillos{
+  overflow-y: scroll;
+  height: 200px;;
+}

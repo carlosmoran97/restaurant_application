@@ -13,7 +13,7 @@ class SesionSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Sesion
-        fields = ('id', 'caja', 'cajero', 'fecha_apertura', 'fecha_cierre', 'monto_apertura', 'monto_real', 'estado')
+        fields = ('id', 'caja', 'cajero', 'fecha_apertura', 'fecha_cierre', 'monto_apertura', 'monto_estimado', 'monto_real', 'diferencia', 'estado')
 
 class OrdenSerializer(serializers.ModelSerializer):
     sesion = SesionSerializer(many=False)
