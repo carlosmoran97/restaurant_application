@@ -13,6 +13,11 @@ body{
   padding-left: 6px;
   padding-right: 6px;
 }
+.platillo_select{
+  border-bottom-width: 1px;
+  border-bottom-color: #EEEEEE;
+  border-bottom-style: solid;
+}
 .platillo_select:hover, .platillo_select_elegido{
   color: black;
   border-left-width: 5px;

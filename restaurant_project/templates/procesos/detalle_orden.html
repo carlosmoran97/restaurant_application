@@ -4,7 +4,7 @@
   {{ 'Detalle Orden' }}
 {% endblock %}
 {% block cssFiles %}
-  <link href="{% static 'restaurant_application/procesos/css/detalle_orden.min.css' %}" rel="stylesheet">
+  <link href="{% static 'restaurant_application/procesos/css/detalle_orden.css' %}" rel="stylesheet">
 {% endblock %}
 {% block body %}
     <div class="container-fluid">
@@ -55,7 +55,6 @@
 
                   </div>
                 </div>
-                <hr>
                 <div id="total" class="row">
                   <div class="col-md-12">
                     <label>Total:</label>
@@ -63,65 +62,74 @@
                   </div>
                 </div>
                 <hr>
-                <div id="calculadora" class="row lado-izquierdo">
-                  <div class="col-sm-12">
-                    <div class="row">
-                      <div class="sobre opcion-numero" value="1">
-                        <h1>1</h1>
-                      </div>
-                      <div class="sobre opcion-numero" value="2">
-                        <h1>2</h1>
-                      </div>
-                      <div class="sobre opcion-numero" value="3">
-                        <h1>3</h1>
-                      </div>
-                      <div id="opcion-cantidad" class="sobre opcion config-opcion opcion-deseleccionada" value="cantidad">
-                        <h3>Cantidad</h3>
-                      </div>
-                    </div>
-                    <div class="row">
-                      <div class="sobre opcion-numero" value="4">
-                        <h1>4</h1>
-                      </div>
-                      <div class="sobre opcion-numero" value="5">
-                        <h1>5</h1>
-                      </div>
-                      <div class="sobre opcion-numero" value="6">
-                        <h1>6</h1>
-                      </div>
-                      <div id="opcion-precio" class="sobre opcion config-opcion opcion-deseleccionada" value="precio">
-                        <h3>Precio</h3>
-                      </div>
-                    </div>
-                    <div class="row">
-                      <div class="sobre opcion-numero" value="7">
-                        <h1>7</h1>
-                      </div>
-                      <div class="sobre opcion-numero" value="8">
-                        <h1>8</h1>
-                      </div>
-                      <div class="sobre opcion-numero" value="9">
-                        <h1>9</h1>
-                      </div>
-                      <div id="opcion-descuento" class="sobre opcion config-opcion opcion-deseleccionada" value="descuento">
-                        <h3>Desc</h3>
-                      </div>
-                    </div>
-                    <div class="row">
-                      <div class="sin-digito">
-                        <h1></h1>
-                      </div>
-                      <div class="sobre opcion-numero" value="0">
-                        <h1>0</h1>
-                      </div>
-                      <div class="sobre opcion-numero" value=".">
-                        <h1>.</h1>
-                      </div>
-                      <div id="borrar" class="sobre config-opcion opcion-borrar">
-                        <h1><i class="fa fa-times" aria-hidden="true"></i></h1>
+                <div class="pos-f-t">
+                  <div class="collapse" id="navbarToggleExternalContent">
+                    <div id="calculadora" class="row lado-izquierdo">
+                      <div class="col-sm-12">
+                        <div class="row">
+                          <div class="sobre opcion-numero" value="1">
+                            <h1>1</h1>
+                          </div>
+                          <div class="sobre opcion-numero" value="2">
+                            <h1>2</h1>
+                          </div>
+                          <div class="sobre opcion-numero" value="3">
+                            <h1>3</h1>
+                          </div>
+                          <div id="opcion-cantidad" class="sobre opcion config-opcion opcion-deseleccionada" value="cantidad">
+                            <h3>Cantidad</h3>
+                          </div>
+                        </div>
+                        <div class="row">
+                          <div class="sobre opcion-numero" value="4">
+                            <h1>4</h1>
+                          </div>
+                          <div class="sobre opcion-numero" value="5">
+                            <h1>5</h1>
+                          </div>
+                          <div class="sobre opcion-numero" value="6">
+                            <h1>6</h1>
+                          </div>
+                          <div id="opcion-precio" class="sobre opcion config-opcion opcion-deseleccionada" value="precio">
+                            <h3>Precio</h3>
+                          </div>
+                        </div>
+                        <div class="row">
+                          <div class="sobre opcion-numero" value="7">
+                            <h1>7</h1>
+                          </div>
+                          <div class="sobre opcion-numero" value="8">
+                            <h1>8</h1>
+                          </div>
+                          <div class="sobre opcion-numero" value="9">
+                            <h1>9</h1>
+                          </div>
+                          <div id="opcion-descuento" class="sobre opcion config-opcion opcion-deseleccionada" value="descuento">
+                            <h3>Desc</h3>
+                          </div>
+                        </div>
+                        <div class="row">
+                          <div class="sin-digito">
+                            <h1></h1>
+                          </div>
+                          <div class="sobre opcion-numero" value="0">
+                            <h1>0</h1>
+                          </div>
+                          <div class="sobre opcion-numero" value=".">
+                            <h1>.</h1>
+                          </div>
+                          <div id="borrar" class="sobre config-opcion opcion-borrar">
+                            <h1><i class="fa fa-times" aria-hidden="true"></i></h1>
+                          </div>
+                        </div>
                       </div>
                     </div>
                   </div>
+                  <nav class="navbar navbar-light bg-light">
+                    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarToggleExternalContent" aria-controls="navbarToggleExternalContent" aria-expanded="false" aria-label="Toggle navigation">
+                      <i class="fa fa-calculator" aria-hidden="true"></i>
+                    </button>
+                  </nav>
                 </div>
               </div>
             </div>
@@ -142,7 +150,4 @@
   });
 </script>
 <script src="{% static 'restaurant_application/procesos/js/detalle_orden.min.js' %}"></script>
-  <style>
-
-  </style>
 {% endblock %}
