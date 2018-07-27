@@ -90,7 +90,7 @@
                                         <label class="sobre">En espera: <span class="badge badge-success" id="ordenados">1</span></label>
                                       </div>
                                       <div class="col-5">
-                                        <label class="sobre">Entregados: <span class="badge badge-success" id="entregados">0</span></label>
+                                        <label class="sobre">Ordenados: <span class="badge badge-success" id="entregados">0</span></label>
                                       </div>
                                     </div>
                                   </div>
@@ -173,7 +173,7 @@
                                       <label class="sobre">En espera: <span class="badge badge-success" id="ordenados">${data[i].ordenados}</span></label>
                                     </div>
                                     <div class="col-5">
-                                      <label class="sobre">Entregados: <span class="badge badge-success" id="entregados">${data[i].entregados}</span></label>
+                                      <label class="sobre">Ordenados: <span class="badge badge-success" id="entregados">${data[i].entregados}</span></label>
                                     </div>
                                   </div>
                                 </div>
@@ -477,10 +477,10 @@
               htmlDIV += `<div class="tab-pane fade show active" id="${data[i].idCategoriaPlatillo}" role="tabpanel" aria-labelledby="${data[i].idCategoriaPlatillo}-tab">`;
               for(let j = 0; j < data[i].platillos.length; j++){
                 htmlDIV +=`
-                <div class="card bg-light mb-3  text-center platillo-card" value="${data[i].platillos[j].codigoPlatillo}" style="width: 12rem;">
+                <div class="card bg-light mb-3 text-center platillo-card" value="${data[i].platillos[j].codigoPlatillo}" style="width: 9rem;">
                   <div class="card-body card-body-platillo">
                     <p class="card-text">
-                        ${data[i].platillos[j].nombre}
+                        <small>${data[i].platillos[j].nombre}</small>
                     </p>
                     <div class="card-footer bg-transparent">
                         ${accounting.formatMoney(data[i].platillos[j].precioUnitario)}
@@ -499,10 +499,10 @@
               htmlDIV += `<div class="tab-pane fade" id="${data[i].idCategoriaPlatillo}" role="tabpanel" aria-labelledby="${data[i].idCategoriaPlatillo}-tab">`;
               for(let j = 0; j < data[i].platillos.length; j++){
                 htmlDIV +=`
-                <div class="card bg-light mb-3  text-center platillo-card" value="${data[i].platillos[j].codigoPlatillo}" style="width: 12rem;">
+                <div class="card bg-light mb-3 text-center platillo-card" value="${data[i].platillos[j].codigoPlatillo}" style="width: 9rem;">
                   <div class="card-body card-body-platillo">
                     <p class="card-text">
-                        ${data[i].platillos[j].nombre}
+                        <small>${data[i].platillos[j].nombre}</small>
                     </p>
                     <div class="card-footer bg-transparent">
                         ${accounting.formatMoney(data[i].platillos[j].precioUnitario)}

@@ -5,6 +5,12 @@ body{
   display: inline-block;
   margin: 3px;
 }
+#total{
+  border-top-width: 1px;
+  border-top-color: #EEEEEE;
+  border-top-style: solid;
+  padding-top: 15px;
+}
 .card-body-platillo{
   padding: 5px;
   margin: 0;
@@ -17,6 +23,7 @@ body{
   border-bottom-width: 1px;
   border-bottom-color: #EEEEEE;
   border-bottom-style: solid;
+  position: relative;
 }
 .platillo_select:hover, .platillo_select_elegido{
   color: black;
@@ -75,5 +82,5 @@ body{
 }
 #agregandoPlatillos{
   overflow-y: scroll;
-  height: 200px;;
+  height: 250px;
 }
