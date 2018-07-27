@@ -1,4 +1,5 @@
 {% extends 'base/base.html'%}
+{% load static %}
 {% block TitlePage %}
   {{ 'Historial de Ordenes' }}
 {% endblock %}
@@ -23,22 +24,26 @@
                 <div class="input-group-prepend">
                   <span class="input-group-text" id="basic-addon1"><i class="fa fa-search" aria-hidden="true"></i></span>
                 </div>
-                <input type="text" class="form-control form-control-sm" placeholder="Código" aria-describedby="basic-addon1" id="txtBuscarCodigo">
+                <select class="custom-select form-control form-control-sm" id="selectMes" aria-describedby="basic-addon1">
+                  <option selected>Mes</option>
+                  <option>Enero</option>
+                  <option>Febrero</option>
+                  <option>Marzo</option>
+                  <option>Abril</option>
+                  <option>Mayo</option>
+                  <option>Junio</option>
+                  <option>Julio</option>
+                  <option>Agosto</option>
+                  <option>Septiembre</option>
+                  <option>Octubre</option>
+                  <option>Noviembre</option>
+                  <option>Diciembre</option>
+                </select>
               </div>
             </div>
             <div class="col-md-3">
               <div class="form-group">
-                <input type="text" class="form-control form-control-sm" placeholder="Nombre" id="txtBuscarNombre">
-              </div>
-            </div>
-            <div class="col-md-3">
-              <div class="form-group">
-                <input type="text" class="form-control form-control-sm" placeholder="Precio Unitario" id="txtBuscarPrecioUnitario">
-              </div>
-            </div>
-            <div class="col-md-3">
-              <div class="form-group">
-
+                <input type="text" class="form-control form-control-sm" id="txtAnio" placeholder="Año">
               </div>
             </div>
           </div>
@@ -74,27 +79,5 @@
 
 {% endblock %}
 {% block JavaScriptFiles %}
-  <script type="text/javascript">
-    $(document).ready(function(){
-      $("#tableOrdenes").DataTable({
-        destroy: true,
-      });
-      $("#tableOrdenes_filter").hide();
-    });
-
-    //FILTROS
-    $(document).on("keyup", "#txtBuscarCodigo", function(){
-      $("#tablePlatillos").DataTable().column(0).search($(this).val()).draw();
-    });
-    $(document).on("keyup", "#txtBuscarPrecioUnitario", function(){
-      $("#tablePlatillos").DataTable().column(2).search($(this).val()).draw();
-    });
-    $(document).on("change", "#selectCategoriaPlatilloBuscar", function(){
-      if($(this).val() == ""){
-        cargarDatos();
-      } else{
-        $("#tablePlatillos").DataTable().column(3).search($("#selectCategoriaPlatilloBuscar option:selected").text()).draw();
-      }
-    });
-  </script>
+  <script src="{% static 'restaurant_application/procesos/js/historial.min.js' %}"></script>
 {% endblock %}
