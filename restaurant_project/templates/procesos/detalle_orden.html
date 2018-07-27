@@ -4,7 +4,7 @@
   {{ 'Detalle Orden' }}
 {% endblock %}
 {% block cssFiles %}
-  <link href="{% static 'restaurant_application/procesos/css/detalle_orden.css' %}" rel="stylesheet">
+  <link href="{% static 'restaurant_application/procesos/css/detalle_orden.min.css' %}" rel="stylesheet">
 {% endblock %}
 {% block body %}
     <div class="container-fluid">
@@ -127,5 +127,5 @@
     object_id_recibido = {{object.id}};
   });
 </script>
-<script src="{% static 'restaurant_application/procesos/js/detalle_orden.js' %}"></script>
+<script src="{% static 'restaurant_application/procesos/js/detalle_orden.min.js' %}"></script>
 {% endblock %}
